@@ -1,4 +1,4 @@
-﻿package com.wasalny.paiement;
+package com.wasalny.paiement;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

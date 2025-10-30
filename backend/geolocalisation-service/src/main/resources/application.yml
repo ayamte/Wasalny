@@ -1,19 +1,5 @@
 ﻿spring:
   application:
     name: geolocalisation-service
-  datasource:
-    url: jdbc:postgresql://localhost:4084/geolocalisation_db
-    username: wasalny_user
-    password: <REDACTED>
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-
-server:
-  port: 8084
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
+  config:  
+    import: "configserver:http://localhost:8888"

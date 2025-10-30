@@ -1,0 +1,71 @@
+server:  
+  port: 8080  
+  
+spring:  
+  cloud:  
+    gateway:  
+      discovery:  
+        locator:  
+          enabled: true  
+          lower-case-service-id: true  
+      routes:  
+        - id: auth-service  
+          uri: lb://auth-service  
+          predicates:  
+            - Path=/api/auth/**  
+          filters:  
+            - StripPrefix=1  
+              
+        - id: user-service  
+          uri: lb://user-service  
+          predicates:  
+            - Path=/api/users/**  
+          filters:  
+            - StripPrefix=1  
+              
+        - id: trajet-service  
+          uri: lb://trajet-service  
+          predicates:  
+            - Path=/api/trajets/**  
+          filters:  
+            - StripPrefix=1  
+              
+        - id: geolocalisation-service  
+          uri: lb://geolocalisation-service  
+          predicates:  
+            - Path=/api/locations/**  
+          filters:  
+            - StripPrefix=1  
+              
+        - id: paiement-service  
+          uri: lb://paiement-service  
+          predicates:  
+            - Path=/api/paiements/**  
+          filters:  
+            - StripPrefix=1  
+              
+        - id: ticket-service  
+          uri: lb://ticket-service  
+          predicates:  
+            - Path=/api/tickets/**  
+          filters:  
+            - StripPrefix=1  
+              
+        - id: abonnement-service  
+          uri: lb://abonnement-service  
+          predicates:  
+            - Path=/api/abonnements/**  
+          filters:  
+            - StripPrefix=1  
+              
+        - id: notification-service  
+          uri: lb://notification-service  
+          predicates:  
+            - Path=/api/notifications/**  
+          filters:  
+            - StripPrefix=1  
+  
+eureka:  
+  client:  
+    service-url:  
+      defaultZone: http://localhost:8761/eureka/

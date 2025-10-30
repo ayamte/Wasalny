@@ -1,4 +1,4 @@
-﻿package com.wasalny.abonnement;
+package com.wasalny.abonnement;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-﻿package com.wasalny.trajet;
+package com.wasalny.trajet;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
