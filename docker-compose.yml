@@ -1,23 +1,23 @@
 ﻿services:  
   # ==================== BASES DE DONNÉES POSTGRESQL ====================  
-  postgres-auth:  
-    image: postgres:15-alpine  
-    container_name: postgres-auth  
-    environment:  
-      POSTGRES_DB: ${AUTH_DB_NAME:-auth_db}  
-      POSTGRES_USER: ${AUTH_DB_USER:-wasalny_user}  
-      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD}  
-    ports:  
-      - "${AUTH_DB_PORT:-5437}:5432"  
-    volumes:  
-      - postgres-auth-data:/var/lib/postgresql/data  
-    networks:  
-      - wasalny-network  
-    restart: unless-stopped  
-    healthcheck:  
-      test: ["CMD-SHELL", "pg_isready -U ${AUTH_DB_USER:-wasalny_user}"]  
-      interval: 10s  
-      timeout: 5s  
+  postgres-auth:
+    image: postgres:15-alpine
+    container_name: postgres-auth
+    environment:
+      POSTGRES_DB: ${AUTH_DB_NAME:-auth_db}
+      POSTGRES_USER: ${AUTH_DB_USER:-wasalny_user}
+      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD}
+    ports:
+      - "${AUTH_DB_PORT:-5437}:5432"
+    volumes:
+      - postgres-auth-data:/var/lib/postgresql/data
+    networks:
+      - wasalny-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${AUTH_DB_USER:-wasalny_user} -d ${AUTH_DB_NAME:-auth_db}"]
+      interval: 10s
+      timeout: 5s
       retries: 5  
     deploy:  
       resources:  
@@ -25,24 +25,24 @@
           cpus: '0.5'  
           memory: 512M  
   
-  postgres-user:  
-    image: postgres:15-alpine  
-    container_name: postgres-user  
-    environment:  
-      POSTGRES_DB: ${USER_DB_NAME:-user_db}  
-      POSTGRES_USER: ${USER_DB_USER:-wasalny_user}  
-      POSTGRES_PASSWORD: ${USER_DB_PASSWORD}  
-    ports:  
-      - "${USER_DB_PORT:-5434}:5432"  
-    volumes:  
-      - postgres-user-data:/var/lib/postgresql/data  
-    networks:  
-      - wasalny-network  
-    restart: unless-stopped  
-    healthcheck:  
-      test: ["CMD-SHELL", "pg_isready -U ${USER_DB_USER:-wasalny_user}"]  
-      interval: 10s  
-      timeout: 5s  
+  postgres-user:
+    image: postgres:15-alpine
+    container_name: postgres-user
+    environment:
+      POSTGRES_DB: ${USER_DB_NAME:-user_db}
+      POSTGRES_USER: ${USER_DB_USER:-wasalny_user}
+      POSTGRES_PASSWORD: ${USER_DB_PASSWORD}
+    ports:
+      - "${USER_DB_PORT:-5434}:5432"
+    volumes:
+      - postgres-user-data:/var/lib/postgresql/data
+    networks:
+      - wasalny-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${USER_DB_USER:-wasalny_user} -d ${USER_DB_NAME:-user_db}"]
+      interval: 10s
+      timeout: 5s
       retries: 5  
     deploy:  
       resources:  
@@ -50,24 +50,24 @@
           cpus: '0.5'  
           memory: 512M  
   
-  postgres-trajet:  
-    image: postgres:15-alpine  
-    container_name: postgres-trajet  
-    environment:  
-      POSTGRES_DB: ${TRAJET_DB_NAME:-trajet_db}  
-      POSTGRES_USER: ${TRAJET_DB_USER:-wasalny_user}  
-      POSTGRES_PASSWORD: ${TRAJET_DB_PASSWORD}  
-    ports:  
-      - "${TRAJET_DB_PORT:-5432}:5432"  
-    volumes:  
-      - postgres-trajet-data:/var/lib/postgresql/data  
-    networks:  
-      - wasalny-network  
-    restart: unless-stopped  
-    healthcheck:  
-      test: ["CMD-SHELL", "pg_isready -U ${TRAJET_DB_USER:-wasalny_user}"]  
-      interval: 10s  
-      timeout: 5s  
+  postgres-trajet:
+    image: postgres:15-alpine
+    container_name: postgres-trajet
+    environment:
+      POSTGRES_DB: ${TRAJET_DB_NAME:-trajet_db}
+      POSTGRES_USER: ${TRAJET_DB_USER:-wasalny_user}
+      POSTGRES_PASSWORD: ${TRAJET_DB_PASSWORD}
+    ports:
+      - "${TRAJET_DB_PORT:-5432}:5432"
+    volumes:
+      - postgres-trajet-data:/var/lib/postgresql/data
+    networks:
+      - wasalny-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${TRAJET_DB_USER:-wasalny_user} -d ${TRAJET_DB_NAME:-trajet_db}"]
+      interval: 10s
+      timeout: 5s
       retries: 5  
     deploy:  
       resources:  
@@ -89,10 +89,10 @@
     networks:  
       - wasalny-network  
     restart: unless-stopped  
-    healthcheck:  
-      test: ["CMD-SHELL", "pg_isready -U ${GEO_DB_USER:-wasalny_user}"]  
-      interval: 10s  
-      timeout: 5s  
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${GEO_DB_USER:-wasalny_user} -d ${GEO_DB_NAME:-geolocalisation_db}"]
+      interval: 10s
+      timeout: 5s
       retries: 5  
     deploy:  
       resources:  
@@ -100,24 +100,24 @@
           cpus: '0.5'  
           memory: 512M  
   
-  postgres-paiement:  
-    image: postgres:15-alpine  
-    container_name: postgres-paiement  
-    environment:  
-      POSTGRES_DB: ${PAYMENT_DB_NAME:-paiement_db}  
-      POSTGRES_USER: ${PAYMENT_DB_USER:-wasalny_user}  
-      POSTGRES_PASSWORD: ${PAYMENT_DB_PASSWORD}  
-    ports:  
-      - "${PAYMENT_DB_PORT:-5433}:5432"  
-    volumes:  
-      - postgres-paiement-data:/var/lib/postgresql/data  
-    networks:  
-      - wasalny-network  
-    restart: unless-stopped  
-    healthcheck:  
-      test: ["CMD-SHELL", "pg_isready -U ${PAYMENT_DB_USER:-wasalny_user}"]  
-      interval: 10s  
-      timeout: 5s  
+  postgres-paiement:
+    image: postgres:15-alpine
+    container_name: postgres-paiement
+    environment:
+      POSTGRES_DB: ${PAYMENT_DB_NAME:-paiement_db}
+      POSTGRES_USER: ${PAYMENT_DB_USER:-wasalny_user}
+      POSTGRES_PASSWORD: ${PAYMENT_DB_PASSWORD}
+    ports:
+      - "${PAYMENT_DB_PORT:-5433}:5432"
+    volumes:
+      - postgres-paiement-data:/var/lib/postgresql/data
+    networks:
+      - wasalny-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PAYMENT_DB_USER:-wasalny_user} -d ${PAYMENT_DB_NAME:-paiement_db}"]
+      interval: 10s
+      timeout: 5s
       retries: 5  
     deploy:  
       resources:  
@@ -125,24 +125,24 @@
           cpus: '0.5'  
           memory: 512M  
   
-  postgres-ticket:  
-    image: postgres:15-alpine  
-    container_name: postgres-ticket  
-    environment:  
-      POSTGRES_DB: ${TICKET_DB_NAME:-ticket_db}  
-      POSTGRES_USER: ${TICKET_DB_USER:-wasalny_user}  
-      POSTGRES_PASSWORD: ${TICKET_DB_PASSWORD}  
-    ports:  
-      - "${TICKET_DB_PORT:-5436}:5432"  
-    volumes:  
-      - postgres-ticket-data:/var/lib/postgresql/data  
-    networks:  
-      - wasalny-network  
-    restart: unless-stopped  
-    healthcheck:  
-      test: ["CMD-SHELL", "pg_isready -U ${TICKET_DB_USER:-wasalny_user}"]  
-      interval: 10s  
-      timeout: 5s  
+  postgres-ticket:
+    image: postgres:15-alpine
+    container_name: postgres-ticket
+    environment:
+      POSTGRES_DB: ${TICKET_DB_NAME:-ticket_db}
+      POSTGRES_USER: ${TICKET_DB_USER:-wasalny_user}
+      POSTGRES_PASSWORD: ${TICKET_DB_PASSWORD}
+    ports:
+      - "${TICKET_DB_PORT:-5436}:5432"
+    volumes:
+      - postgres-ticket-data:/var/lib/postgresql/data
+    networks:
+      - wasalny-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${TICKET_DB_USER:-wasalny_user} -d ${TICKET_DB_NAME:-ticket_db}"]
+      interval: 10s
+      timeout: 5s
       retries: 5  
     deploy:  
       resources:  
@@ -150,24 +150,24 @@
           cpus: '0.5'  
           memory: 512M  
   
-  postgres-abonnement:  
-    image: postgres:15-alpine  
-    container_name: postgres-abonnement  
-    environment:  
-      POSTGRES_DB: ${ABONNEMENT_DB_NAME:-abonnement_db}  
-      POSTGRES_USER: ${ABONNEMENT_DB_USER:-wasalny_user}  
-      POSTGRES_PASSWORD: ${ABONNEMENT_DB_PASSWORD}  
-    ports:  
-      - "${ABONNEMENT_DB_PORT:-5438}:5432"  
-    volumes:  
-      - postgres-abonnement-data:/var/lib/postgresql/data  
-    networks:  
-      - wasalny-network  
-    restart: unless-stopped  
-    healthcheck:  
-      test: ["CMD-SHELL", "pg_isready -U ${ABONNEMENT_DB_USER:-wasalny_user}"]  
-      interval: 10s  
-      timeout: 5s  
+  postgres-abonnement:
+    image: postgres:15-alpine
+    container_name: postgres-abonnement
+    environment:
+      POSTGRES_DB: ${ABONNEMENT_DB_NAME:-abonnement_db}
+      POSTGRES_USER: ${ABONNEMENT_DB_USER:-wasalny_user}
+      POSTGRES_PASSWORD: ${ABONNEMENT_DB_PASSWORD}
+    ports:
+      - "${ABONNEMENT_DB_PORT:-5438}:5432"
+    volumes:
+      - postgres-abonnement-data:/var/lib/postgresql/data
+    networks:
+      - wasalny-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${ABONNEMENT_DB_USER:-wasalny_user} -d ${ABONNEMENT_DB_NAME:-abonnement_db}"]
+      interval: 10s
+      timeout: 5s
       retries: 5  
     deploy:  
       resources:  
@@ -175,24 +175,24 @@
           cpus: '0.5'  
           memory: 512M  
   
-  postgres-notification:  
-    image: postgres:15-alpine  
-    container_name: postgres-notification  
-    environment:  
-      POSTGRES_DB: ${NOTIFICATION_DB_NAME:-notification_db}  
-      POSTGRES_USER: ${NOTIFICATION_DB_USER:-wasalny_user}  
-      POSTGRES_PASSWORD: ${NOTIFICATION_DB_PASSWORD}  
-    ports:  
-      - "${NOTIFICATION_DB_PORT:-5439}:5432"  
-    volumes:  
-      - postgres-notification-data:/var/lib/postgresql/data  
-    networks:  
-      - wasalny-network  
-    restart: unless-stopped  
-    healthcheck:  
-      test: ["CMD-SHELL", "pg_isready -U ${NOTIFICATION_DB_USER:-wasalny_user}"]  
-      interval: 10s  
-      timeout: 5s  
+  postgres-notification:
+    image: postgres:15-alpine
+    container_name: postgres-notification
+    environment:
+      POSTGRES_DB: ${NOTIFICATION_DB_NAME:-notification_db}
+      POSTGRES_USER: ${NOTIFICATION_DB_USER:-wasalny_user}
+      POSTGRES_PASSWORD: ${NOTIFICATION_DB_PASSWORD}
+    ports:
+      - "${NOTIFICATION_DB_PORT:-5439}:5432"
+    volumes:
+      - postgres-notification-data:/var/lib/postgresql/data
+    networks:
+      - wasalny-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${NOTIFICATION_DB_USER:-wasalny_user} -d ${NOTIFICATION_DB_NAME:-notification_db}"]
+      interval: 10s
+      timeout: 5s
       retries: 5  
     deploy:  
       resources:  
@@ -215,11 +215,12 @@
     networks:  
       - wasalny-network  
     restart: unless-stopped  
-    healthcheck:  
-      test: ["CMD", "rabbitmq-diagnostics", "ping"]  
-      interval: 10s  
-      timeout: 5s  
-      retries: 5  
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 60s
+      timeout: 30s
+      retries: 5
+      start_period: 600s
     deploy:  
       resources:  
         limits:  
@@ -319,12 +320,12 @@
       config-server:  
         condition: service_healthy  
     restart: unless-stopped  
-    healthcheck:  
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]  
-      interval: 30s  
-      timeout: 10s  
-      retries: 5  
-      start_period: 60s  
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 60s
+      timeout: 30s
+      retries: 5
+      start_period: 360s      
     deploy:  
       resources:  
         limits:  
@@ -366,7 +367,7 @@
       interval: 30s  
       timeout: 10s  
       retries: 5  
-      start_period: 90s  
+      start_period: 300s  
     deploy:  
       resources:  
         limits:  
@@ -405,25 +406,27 @@
       interval: 30s  
       timeout: 10s  
       retries: 5  
-      start_period: 90s  
+      start_period: 300s  
     deploy:  
       resources:  
         limits:  
           cpus: '1'  
           memory: 1G  
   
-  trajet-service:  
-    build:  
-      context: ./backend/trajet-service  
-      dockerfile: Dockerfile  
-    ports:  
-      - "8081:8081"  
-    networks:  
-      - wasalny-network  
-    environment:  
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888  
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/  
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-trajet:5432/trajet_db  
+  trajet-service:
+    build:
+      context: ./backend/trajet-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    networks:
+      - wasalny-network
+    environment:
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-trajet:5432/${TRAJET_DB_NAME:-trajet_db}
+      - SPRING_DATASOURCE_USERNAME=${TRAJET_DB_USER:-wasalny_user}
+      - SPRING_DATASOURCE_PASSWORD=${TRAJET_DB_PASSWORD}  
     depends_on:  
       postgres-trajet:  
         condition: service_healthy  
@@ -437,26 +440,28 @@
       interval: 30s  
       timeout: 10s  
       retries: 5  
-      start_period: 90s  
+      start_period: 300s  
     deploy:  
       resources:  
         limits:  
           cpus: '1'  
           memory: 1G  
   
-  geolocalisation-service:  
-    build:  
-      context: ./backend/geolocalisation-service  
-      dockerfile: Dockerfile  
-    ports:  
-      - "8084:8084"  
-    networks:  
-      - wasalny-network  
-    environment:  
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888  
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/  
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-geo:5432/geolocalisation_db  
-      - SPRING_REDIS_HOST=redis  
+  geolocalisation-service:
+    build:
+      context: ./backend/geolocalisation-service
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8084"
+    networks:
+      - wasalny-network
+    environment:
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-geo:5432/${GEO_DB_NAME:-geolocalisation_db}
+      - SPRING_DATASOURCE_USERNAME=${GEO_DB_USER:-wasalny_user}
+      - SPRING_DATASOURCE_PASSWORD=${GEO_DB_PASSWORD}
+      - SPRING_REDIS_HOST=redis
       - SPRING_REDIS_PASSWORD=${REDIS_PASSWORD}  
     depends_on:  
       postgres-geo:  
@@ -473,27 +478,29 @@
       interval: 30s  
       timeout: 10s  
       retries: 5  
-      start_period: 90s  
+      start_period: 300s  
     deploy:  
       resources:  
         limits:  
           cpus: '1'  
           memory: 1G  
   
-  paiement-service:  
-    build:  
-      context: ./backend/paiement-service  
-      dockerfile: Dockerfile  
-    ports:  
-      - "8082:8082"  
-    networks:  
-      - wasalny-network  
-    environment:  
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888  
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/  
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-paiement:5432/paiement_db  
-      - SPRING_RABBITMQ_HOST=rabbitmq  
-      - SPRING_REDIS_HOST=redis  
+  paiement-service:
+    build:
+      context: ./backend/paiement-service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    networks:
+      - wasalny-network
+    environment:
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-paiement:5432/${PAYMENT_DB_NAME:-paiement_db}
+      - SPRING_DATASOURCE_USERNAME=${PAYMENT_DB_USER:-wasalny_user}
+      - SPRING_DATASOURCE_PASSWORD=${PAYMENT_DB_PASSWORD}
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_REDIS_HOST=redis
       - SPRING_REDIS_PASSWORD=${REDIS_PASSWORD}  
     depends_on:  
       postgres-paiement:  
@@ -512,25 +519,27 @@
       interval: 30s  
       timeout: 10s  
       retries: 5  
-      start_period: 90s  
+      start_period: 300s  
     deploy:  
       resources:  
         limits:  
           cpus: '1'  
           memory: 1G  
   
-  ticket-service:  
-    build:  
-      context: ./backend/ticket-service  
-      dockerfile: Dockerfile  
-    ports:  
-      - "8085:8085"  
-    networks:  
-      - wasalny-network  
-    environment:  
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888  
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/  
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-ticket:5432/ticket_db  
+  ticket-service:
+    build:
+      context: ./backend/ticket-service
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    networks:
+      - wasalny-network
+    environment:
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-ticket:5432/${TICKET_DB_NAME:-ticket_db}
+      - SPRING_DATASOURCE_USERNAME=${TICKET_DB_USER:-wasalny_user}
+      - SPRING_DATASOURCE_PASSWORD=${TICKET_DB_PASSWORD}
       - SPRING_RABBITMQ_HOST=rabbitmq  
     depends_on:  
       postgres-ticket:  
@@ -547,25 +556,27 @@
       interval: 30s  
       timeout: 10s  
       retries: 5  
-      start_period: 90s  
+      start_period: 300s  
     deploy:  
       resources:  
         limits:  
           cpus: '1'  
           memory: 1G  
   
-  abonnement-service:  
-    build:  
-      context: ./backend/abonnement-service  
-      dockerfile: Dockerfile  
-    ports:  
-      - "8087:8087"  
-    networks:  
-      - wasalny-network  
-    environment:  
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888  
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/  
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-abonnement:5432/abonnement_db  
+  abonnement-service:
+    build:
+      context: ./backend/abonnement-service
+      dockerfile: Dockerfile
+    ports:
+      - "8087:8087"
+    networks:
+      - wasalny-network
+    environment:
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-abonnement:5432/${ABONNEMENT_DB_NAME:-abonnement_db}
+      - SPRING_DATASOURCE_USERNAME=${ABONNEMENT_DB_USER:-wasalny_user}
+      - SPRING_DATASOURCE_PASSWORD=${ABONNEMENT_DB_PASSWORD}
       - SPRING_RABBITMQ_HOST=rabbitmq  
     depends_on:  
       postgres-abonnement:  
@@ -582,25 +593,27 @@
       interval: 30s  
       timeout: 10s  
       retries: 5  
-      start_period: 90s  
+      start_period: 300s  
     deploy:  
       resources:  
         limits:  
           cpus: '1'  
           memory: 1G  
   
-  notification-service:  
-    build:  
-      context: ./backend/notification-service  
-      dockerfile: Dockerfile  
-    ports:  
-      - "8088:8088"  
-    networks:  
-      - wasalny-network  
-    environment:  
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888  
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/  
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-notification:5432/notification_db  
+  notification-service:
+    build:
+      context: ./backend/notification-service
+      dockerfile: Dockerfile
+    ports:
+      - "8088:8088"
+    networks:
+      - wasalny-network
+    environment:
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-notification:5432/${NOTIFICATION_DB_NAME:-notification_db}
+      - SPRING_DATASOURCE_USERNAME=${NOTIFICATION_DB_USER:-wasalny_user}
+      - SPRING_DATASOURCE_PASSWORD=${NOTIFICATION_DB_PASSWORD}
       - SPRING_RABBITMQ_HOST=rabbitmq  
     depends_on:  
       postgres-notification:  
@@ -617,7 +630,7 @@
       interval: 30s  
       timeout: 10s  
       retries: 5  
-      start_period: 90s  
+      start_period: 300s  
     deploy:  
       resources:  
         limits:  
