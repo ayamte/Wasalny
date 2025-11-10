@@ -18,7 +18,8 @@
       test: ["CMD-SHELL", "pg_isready -U ${AUTH_DB_USER:-wasalny_user} -d ${AUTH_DB_NAME:-auth_db}"]
       interval: 10s
       timeout: 5s
-      retries: 5  
+      retries: 5 
+      start_period: 30s  
     deploy:  
       resources:  
         limits:  
@@ -44,6 +45,7 @@
       interval: 10s
       timeout: 5s
       retries: 5  
+      start_period: 30s 
     deploy:  
       resources:  
         limits:  
@@ -69,6 +71,7 @@
       interval: 10s
       timeout: 5s
       retries: 5  
+      start_period: 30s 
     deploy:  
       resources:  
         limits:  
@@ -93,7 +96,8 @@
       test: ["CMD-SHELL", "pg_isready -U ${GEO_DB_USER:-wasalny_user} -d ${GEO_DB_NAME:-geolocalisation_db}"]
       interval: 10s
       timeout: 5s
-      retries: 5  
+      retries: 5 
+      start_period: 30s  
     deploy:  
       resources:  
         limits:  
@@ -118,7 +122,8 @@
       test: ["CMD-SHELL", "pg_isready -U ${PAYMENT_DB_USER:-wasalny_user} -d ${PAYMENT_DB_NAME:-paiement_db}"]
       interval: 10s
       timeout: 5s
-      retries: 5  
+      retries: 5 
+      start_period: 30s  
     deploy:  
       resources:  
         limits:  
@@ -144,6 +149,7 @@
       interval: 10s
       timeout: 5s
       retries: 5  
+      start_period: 30s 
     deploy:  
       resources:  
         limits:  
@@ -168,7 +174,8 @@
       test: ["CMD-SHELL", "pg_isready -U ${ABONNEMENT_DB_USER:-wasalny_user} -d ${ABONNEMENT_DB_NAME:-abonnement_db}"]
       interval: 10s
       timeout: 5s
-      retries: 5  
+      retries: 5 
+      start_period: 30s  
     deploy:  
       resources:  
         limits:  
@@ -194,6 +201,7 @@
       interval: 10s
       timeout: 5s
       retries: 5  
+      start_period: 30s 
     deploy:  
       resources:  
         limits:  
@@ -244,6 +252,7 @@
       interval: 10s  
       timeout: 5s  
       retries: 5  
+      start_period: 20s
     deploy:  
       resources:  
         limits:  
@@ -260,18 +269,16 @@
       - "8761:8761"  
     networks:  
       - wasalny-network  
+    environment:  
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=false  
+      - EUREKA_CLIENT_FETCH_REGISTRY=false  
     restart: unless-stopped  
     healthcheck:  
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8761/actuator/health"]  
       interval: 30s  
       timeout: 10s  
       retries: 5  
-      start_period: 60s  
-    deploy:  
-      resources:  
-        limits:  
-          cpus: '1'  
-          memory: 1G  
+      start_period: 300s   
   
   # ==================== CONFIG SERVER ====================  
   config-server:  
@@ -294,7 +301,7 @@
       interval: 30s  
       timeout: 10s  
       retries: 5  
-      start_period: 60s  
+      start_period: 300s    
     deploy:  
       resources:  
         limits:  
