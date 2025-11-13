@@ -1,3 +1,4 @@
+/*Sans ce fichier, votre service ne pourrait pas communiquer avec le notification-service pour envoyer des notifications aux clients après un paiement */
 package com.wasalny.paiement.config;  
   
 import org.springframework.amqp.core.*;  
@@ -13,9 +14,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 @Configuration  
 public class RabbitMQConfig {  
       
-    public static final String PAYMENT_EXCHANGE = "payment.exchange";  
-    public static final String PAYMENT_COMPLETED_QUEUE = "payment.completed.queue";  
-    public static final String PAYMENT_FAILED_QUEUE = "payment.failed.queue";  
+    public static final String PAYMENT_EXCHANGE = "payment.exchange";  //Le bureau de poste central qui reçoit tous les messages
+    public static final String PAYMENT_COMPLETED_QUEUE = "payment.completed.queue";  // Pour les paiements réussis
+    public static final String PAYMENT_FAILED_QUEUE = "payment.failed.queue";  //Pour les paiements échoués
     public static final String PAYMENT_COMPLETED_ROUTING_KEY = "payment.completed";  
     public static final String PAYMENT_FAILED_ROUTING_KEY = "payment.failed";  
       
@@ -34,6 +35,9 @@ public class RabbitMQConfig {
         return new Queue(PAYMENT_FAILED_QUEUE, true);  
     }  
       
+    /*Les Bindings créent des connexions entre l'exchange et les queues.
+     Ils disent : "Quand un message arrive à l'exchange avec la routing key payment.completed, 
+     envoie-le vers la queue payment.completed.queue". */
     @Bean  
     public Binding paymentCompletedBinding() {  
         return BindingBuilder  
@@ -53,7 +57,7 @@ public class RabbitMQConfig {
     @Bean  
     public Jackson2JsonMessageConverter messageConverter() {  
         ObjectMapper objectMapper = new ObjectMapper();  
-        objectMapper.registerModule(new JavaTimeModule());  
+        objectMapper.registerModule(new JavaTimeModule());  //pour éviter les erreurs de sérialisation (LocalDateTime par exple)
         return new Jackson2JsonMessageConverter(objectMapper);  
     } 
       
