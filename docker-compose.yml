@@ -521,12 +521,12 @@
       config-server:  
         condition: service_healthy  
     restart: unless-stopped  
-    healthcheck:  
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8082/actuator/health"]  
-      interval: 30s  
-      timeout: 10s  
-      retries: 5  
-      start_period: 300s  
+    #healthcheck:  
+   #   test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+     # interval: 30s  
+     # timeout: 30s  
+     # retries: 5  
+     # start_period: 300s  
     deploy:  
       resources:  
         limits:  
