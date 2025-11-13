@@ -1,4 +1,5 @@
 package com.wasalny.geolocalisation.entity;  
+  
 import jakarta.persistence.*;  
 import lombok.Data;  
 import java.time.LocalDateTime;  
@@ -14,5 +15,12 @@ public class Location {
     private Double latitude;  
     private Double longitude;  
     private String userId;  
-    private LocalDateTime timestamp;  
+      
+    @Column(name = "created_at")  
+    private LocalDateTime createdAt;  
+      
+    @PrePersist  
+    protected void onCreate() {  
+        createdAt = LocalDateTime.now();  
+    }  
 }

@@ -15,12 +15,12 @@ public class LocationService {
         return locationRepository.save(location);  
     }  
       
-    public List<Location> getAllLocations() {  
-        return locationRepository.findAll();  
+    public List<Location> getUserLocations(String userId) {  
+        return locationRepository.findByUserIdOrderByCreatedAtDesc(userId);  
     }  
       
-    public List<Location> getLocationsByUserId(String userId) {  
-        return locationRepository.findByUserId(userId);  
+    public Location getLatestLocation(String userId) {  
+        List<Location> locations = locationRepository.findByUserIdOrderByCreatedAtDesc(userId);  
+        return locations.isEmpty() ? null : locations.get(0);  
     }  
 }
-//hello
