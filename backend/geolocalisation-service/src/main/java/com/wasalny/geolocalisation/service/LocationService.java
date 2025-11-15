@@ -23,4 +23,35 @@ public class LocationService {
         List<Location> locations = locationRepository.findByUserIdOrderByCreatedAtDesc(userId);  
         return locations.isEmpty() ? null : locations.get(0);  
     }  
+
+    // Récupérer une location par ID  
+public Location getLocationById(Long id) {  
+    return locationRepository.findById(id)  
+        .orElseThrow(() -> new RuntimeException("Location not found with id: " + id));  
+}  
+  
+// Mettre à jour une location  
+public Location updateLocation(Long id, Location locationDetails) {  
+    Location location = locationRepository.findById(id)  
+        .orElseThrow(() -> new RuntimeException("Location not found with id: " + id));  
+      
+    location.setLatitude(locationDetails.getLatitude());  
+    location.setLongitude(locationDetails.getLongitude());  
+    location.setUserId(locationDetails.getUserId());  
+      
+    return locationRepository.save(location);  
+}  
+  
+// Supprimer une location  
+public void deleteLocation(Long id) {  
+    Location location = locationRepository.findById(id)  
+        .orElseThrow(() -> new RuntimeException("Location not found with id: " + id));  
+    locationRepository.delete(location);  
+}  
+  
+// Recherche géospatiale - locations à proximité  
+// Cette méthode nécessite une requête personnalisée dans le repository  
+public List<Location> getNearbyLocations(Double latitude, Double longitude, Double radiusKm) {  
+    return locationRepository.findNearbyLocations(latitude, longitude, radiusKm);  
+}
 }

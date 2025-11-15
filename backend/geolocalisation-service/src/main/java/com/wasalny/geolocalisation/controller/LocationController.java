@@ -41,4 +41,48 @@ public class LocationController {
         Location location = locationService.getLatestLocation(userId);  
         return location != null ? ResponseEntity.ok(location) : ResponseEntity.notFound().build();  
     }  
+    // GET /locations/{id} - Récupérer une location par ID  
+@GetMapping("/{id}")  
+public ResponseEntity<Location> getLocationById(@PathVariable Long id) {  
+    try {  
+        Location location = locationService.getLocationById(id);  
+        return ResponseEntity.ok(location);  
+    } catch (RuntimeException e) {  
+        return ResponseEntity.notFound().build();  
+    }  
+}  
+  
+// PUT /locations/{id} - Mettre à jour une location  
+@PutMapping("/{id}")  
+public ResponseEntity<Location> updateLocation(  
+        @PathVariable Long id,  
+        @Valid @RequestBody Location locationDetails) {  
+    try {  
+        Location updatedLocation = locationService.updateLocation(id, locationDetails);  
+        return ResponseEntity.ok(updatedLocation);  
+    } catch (RuntimeException e) {  
+        return ResponseEntity.notFound().build();  
+    }  
+}  
+  
+// DELETE /locations/{id} - Supprimer une location  
+@DeleteMapping("/{id}")  
+public ResponseEntity<Void> deleteLocation(@PathVariable Long id) {  
+    try {  
+        locationService.deleteLocation(id);  
+        return ResponseEntity.noContent().build();  
+    } catch (RuntimeException e) {  
+        return ResponseEntity.notFound().build();  
+    }  
+}  
+  
+// GET /locations/nearby - Recherche géospatiale  
+@GetMapping("/nearby")  
+public ResponseEntity<List<Location>> getNearbyLocations(  
+        @RequestParam Double latitude,  
+        @RequestParam Double longitude,  
+        @RequestParam(defaultValue = "5.0") Double radiusKm) {  
+    List<Location> locations = locationService.getNearbyLocations(latitude, longitude, radiusKm);  
+    return ResponseEntity.ok(locations);  
+}
 }
