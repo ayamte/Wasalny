@@ -19,7 +19,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;  
   
 @RestController  
-@RequestMapping("/configurations-horaires")  
+@RequestMapping("/trajets/configurations-horaires")  
 @RequiredArgsConstructor  
 public class ConfigurationHoraireController {  
       

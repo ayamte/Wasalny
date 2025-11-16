@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;  
   
 @RestController  
-@RequestMapping("/lignes")  
+@RequestMapping("/trajets/lignes")  
 @RequiredArgsConstructor  
 public class LigneController {  
       

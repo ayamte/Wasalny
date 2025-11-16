@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;  
   
 @RestController  
-@RequestMapping("/assignations")  
+@RequestMapping("/trajets/assignations")  
 @RequiredArgsConstructor  
 public class AssignationBusConducteurController {  
       

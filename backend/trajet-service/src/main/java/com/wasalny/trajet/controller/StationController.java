@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;  
   
 @RestController  
-@RequestMapping("/stations")  
+@RequestMapping("/trajets/stations")  
 @RequiredArgsConstructor  
 public class StationController {  
       
