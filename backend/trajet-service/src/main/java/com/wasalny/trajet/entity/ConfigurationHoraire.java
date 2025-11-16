@@ -22,17 +22,14 @@ public class ConfigurationHoraire {
     @Column(name = "id", updatable = false, nullable = false)  
     private UUID id;  
       
-    @Column(name = "actif", nullable = false)  
-    private Boolean actif = true;  
-      
-    @Column(name = "intervalle_minutes", nullable = false)  
-    private Integer intervalleMinutes;  
-      
-    @Column(name = "nombre_bus", nullable = false)  
-    private Integer nombreBus;  
-      
     @Column(name = "heure_debut", nullable = false)  
     private LocalTime heureDebut;  
+      
+    @Column(name = "heure_fin", nullable = false)  
+    private LocalTime heureFin;  
+      
+    @Column(name = "frequence_minutes", nullable = false)  
+    private Integer frequenceMinutes;  
       
     @Column(name = "duree_aller_minutes", nullable = false)  
     private Integer dureeAllerMinutes;  
@@ -43,8 +40,16 @@ public class ConfigurationHoraire {
     @Column(name = "temps_pause_minutes", nullable = false)  
     private Integer tempsPauseMinutes;  
       
-    // Relations  
-    @OneToOne(fetch = FetchType.LAZY)  
-    @JoinColumn(name = "ligne_id", nullable = false, unique = true)  
+    @Column(name = "temps_arret_minutes", nullable = false)  
+    private Integer tempsArretMinutes;  
+      
+    @Column(name = "nombre_bus", nullable = false)  
+    private Integer nombreBus;  
+      
+    @Column(name = "active", nullable = false)  
+    private Boolean active = true;  // ✅ Changé de "actif" à "active"  
+      
+    @ManyToOne(fetch = FetchType.LAZY)  
+    @JoinColumn(name = "ligne_id", nullable = false)  
     private Ligne ligne;  
 }

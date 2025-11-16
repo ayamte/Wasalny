@@ -35,7 +35,7 @@ public class Bus {
       
     @Column(name = "active", nullable = false)  
     private Boolean active = true;  
-      
+
     @Column(name = "latitude_actuelle")  
     private Double latitudeActuelle;  
       

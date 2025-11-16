@@ -31,8 +31,8 @@ public class AssignationBusConducteur {
     @Column(name = "date_fin", nullable = false)  
     private LocalDate dateFin;  
       
-    @Column(name = "actif", nullable = false)  
-    private Boolean actif = true;  
+    @Column(name = "active", nullable = false)  
+    private Boolean active = true;  
       
     // Relations  
     @ManyToOne(fetch = FetchType.LAZY)  

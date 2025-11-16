@@ -10,6 +10,9 @@ import java.util.UUID;
   
 @Repository  
 public interface BusRepository extends JpaRepository<Bus, UUID> {  
+      
     Optional<Bus> findByNumeroImmatriculation(String numeroImmatriculation);  
+      
+    // AJOUTER CETTE MÉTHODE  
     List<Bus> findByActiveTrue();  
 }

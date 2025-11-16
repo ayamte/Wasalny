@@ -19,5 +19,15 @@ public interface TripRepository extends JpaRepository<Trip, UUID> {
     List<Trip> findByBusIdAndDateTrip(UUID busId, LocalDate dateTrip);  
       
     @Query("SELECT t FROM Trip t WHERE t.ligne.id = :ligneId AND t.dateTrip = :date ORDER BY t.heureDepart")  
-    List<Trip> findByLigneAndDate(@Param("ligneId") UUID ligneId, @Param("date") LocalDate date);  
+    List<Trip> findByLigneAndDate(@Param("ligneId") UUID ligneId, @Param("date") LocalDate date); 
+    @Query("SELECT DISTINCT t FROM Trip t " +  
+       "JOIN t.passageStations ps1 " +  
+       "JOIN t.passageStations ps2 " +  
+       "WHERE ps1.station.id = :departId AND ps2.station.id = :arriveeId " +  
+       "AND ps1.ordre < ps2.ordre " +  
+       "AND t.dateTrip = :date " +  
+       "AND t.statut IN ('PLANIFIE', 'EN_COURS')")  
+List<Trip> findTripsEntreStations(@Param("departId") UUID departId,  
+                                   @Param("arriveeId") UUID arriveeId,  
+                                   @Param("date") LocalDate date); 
 }
