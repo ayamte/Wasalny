@@ -1,0 +1,13 @@
+target/  
+!target/*.jar  
+.mvn/  
+mvnw  
+mvnw.cmd  
+.idea/  
+.vscode/  
+*.iml  
+.DS_Store  
+.git/  
+README.md  
+src/test/  
+*.log  

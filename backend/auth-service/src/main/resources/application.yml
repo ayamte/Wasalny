@@ -1,0 +1,65 @@
+spring:
+  application:
+    name: auth-service
+  config:
+    import: "optional:configserver:http://config-server:8888"
+
+  # DataSource Configuration
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres-auth:5432/auth_db}
+    username: ${SPRING_DATASOURCE_USERNAME:wasalny_user}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # Redis Configuration
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:redis}
+      port: 6379
+      password: ${SPRING_REDIS_PASSWORD}
+      timeout: 60000ms
+
+  # Mail Configuration
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SUPPORT_EMAIL}
+    password: ${APP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true    
+  
+# Server Configuration    
+server:    
+  port: 8086    
+    
+# JWT Configuration
+security:
+  jwt:
+    secret-key: ${JWT_SECRET}
+    expiration-time: ${JWT_EXPIRATION:3600000}
+
+# Email Configuration
+support:
+  email: ${SUPPORT_EMAIL:noreply@wasalny.com}    
+    
+# Actuator    
+management:    
+  endpoints:    
+    web:    
+      exposure:    
+        include: health,info    
+  endpoint:    
+    health:    
+      show-details: always

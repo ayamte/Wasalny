@@ -1,0 +1,29 @@
+# Maven build artifacts  
+target/  
+!target/*.jar  
+  
+# Maven wrapper  
+.mvn/  
+mvnw  
+mvnw.cmd   
+  
+ 
+  
+# Git  
+.git/  
+.gitignore  
+.gitattributes  
+  
+  
+# Test files  
+src/test/  
+  
+# Logs  
+*.log  
+logs/  
+  
+# Temporary files  
+*.tmp  
+*.bak  
+*.swp  
+*~  
