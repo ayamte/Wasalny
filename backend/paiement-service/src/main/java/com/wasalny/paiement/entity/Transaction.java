@@ -47,7 +47,7 @@ public class Transaction {
     private TypeService typeService;  
       
     @Column(nullable = false)  
-    private UUID referenceService;  
+    private UUID referenceService;  // dans ticket doit etre id du trajet  mais dans abonnement doit etre id du type d'abonnement
       
     private String description;  
     private String motifEchec;  
