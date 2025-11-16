@@ -354,11 +354,13 @@
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/  
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-auth:5432/${AUTH_DB_NAME:-auth_db}  
       - SPRING_DATASOURCE_USERNAME=${AUTH_DB_USER:-wasalny_user}  
-      - SPRING_DATASOURCE_PASSWORD=${AUTH_DB_PASSWORD}  
-      - SPRING_REDIS_HOST=redis  
-      - SPRING_REDIS_PASSWORD=${REDIS_PASSWORD}  
-      - JWT_SECRET=${JWT_SECRET}  
-      - JWT_EXPIRATION=${JWT_EXPIRATION:-86400000}  
+      - SPRING_DATASOURCE_PASSWORD=${AUTH_DB_PASSWORD}
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PASSWORD=${REDIS_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=${JWT_EXPIRATION:-86400000}
+      - SUPPORT_EMAIL=${SUPPORT_EMAIL}
+      - APP_PASSWORD=${APP_PASSWORD}
     depends_on:  
       postgres-auth:  
         condition: service_healthy  
@@ -395,9 +397,9 @@
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/  
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-user:5432/${USER_DB_NAME:-user_db}  
       - SPRING_DATASOURCE_USERNAME=${USER_DB_USER:-wasalny_user}  
-      - SPRING_DATASOURCE_PASSWORD=${USER_DB_PASSWORD}  
-      - SPRING_REDIS_HOST=redis  
-      - SPRING_REDIS_PASSWORD=${REDIS_PASSWORD}  
+      - SPRING_DATASOURCE_PASSWORD=${USER_DB_PASSWORD}
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PASSWORD=${REDIS_PASSWORD}
     depends_on:  
       postgres-user:  
         condition: service_healthy  
@@ -518,15 +520,15 @@
         condition: service_healthy  
       eureka-server:  
         condition: service_healthy  
-      config-server:  
-        condition: service_healthy  
-    restart: unless-stopped  
-    #healthcheck:  
-   #   test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
-     # interval: 30s  
-     # timeout: 30s  
-     # retries: 5  
-     # start_period: 300s  
+      config-server:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8082/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 300s
     deploy:  
       resources:  
         limits:  

@@ -3,7 +3,8 @@
     "allow": [
       "Bash(docker logs:*)",
       "Bash(docker ps:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []
