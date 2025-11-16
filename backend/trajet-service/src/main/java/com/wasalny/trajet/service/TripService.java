@@ -69,33 +69,41 @@ public class TripService {
         return convertToResponseDTO(savedTrip);
     }
 
-    /** Confirmer le passage à une station */
-    public TripResponseDTO confirmerPassageStation(UUID tripId, ConfirmerPassageDTO dto) {
-        Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new RuntimeException("Trip non trouvé avec l'ID: " + tripId));
-
-        List<PassageStation> passages = passageStationRepository.findByTripIdOrderByOrdreAsc(tripId);
-        PassageStation passage = passages.stream()
-                .filter(p -> p.getStation().getId().equals(dto.getStationId()))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Station non trouvée dans ce trip"));
-
-        passage.confirmer(dto.getHeureReelle());
-        passageStationRepository.save(passage);
-
-        // Propager le retard aux stations suivantes non confirmées
-        int retardMinutes = passage.getRetardMinutes();
-        if (retardMinutes > 0) {
-            passages.stream()
-                    .filter(p -> p.getOrdre() > passage.getOrdre() && !p.getConfirme())
-                    .forEach(p -> {
-                        p.setRetardMinutes(retardMinutes);
-                        passageStationRepository.save(p);
-                    });
-        }
-
-        return convertToResponseDTO(trip);
-    }
+    /** Confirmer le passage à une station */  
+public TripResponseDTO confirmerPassageStation(UUID tripId, ConfirmerPassageDTO dto) {  
+    Trip trip = tripRepository.findById(tripId)  
+            .orElseThrow(() -> new RuntimeException("Trip non trouvé avec l'ID: " + tripId));  
+  
+    List<PassageStation> passages = passageStationRepository.findByTripIdOrderByOrdreAsc(tripId);  
+    PassageStation passage = passages.stream()  
+            .filter(p -> p.getStation().getId().equals(dto.getStationId()))  
+            .findFirst()  
+            .orElseThrow(() -> new RuntimeException("Station non trouvée dans ce trip"));  
+  
+    // Confirmer le passage (calcule automatiquement le retard)  
+    passage.confirmer(dto.getHeureReelle());  
+    passageStationRepository.save(passage);  
+  
+    // Propager le retard aux stations suivantes non confirmées  
+    int retardMinutes = passage.getRetardMinutes();  
+      
+    passages.stream()  
+            .filter(p -> p.getOrdre() > passage.getOrdre() && !p.getConfirme())  
+            .forEach(p -> {  
+                // Mettre à jour le retard  
+                p.setRetardMinutes(retardMinutes);  
+                  
+                // Recalculer l'heure estimée en ajoutant le retard à l'heure prévue  
+                LocalTime nouvelleHeureEstimee = p.getHeurePrevu().plusMinutes(retardMinutes);  
+                p.setHeureEstimee(nouvelleHeureEstimee);  
+                  
+                passageStationRepository.save(p);  
+            });  
+  
+    // Sauvegarder le trip mis à jour  
+    Trip savedTrip = tripRepository.save(trip);  
+    return convertToResponseDTO(savedTrip);  
+}
 
     /** Réserver une place dans un trip */
     public TripResponseDTO reserverPlace(UUID tripId) {

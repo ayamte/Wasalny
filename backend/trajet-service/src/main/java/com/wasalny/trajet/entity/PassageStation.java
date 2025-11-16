@@ -32,6 +32,9 @@ public class PassageStation {
       
     @Column(name = "heure_reelle")  
     private LocalTime heureReelle;  
+
+    @Column(name = "heure_estimee")  
+    private LocalTime heureEstimee;
       
     @Column(name = "retard_minutes", nullable = false)  
     private Integer retardMinutes = 0;  

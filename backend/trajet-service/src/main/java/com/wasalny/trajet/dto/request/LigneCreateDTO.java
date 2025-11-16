@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;  
 import lombok.Data;  
 import lombok.NoArgsConstructor;  
+import java.util.UUID;
   
 import java.math.BigDecimal;  
   
@@ -19,6 +20,11 @@ public class LigneCreateDTO {
       
     @NotBlank(message = "Le nom de ligne est obligatoire")  
     private String nom;  
+    @NotNull(message = "L'ID de la station de départ est obligatoire")  
+    private UUID stationDepartId;  
+  
+    @NotNull(message = "L'ID de la station d'arrivée est obligatoire")  
+    private UUID stationArriveeId;
       
     @NotNull(message = "Le prix standard est obligatoire")  
     @DecimalMin(value = "0.0", inclusive = false, message = "Le prix doit être positif")  
