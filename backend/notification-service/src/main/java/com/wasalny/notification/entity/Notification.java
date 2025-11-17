@@ -23,12 +23,14 @@ public class Notification {
     @Column(name = "is_read")  
     private Boolean isRead = false;  
       
+    @Column(name = "created_at")  
     private LocalDateTime createdAt;  
       
-    // Données spécifiques au paiement  
+    // Métadonnées spécifiques selon le type  
     private String paymentId;  
     private Double amount;  
-    private String status; // "SUCCESS", "FAILED"  
+    private String ticketId;  
+    private String subscriptionId;  
       
     @PrePersist  
     protected void onCreate() {  

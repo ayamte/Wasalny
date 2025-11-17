@@ -12,32 +12,71 @@ public class NotificationService {
     @Autowired  
     private NotificationRepository notificationRepository;  
       
+    // Notifications de paiement  
     public Notification createPaymentSuccessNotification(String userId, String paymentId, Double amount) {  
         Notification notification = new Notification();  
         notification.setUserId(userId);  
-        notification.setType(NotificationType.PAYMENT_SUCCESS);  
+        notification.setType(NotificationType.PAYMENT);  
         notification.setTitle("Paiement réussi");  
-        notification.setMessage(String.format("Votre paiement de %.2f MAD a été effectué avec succès", amount));  
+        notification.setMessage("Votre paiement de " + amount + " DH a été effectué avec succès");  
         notification.setPaymentId(paymentId);  
         notification.setAmount(amount);  
-        notification.setStatus("SUCCESS");  
-          
         return notificationRepository.save(notification);  
     }  
       
-    public Notification createPaymentFailedNotification(String userId, String paymentId, Double amount, String reason) {  
+    public Notification createPaymentFailedNotification(String userId, String paymentId, String reason) {  
         Notification notification = new Notification();  
         notification.setUserId(userId);  
-        notification.setType(NotificationType.PAYMENT_FAILED);  
-        notification.setTitle("Échec du paiement");  
-        notification.setMessage(String.format("Votre paiement de %.2f MAD n'a pas pu être traité. Raison: %s", amount, reason));  
+        notification.setType(NotificationType.PAYMENT);  
+        notification.setTitle("Paiement échoué");  
+        notification.setMessage("Votre paiement n'a pas pu être traité. Raison: " + reason);  
         notification.setPaymentId(paymentId);  
-        notification.setAmount(amount);  
-        notification.setStatus("FAILED");  
-          
         return notificationRepository.save(notification);  
     }  
       
+    // Notifications de ticket  
+    public Notification createTicketIssuedNotification(String userId, String ticketId, String routeId) {  
+        Notification notification = new Notification();  
+        notification.setUserId(userId);  
+        notification.setType(NotificationType.TICKET);  
+        notification.setTitle("Ticket émis");  
+        notification.setMessage("Votre ticket pour le trajet " + routeId + " a été émis avec succès");  
+        notification.setTicketId(ticketId);  
+        return notificationRepository.save(notification);  
+    }  
+      
+    public Notification createTicketValidatedNotification(String userId, String ticketId) {  
+        Notification notification = new Notification();  
+        notification.setUserId(userId);  
+        notification.setType(NotificationType.TICKET);  
+        notification.setTitle("Ticket validé");  
+        notification.setMessage("Votre ticket " + ticketId + " a été validé avec succès");  
+        notification.setTicketId(ticketId);  
+        return notificationRepository.save(notification);  
+    }  
+      
+    // Notifications d'abonnement  
+    public Notification createSubscriptionRenewedNotification(String userId, String subscriptionId) {  
+        Notification notification = new Notification();  
+        notification.setUserId(userId);  
+        notification.setType(NotificationType.SUBSCRIPTION);  
+        notification.setTitle("Abonnement renouvelé");  
+        notification.setMessage("Votre abonnement a été renouvelé avec succès");  
+        notification.setSubscriptionId(subscriptionId);  
+        return notificationRepository.save(notification);  
+    }  
+      
+    public Notification createSubscriptionExpiredNotification(String userId, String subscriptionId) {  
+        Notification notification = new Notification();  
+        notification.setUserId(userId);  
+        notification.setType(NotificationType.SUBSCRIPTION);  
+        notification.setTitle("Abonnement expiré");  
+        notification.setMessage("Votre abonnement a expiré. Veuillez le renouveler pour continuer à utiliser le service");  
+        notification.setSubscriptionId(subscriptionId);  
+        return notificationRepository.save(notification);  
+    }  
+      
+    // Récupération des notifications  
     public List<Notification> getUserNotifications(String userId) {  
         return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId);  
     }  
@@ -46,10 +85,23 @@ public class NotificationService {
         return notificationRepository.findByUserIdAndIsReadFalseOrderByCreatedAtDesc(userId);  
     }  
       
+    public Notification getNotificationById(Long id) {  
+        return notificationRepository.findById(id)  
+            .orElseThrow(() -> new RuntimeException("Notification not found with id: " + id));  
+    }  
+      
+    // Mise à jour  
     public Notification markAsRead(Long notificationId) {  
         Notification notification = notificationRepository.findById(notificationId)  
             .orElseThrow(() -> new RuntimeException("Notification not found"));  
         notification.setIsRead(true);  
         return notificationRepository.save(notification);  
+    }  
+      
+    // Suppression  
+    public void deleteNotification(Long notificationId) {  
+        Notification notification = notificationRepository.findById(notificationId)  
+            .orElseThrow(() -> new RuntimeException("Notification not found with id: " + notificationId));  
+        notificationRepository.delete(notification);  
     }  
 }
