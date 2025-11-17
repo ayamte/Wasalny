@@ -161,6 +161,7 @@ public class UserProfileService {
     private UserInfoDto convertToDto(UserProfile profile) {
         UserInfoDto dto = new UserInfoDto();
         dto.setId(profile.getId());
+        dto.setUuid(profile.getUuid());
         dto.setEmail(profile.getEmail());
         dto.setUsername(profile.getUsername());
         dto.setRole(profile.getRole());

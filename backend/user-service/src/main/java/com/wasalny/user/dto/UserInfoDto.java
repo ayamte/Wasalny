@@ -2,9 +2,11 @@ package com.wasalny.user.dto;
 
 import com.wasalny.user.entity.RoleUtilisateur;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class UserInfoDto {
     private Long id;
+    private UUID uuid;
     private String email;
     private String username;
     private RoleUtilisateur role;
@@ -17,6 +19,9 @@ public class UserInfoDto {
     // Getters et Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public UUID getUuid() { return uuid; }
+    public void setUuid(UUID uuid) { this.uuid = uuid; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }

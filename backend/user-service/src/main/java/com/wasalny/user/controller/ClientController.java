@@ -5,6 +5,7 @@ import com.wasalny.user.dto.UpdateProfileDto;
 import com.wasalny.user.entity.ClientProfile;
 import com.wasalny.user.service.PasswordService;
 import com.wasalny.user.service.UserProfileService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +15,7 @@ public class ClientController {
     private final UserProfileService userProfileService;
     private final PasswordService passwordService;
 
-    public ClientController(UserProfileService userProfileService, PasswordService passwordService) {
+    public ClientController(UserProfileService userProfileService, @Lazy PasswordService passwordService) {
         this.userProfileService = userProfileService;
         this.passwordService = passwordService;
     }

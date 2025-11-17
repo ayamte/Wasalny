@@ -5,18 +5,22 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;  
 import org.springframework.security.core.userdetails.UserDetails;  
   
-import java.time.LocalDateTime;  
-import java.util.Collection;  
-import java.util.List;  
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
   
 @Table(name = "users")  
 @Entity  
 public class User implements UserDetails {  
-    @Id  
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  
-    private Long id;  
-  
-    @Column(unique = true, nullable = false)  
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false)
+    private UUID uuid;
+
+    @Column(unique = true, nullable = false)
     private String username;  
   
     @Column(unique = true, nullable = false)  
@@ -75,9 +79,12 @@ public class User implements UserDetails {
     }  
   
     // Getters et Setters  
-    public Long getId() { return id; }  
-    public void setId(Long id) { this.id = id; }  
-  
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public UUID getUuid() { return uuid; }
+    public void setUuid(UUID uuid) { this.uuid = uuid; }
+
     public String getUsername() { return username; }  
     public void setUsername(String username) { this.username = username; }  
   

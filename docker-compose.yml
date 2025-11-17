@@ -509,6 +509,8 @@
       - SPRING_DATASOURCE_USERNAME=${PAYMENT_DB_USER:-wasalny_user}
       - SPRING_DATASOURCE_PASSWORD=${PAYMENT_DB_PASSWORD}
       - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USER:-admin}
+      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
       - SPRING_REDIS_HOST=redis
       - SPRING_REDIS_PASSWORD=${REDIS_PASSWORD}  
     depends_on:  
@@ -549,7 +551,9 @@
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-ticket:5432/${TICKET_DB_NAME:-ticket_db}
       - SPRING_DATASOURCE_USERNAME=${TICKET_DB_USER:-wasalny_user}
       - SPRING_DATASOURCE_PASSWORD=${TICKET_DB_PASSWORD}
-      - SPRING_RABBITMQ_HOST=rabbitmq  
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USER:-admin}
+      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}  
     depends_on:  
       postgres-ticket:  
         condition: service_healthy  
