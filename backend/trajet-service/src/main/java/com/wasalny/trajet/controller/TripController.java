@@ -142,6 +142,28 @@ public ResponseEntity<List<TripResponseDTO>> obtenirTripsParStation(
     List<TripResponseDTO> trips = tripService.obtenirTripsParStation(stationId, date);  
     return ResponseEntity.ok(trips);  
 }
+@PostMapping("/{tripId}/update-location")  
+public ResponseEntity<Void> updateTripLocation(  
+    @PathVariable UUID tripId,  
+    @RequestBody LocationUpdateDTO dto) {  
+      
+    // Valider que le trip est EN_COURS  
+    Trip trip = tripRepository.findById(tripId)  
+        .orElseThrow(() -> new RuntimeException("Trip non trouvé"));  
+      
+    if (trip.getStatut() != StatutTrip.EN_COURS) {  
+        throw new RuntimeException("Le trip n'est pas en cours");  
+    }  
+      
+    // Appeler le geolocalisation-service  
+    geolocationClientService.updateBusLocation(  
+        trip.getBus().getId(),  
+        dto.getLatitude(),  
+        dto.getLongitude()  
+    );  
+      
+    return ResponseEntity.ok().build();  
+}
       
     /**  
      * GET /trips/{tripId}/places-disponibles - Vérifier les places disponibles  

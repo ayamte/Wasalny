@@ -29,6 +29,7 @@ public class TripService {
     private final StationRepository stationRepository;
     private final BusRepository busRepository;
     private final LigneRepository ligneRepository;
+    private final GeolocationClientService geolocationClientService;
 
     /** Démarrer un trip */
     public TripResponseDTO demarrerTrip(UUID tripId) {
@@ -83,6 +84,13 @@ public TripResponseDTO confirmerPassageStation(UUID tripId, ConfirmerPassageDTO 
     // Confirmer le passage (calcule automatiquement le retard)  
     passage.confirmer(dto.getHeureReelle());  
     passageStationRepository.save(passage);  
+
+     Station station = passage.getStation();  
+    geolocationClientService.updateBusLocation(  
+        trip.getBus().getId(),  
+        station.getLatitude(),  
+        station.getLongitude()  
+    );  
   
     // Propager le retard aux stations suivantes non confirmées  
     int retardMinutes = passage.getRetardMinutes();  
