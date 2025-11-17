@@ -52,6 +52,29 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+        <!-- RabbitMQ pour la communication asynchrone -->  
+        <dependency>  
+            <groupId>org.springframework.boot</groupId>  
+            <artifactId>spring-boot-starter-amqp</artifactId>  
+        </dependency>  
+      
+    <!-- Jackson JSR310 pour la sérialisation LocalDateTime -->  
+    <dependency>  
+        <groupId>com.fasterxml.jackson.datatype</groupId>  
+        <artifactId>jackson-datatype-jsr310</artifactId>  
+    </dependency>  
+      
+    <!-- Validation -->  
+    <dependency>  
+        <groupId>org.springframework.boot</groupId>  
+        <artifactId>spring-boot-starter-validation</artifactId>  
+    </dependency> 
+
+    <!-- Pour la sérialisation JSON des événements -->  
+    <dependency>  
+        <groupId>com.fasterxml.jackson.core</groupId>  
+        <artifactId>jackson-databind</artifactId>  
+    </dependency> 
     </dependencies>
     
     <dependencyManagement>
