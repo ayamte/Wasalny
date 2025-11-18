@@ -55,15 +55,28 @@ public class NotificationService {
         return notificationRepository.save(notification);  
     }  
       
-    // Notifications d'abonnement  
-    public Notification createSubscriptionRenewedNotification(String userId, String subscriptionId) {  
-        Notification notification = new Notification();  
-        notification.setUserId(userId);  
-        notification.setType(NotificationType.SUBSCRIPTION);  
-        notification.setTitle("Abonnement renouvelé");  
-        notification.setMessage("Votre abonnement a été renouvelé avec succès");  
-        notification.setSubscriptionId(subscriptionId);  
-        return notificationRepository.save(notification);  
+    // Notifications d'abonnement
+    public Notification createSubscriptionNotification(String userId, String subscriptionId,
+                                                      String numeroAbonnement, String nomType,
+                                                      java.time.LocalDate dateDebut, java.time.LocalDate dateFin) {
+        Notification notification = new Notification();
+        notification.setUserId(userId);
+        notification.setType(NotificationType.SUBSCRIPTION);
+        notification.setTitle("Nouvel abonnement activé");
+        notification.setMessage("Votre abonnement " + nomType + " (N°" + numeroAbonnement +
+                ") a été activé avec succès. Valide du " + dateDebut + " au " + dateFin);
+        notification.setSubscriptionId(subscriptionId);
+        return notificationRepository.save(notification);
+    }
+
+    public Notification createSubscriptionRenewedNotification(String userId, String subscriptionId) {
+        Notification notification = new Notification();
+        notification.setUserId(userId);
+        notification.setType(NotificationType.SUBSCRIPTION);
+        notification.setTitle("Abonnement renouvelé");
+        notification.setMessage("Votre abonnement a été renouvelé avec succès");
+        notification.setSubscriptionId(subscriptionId);
+        return notificationRepository.save(notification);
     }  
       
     public Notification createSubscriptionExpiredNotification(String userId, String subscriptionId) {  

@@ -280,32 +280,35 @@
       retries: 5  
       start_period: 300s   
   
-  # ==================== CONFIG SERVER ====================  
-  config-server:  
-    build:  
-      context: ./infrastructure/config-server  
-      dockerfile: Dockerfile  
-    container_name: config-server  
-    ports:  
-      - "8888:8888"  
-    networks:  
-      - wasalny-network  
-    environment:  
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/  
-    depends_on:  
-      eureka-server:  
-        condition: service_healthy  
-    restart: unless-stopped  
-    healthcheck:  
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8888/actuator/health"]  
-      interval: 30s  
-      timeout: 10s  
-      retries: 5  
-      start_period: 300s    
-    deploy:  
-      resources:  
-        limits:  
-          cpus: '0.5'  
+  # ==================== CONFIG SERVER ====================
+  config-server:
+    build:
+      context: ./infrastructure/config-server
+      dockerfile: Dockerfile
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./infrastructure/config-server/src/main/resources/config:/app/config
+    networks:
+      - wasalny-network
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCHLOCATIONS=file:/app/config/
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8888/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 300s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
           memory: 512M  
   
   # ==================== API GATEWAY ====================  
@@ -590,7 +593,9 @@
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-abonnement:5432/${ABONNEMENT_DB_NAME:-abonnement_db}
       - SPRING_DATASOURCE_USERNAME=${ABONNEMENT_DB_USER:-wasalny_user}
       - SPRING_DATASOURCE_PASSWORD=${ABONNEMENT_DB_PASSWORD}
-      - SPRING_RABBITMQ_HOST=rabbitmq  
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USER:-admin}
+      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}  
     depends_on:  
       postgres-abonnement:  
         condition: service_healthy  
@@ -627,7 +632,9 @@
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-notification:5432/${NOTIFICATION_DB_NAME:-notification_db}
       - SPRING_DATASOURCE_USERNAME=${NOTIFICATION_DB_USER:-wasalny_user}
       - SPRING_DATASOURCE_PASSWORD=${NOTIFICATION_DB_PASSWORD}
-      - SPRING_RABBITMQ_HOST=rabbitmq  
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USER:-admin}
+      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}  
     depends_on:  
       postgres-notification:  
         condition: service_healthy  

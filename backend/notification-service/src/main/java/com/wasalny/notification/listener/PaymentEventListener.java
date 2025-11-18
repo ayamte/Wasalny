@@ -14,22 +14,25 @@ public class PaymentEventListener {
     @Autowired  
     private NotificationService notificationService;  
       
-    @RabbitListener(queues = "payment.notification.queue")  
-    public void handlePaymentEvent(PaymentEvent event) {  
-        log.info("Received payment event for user: {}", event.getUserId());  
-          
-        if ("SUCCESS".equals(event.getStatus())) {  
-            notificationService.createPaymentSuccessNotification(  
-                event.getUserId(),   
-                event.getPaymentId(),   
-                event.getAmount()  
-            );  
-        } else if ("FAILED".equals(event.getStatus())) {  
-            notificationService.createPaymentFailedNotification(  
-                event.getUserId(),   
-                event.getPaymentId(),   
-                event.getFailureReason()  
-            );  
-        }  
+    @RabbitListener(queues = "payment.notification.queue")
+    public void handlePaymentEvent(PaymentEvent event) {
+        log.info("Received payment event - Transaction: {}, Client: {}, Status: {}",
+                event.getTransactionId(), event.getClientId(), event.getStatut());
+
+        if ("REUSSIE".equals(event.getStatut())) {
+            notificationService.createPaymentSuccessNotification(
+                event.getClientId().toString(),
+                event.getTransactionId().toString(),
+                event.getMontant().doubleValue()
+            );
+            log.info("Notification de paiement réussi créée pour client: {}", event.getClientId());
+        } else if ("ECHOUEE".equals(event.getStatut())) {
+            notificationService.createPaymentFailedNotification(
+                event.getClientId().toString(),
+                event.getTransactionId().toString(),
+                event.getMotifEchec()
+            );
+            log.info("Notification de paiement échoué créée pour client: {}", event.getClientId());
+        }
     }  
 }

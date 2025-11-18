@@ -23,9 +23,21 @@ public class NotificationController {
      */
     @GetMapping
     @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
-    public ResponseEntity<List<Notification>> getUserNotifications(@RequestParam String userId) {  
-        List<Notification> notifications = notificationService.getUserNotifications(userId);  
-        return ResponseEntity.ok(notifications);  
+    public ResponseEntity<List<Notification>> getUserNotifications(@RequestParam String userId) {
+        List<Notification> notifications = notificationService.getUserNotifications(userId);
+        return ResponseEntity.ok(notifications);
+    }
+
+    /**
+     * Récupérer toutes les notifications d'un client par son ID
+     * GET /notifications/client/{clientId}
+     * Accessible par CLIENT (ses propres notifications) ou ADMIN
+     */
+    @GetMapping("/client/{clientId}")
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
+    public ResponseEntity<List<Notification>> getClientNotifications(@PathVariable String clientId) {
+        List<Notification> notifications = notificationService.getUserNotifications(clientId);
+        return ResponseEntity.ok(notifications);
     }  
       
     /**
