@@ -19,7 +19,11 @@ spring:
     username: ${RABBITMQ_USER:admin}  
     password: ${RABBITMQ_PASSWORD}  
   
-eureka:  
-  client:  
-    service-url:  
+eureka:
+  client:
+    service-url:
       defaultZone: http://eureka-server:8761/eureka/
+
+security:
+  jwt:
+    secret-key: <REDACTED>
