@@ -1,20 +1,29 @@
-server:  
-  port: 8084  
-  
-spring:  
-  datasource:  
-    url: jdbc:postgresql://postgres-auth:5435/geolocalisation_db  
-    username: ${GEO_DB_USER:wasalny_user}  
-    password: ${GEO_DB_PASSWORD}  
-  jpa:  
-    hibernate:  
-      ddl-auto: update  
-    show-sql: true  
-    properties:  
-      hibernate:  
-        dialect: org.hibernate.dialect.PostgreSQLDialect  
-  
-eureka:  
-  client:  
-    service-url:  
+server:
+  port: 8084
+
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres-geo:5432/geolocalisation_db
+    username: ${GEO_DB_USER:wasalny_user}
+    password: ${GEO_DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  redis:
+    host: ${SPRING_REDIS_HOST:redis}
+    port: 6379
+    password: ${SPRING_REDIS_PASSWORD}
+
+eureka:
+  client:
+    service-url:
       defaultZone: http://eureka-server:8761/eureka/
+
+security:
+  jwt:
+    secret-key: ${JWT_SECRET}
+    expiration-time: ${JWT_EXPIRATION:86400000}
