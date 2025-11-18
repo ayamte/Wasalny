@@ -1,12 +1,13 @@
 package com.wasalny.abonnement.entity;  
   
-import jakarta.persistence.*;  
-import lombok.AllArgsConstructor;  
-import lombok.Data;  
-import lombok.NoArgsConstructor;  
-import java.math.BigDecimal;  
-import java.time.LocalDate;  
-import java.time.LocalDateTime;  
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;  
   
 @Entity  
@@ -46,10 +47,17 @@ public class Abonnement {
     @Column(nullable = false, precision = 10, scale = 2)  
     private BigDecimal montantPaye;  
       
-    @Column(nullable = false)  
-    private UUID transactionId;  
-      
-    @Column(nullable = false, updatable = false)  
+    @Column(nullable = false)
+    private UUID transactionId;
+
+    @Column(name = "lignes_autorisees", columnDefinition = "TEXT")
+    @Convert(converter = UuidListConverter.class)
+    private List<UUID> lignesAutorisees;
+
+    @Column(name = "zone_geographique", length = 100)
+    private String zoneGeographique;
+
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();  
       
     // Méthodes métier  

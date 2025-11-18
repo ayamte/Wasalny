@@ -25,16 +25,28 @@ public class Ticket {
     @Column(nullable = false)  
     private UUID clientId;  
       
-    @Column(nullable = false)  
-    private UUID tripId;  
-      
-    @Column(nullable = false, length = 50)  
-    private String numeroTrip;  
-      
-    @Column(nullable = false)  
-    private UUID stationFinaleId;  
-      
-    @Column(nullable = false, length = 200)  
+    @Column(nullable = false)
+    private UUID tripId;
+
+    @Column(nullable = false, length = 50)
+    private String numeroTrip;
+
+    @Column(name = "ligne_id")
+    private UUID ligneId;
+
+    @Column(name = "nom_ligne", length = 200)
+    private String nomLigne;
+
+    @Column(name = "station_depart_id")
+    private UUID stationDepartId;
+
+    @Column(name = "nom_station_depart", length = 200)
+    private String nomStationDepart;
+
+    @Column(nullable = false)
+    private UUID stationFinaleId;
+
+    @Column(nullable = false, length = 200)
     private String nomStationFinale;  
       
     @Column(nullable = false)  
