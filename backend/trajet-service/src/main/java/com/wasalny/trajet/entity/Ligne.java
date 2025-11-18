@@ -37,7 +37,10 @@ public class Ligne {
     private Double vitesseStandardKmH;  
       
     @Column(name = "active", nullable = false)  
-    private Boolean active = true;  
+    private Boolean active = true; 
+    
+    @Column(name = "distance_totale_km")  
+    private Double distanceTotaleKm; 
       
     // Relations  
     @OneToOne(mappedBy = "ligne", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)  

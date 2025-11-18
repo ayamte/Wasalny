@@ -196,7 +196,7 @@ public class ConfigurationHoraireService {
                 passageStationRepository.save(passage);  
                   
                 if (i < stationsOrdonnees.size() - 1) {  
-                    double distance = ls.getDistanceKmDepart();  
+                    double distance = ls.getDistanceCumuleeKm(); 
                     double vitesse = config.getLigne().getVitesseStandardKmH();  
                     int tempsTrajet = (int) ((distance / vitesse) * 60);  
                     heurePassage = heurePassage.plusMinutes(tempsTrajet + config.getTempsArretMinutes());  

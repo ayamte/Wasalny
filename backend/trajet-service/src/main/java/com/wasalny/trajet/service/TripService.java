@@ -30,25 +30,34 @@ public class TripService {
     private final BusRepository busRepository;
     private final LigneRepository ligneRepository;
     private final GeolocationClientService geolocationClientService;
-
-    /** Démarrer un trip */
-    public TripResponseDTO demarrerTrip(UUID tripId) {
-        Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new RuntimeException("Trip non trouvé avec l'ID: " + tripId));
-
-        trip.demarrer();
-
-        // Confirmer automatiquement le passage à la première station
-        List<PassageStation> passages = passageStationRepository.findByTripIdOrderByOrdreAsc(tripId);
-        if (!passages.isEmpty()) {
-            PassageStation premierPassage = passages.get(0);
-            premierPassage.confirmer(LocalTime.now());
-            passageStationRepository.save(premierPassage);
-        }
-
-        Trip savedTrip = tripRepository.save(trip);
-        return convertToResponseDTO(savedTrip);
-    }
+/** Démarrer un trip */    
+public TripResponseDTO demarrerTrip(UUID tripId) {    
+    Trip trip = tripRepository.findById(tripId)    
+            .orElseThrow(() -> new RuntimeException("Trip non trouvé avec l'ID: " + tripId));    
+    
+    trip.demarrer();    
+    
+    // Confirmer automatiquement le passage à la première station    
+    List<PassageStation> passages = passageStationRepository.findByTripIdOrderByOrdreAsc(tripId);    
+    if (!passages.isEmpty()) {    
+        PassageStation premierPassage = passages.get(0);    
+          
+        // CORRECTION : Utiliser l'heure de départ du trip au lieu de LocalTime.now()  
+        premierPassage.confirmer(trip.getHeureDepart());    
+        passageStationRepository.save(premierPassage);    
+            
+        // Mettre à jour la position du bus dans le geolocalisation-service    
+        Station premiereStation = premierPassage.getStation();    
+        geolocationClientService.updateBusLocation(    
+            trip.getBus().getId(),    
+            premiereStation.getLatitude(),    
+            premiereStation.getLongitude()    
+        );    
+    }    
+    
+    Trip savedTrip = tripRepository.save(trip);    
+    return convertToResponseDTO(savedTrip);    
+}
 
     /** Terminer un trip */
     public TripResponseDTO terminerTrip(UUID tripId) {

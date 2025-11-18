@@ -10,6 +10,10 @@ import com.wasalny.trajet.entity.StatutTrip;
 import org.springframework.format.annotation.DateTimeFormat;  
 import org.springframework.http.ResponseEntity;  
 import org.springframework.web.bind.annotation.*;  
+import com.wasalny.trajet.dto.request.LocationUpdateDTO;
+import com.wasalny.trajet.entity.Trip;
+import com.wasalny.trajet.repository.TripRepository;  
+import com.wasalny.trajet.service.GeolocationClientService;
   
 import java.time.LocalDate;  
 import java.util.List;  
@@ -21,6 +25,8 @@ import java.util.UUID;
 public class TripController {  
       
     private final TripService tripService;  
+    private final TripRepository tripRepository;  
+    private final GeolocationClientService geolocationClientService;
       
     /**  
      * POST /trips/{tripId}/demarrer - Démarrer un trip  

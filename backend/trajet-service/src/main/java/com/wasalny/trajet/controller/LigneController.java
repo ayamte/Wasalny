@@ -1,9 +1,8 @@
 package com.wasalny.trajet.controller;  
   
 import com.wasalny.trajet.dto.request.LigneCreateDTO;  
-import com.wasalny.trajet.dto.request.LigneStationCreateDTO;  
 import com.wasalny.trajet.dto.response.LigneResponseDTO;  
-import com.wasalny.trajet.dto.response.LigneStationResponseDTO;  
+import com.wasalny.trajet.dto.simple.StationSimpleDTO;  
 import com.wasalny.trajet.service.LigneService;  
 import jakarta.validation.Valid;  
 import lombok.RequiredArgsConstructor;  
@@ -22,7 +21,7 @@ public class LigneController {
     private final LigneService ligneService;  
       
     /**  
-     * POST /lignes - Créer une nouvelle ligne  
+     * POST /lignes - Créer une nouvelle ligne avec stations intermédiaires  
      */  
     @PostMapping  
     public ResponseEntity<LigneResponseDTO> creerLigne(@Valid @RequestBody LigneCreateDTO dto) {  
@@ -31,26 +30,7 @@ public class LigneController {
     }  
       
     /**  
-     * POST /lignes/stations - Ajouter une station à une ligne  
-     */  
-    @PostMapping("/stations")  
-    public ResponseEntity<LigneStationResponseDTO> ajouterStationALigne(  
-            @Valid @RequestBody LigneStationCreateDTO dto) {  
-        LigneStationResponseDTO ligneStation = ligneService.ajouterStationALigne(dto);  
-        return ResponseEntity.status(HttpStatus.CREATED).body(ligneStation);  
-    }  
-      
-    /**  
-     * GET /lignes - Obtenir toutes les lignes actives  
-     */  
-    @GetMapping  
-    public ResponseEntity<List<LigneResponseDTO>> listerLignesActives() {  
-        List<LigneResponseDTO> lignes = ligneService.obtenirLignesActives();  
-        return ResponseEntity.ok(lignes);  
-    }  
-      
-    /**  
-     * GET /lignes/{id} - Obtenir une ligne par ID avec ses stations  
+     * GET /lignes/{id} - Obtenir une ligne par son ID  
      */  
     @GetMapping("/{id}")  
     public ResponseEntity<LigneResponseDTO> obtenirLigne(@PathVariable UUID id) {  
@@ -59,11 +39,20 @@ public class LigneController {
     }  
       
     /**  
+     * GET /lignes - Lister toutes les lignes  
+     */  
+    @GetMapping  
+    public ResponseEntity<List<LigneResponseDTO>> listerLignes() {  
+        List<LigneResponseDTO> lignes = ligneService.listerToutesLesLignes();  
+        return ResponseEntity.ok(lignes);  
+    }  
+      
+    /**  
      * GET /lignes/{id}/stations - Obtenir les stations d'une ligne  
      */  
     @GetMapping("/{id}/stations")  
-    public ResponseEntity<List<LigneStationResponseDTO>> obtenirStationsDeLigne(@PathVariable UUID id) {  
-        List<LigneStationResponseDTO> stations = ligneService.obtenirStationsDeLigne(id);  
+    public ResponseEntity<List<StationSimpleDTO>> obtenirStationsDeLigne(@PathVariable UUID id) {  
+        List<StationSimpleDTO> stations = ligneService.obtenirStationsDeLigne(id);  
         return ResponseEntity.ok(stations);  
     }  
       

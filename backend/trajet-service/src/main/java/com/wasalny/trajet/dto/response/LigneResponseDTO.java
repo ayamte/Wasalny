@@ -1,5 +1,6 @@
-package com.wasalny.trajet.dto.response; 
+package com.wasalny.trajet.dto.response;  
   
+import com.wasalny.trajet.dto.simple.StationSimpleDTO;  
 import lombok.AllArgsConstructor;  
 import lombok.Data;  
 import lombok.NoArgsConstructor;  
@@ -18,6 +19,9 @@ public class LigneResponseDTO {
     private String nom;  
     private BigDecimal prixStandard;  
     private Double vitesseStandardKmH;  
+    private Double distanceTotaleKm;  
     private Boolean active;  
-    private List<LigneStationResponseDTO> stations;  
+      
+    // Liste ordonnée des stations (départ, intermédiaires, arrivée)  
+    private List<StationSimpleDTO> stations;  
 }
