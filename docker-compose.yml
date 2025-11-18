@@ -429,6 +429,7 @@
     build:
       context: ./backend/trajet-service
       dockerfile: Dockerfile
+    container_name: wasalny-trajet-service
     ports:
       - "8081:8081"
     networks:
@@ -438,31 +439,35 @@
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-trajet:5432/${TRAJET_DB_NAME:-trajet_db}
       - SPRING_DATASOURCE_USERNAME=${TRAJET_DB_USER:-wasalny_user}
-      - SPRING_DATASOURCE_PASSWORD=${TRAJET_DB_PASSWORD}  
-    depends_on:  
-      postgres-trajet:  
-        condition: service_healthy  
-      eureka-server:  
-        condition: service_healthy  
-      config-server:  
-        condition: service_healthy  
-    restart: unless-stopped  
-    healthcheck:  
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8081/actuator/health"]  
-      interval: 30s  
-      timeout: 10s  
-      retries: 5  
-      start_period: 300s  
-    deploy:  
-      resources:  
-        limits:  
-          cpus: '1'  
+      - SPRING_DATASOURCE_PASSWORD=${TRAJET_DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=${JWT_EXPIRATION:-86400000}
+      - GEOLOCALISATION_SERVICE_URL=http://geolocalisation-service:8084
+    depends_on:
+      postgres-trajet:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 300s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
           memory: 1G  
   
   geolocalisation-service:
     build:
       context: ./backend/geolocalisation-service
       dockerfile: Dockerfile
+    container_name: wasalny-geolocalisation-service
     ports:
       - "8084:8084"
     networks:
@@ -474,27 +479,29 @@
       - SPRING_DATASOURCE_USERNAME=${GEO_DB_USER:-wasalny_user}
       - SPRING_DATASOURCE_PASSWORD=${GEO_DB_PASSWORD}
       - SPRING_REDIS_HOST=redis
-      - SPRING_REDIS_PASSWORD=${REDIS_PASSWORD}  
-    depends_on:  
-      postgres-geo:  
-        condition: service_healthy  
-      redis:  
-        condition: service_healthy  
-      eureka-server:  
-        condition: service_healthy  
-      config-server:  
-        condition: service_healthy  
-    restart: unless-stopped  
-    healthcheck:  
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8084/actuator/health"]  
-      interval: 30s  
-      timeout: 10s  
-      retries: 5  
-      start_period: 300s  
-    deploy:  
-      resources:  
-        limits:  
-          cpus: '1'  
+      - SPRING_REDIS_PASSWORD=${REDIS_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=${JWT_EXPIRATION:-86400000}
+    depends_on:
+      postgres-geo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8084/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 300s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
           memory: 1G  
   
   paiement-service:
