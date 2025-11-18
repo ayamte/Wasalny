@@ -1,25 +1,26 @@
 package com.wasalny.abonnement.controller;  
   
 import com.wasalny.abonnement.dto.TypeAbonnementRequest;
-import com.wasalny.abonnement.dto.TypeAbonnementResponse;  
-import com.wasalny.abonnement.entity.TypeAbonnement;  
+import com.wasalny.abonnement.dto.TypeAbonnementResponse;
+import com.wasalny.abonnement.entity.TypeAbonnement;
 import com.wasalny.abonnement.service.AbonnementService;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;  
-import lombok.extern.slf4j.Slf4j;  
-import org.springframework.http.ResponseEntity;  
-import org.springframework.web.bind.annotation.*;  
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
-import java.util.List;  
-import java.util.UUID;  
-import java.util.stream.Collectors;  
-  
-@RestController  
-@RequestMapping("/abonnements/types")  
-@RequiredArgsConstructor  
-@Slf4j  
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/abonnements/types")
+@RequiredArgsConstructor
+@Slf4j
 public class TypeAbonnementController {  
       
     private final AbonnementService abonnementService;  
@@ -63,12 +64,13 @@ public class TypeAbonnementController {
         return ResponseEntity.ok(responses);  
     }  
 
-    /**  
-     * Créer un nouveau type d'abonnement  
-     *  
-     */  
-    @PostMapping  
-    public ResponseEntity<TypeAbonnementResponse> creerTypeAbonnement(  
+    /**
+     * Créer un nouveau type d'abonnement
+     * Accessible par ADMIN uniquement
+     */
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<TypeAbonnementResponse> creerTypeAbonnement(
             @RequestBody @Valid TypeAbonnementRequest request) {  
         log.info("Création d'un nouveau type d'abonnement: {}", request.getNom());  
         
