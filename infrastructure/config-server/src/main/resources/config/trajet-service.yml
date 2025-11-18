@@ -3,7 +3,7 @@ server:
   
 spring:  
   datasource:  
-    url: jdbc:postgresql://postgres-auth:5432/trajet_db  
+    url: jdbc:postgresql://postgres-trajet:5432/trajet_db  
     username: ${TRAJET_DB_USER:wasalny_user}  
     password: ${TRAJET_DB_PASSWORD}  
   jpa:  
