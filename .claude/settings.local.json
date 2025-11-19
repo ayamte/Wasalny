@@ -4,7 +4,8 @@
       "Bash(docker logs:*)",
       "Bash(docker ps:*)",
       "Bash(findstr:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(docker network:*)"
     ],
     "deny": [],
     "ask": []
