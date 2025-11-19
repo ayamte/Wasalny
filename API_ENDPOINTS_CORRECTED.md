@@ -200,14 +200,15 @@ POST http://localhost:8081/trajets/lignes
 Authorization: Bearer {ADMIN_TOKEN}
 Content-Type: application/json
 
+
 {
   "numero": "L12",
   "nom": "Ligne Hay Riad - Bab El Had",
-  "description": "Ligne directe centre ville",
   "stationDepartId": "{STATION_DEPART_ID}",
-  "stationFinaleId": "{STATION_FINALE_ID}",
-  "stationsIntermediaires": ["{STATION_INTERMEDIAIRE_ID}"],
-  "tarifBase": 7.00
+  "stationArriveeId": "{STATION_FINALE_ID}"",
+  "stationsIntermediairesIds": ["{STATION_INTERMEDIAIRE_ID}"],
+  "prixStandard": 7.00,
+  "vitesseStandardKmH": 40.0
 }
 ```
 
@@ -266,13 +267,15 @@ Authorization: Bearer {ADMIN_TOKEN}
 Content-Type: application/json
 
 {
-  "ligneId": "{LIGNE_ID}",
-  "nom": "Horaires Semaine Ligne 12",
+  "ligneId": "{ID_LIGNE}",
   "heureDebut": "06:00:00",
   "heureFin": "23:00:00",
-  "intervalleMinutes": 30,
-  "joursActifs": ["LUNDI", "MARDI", "MERCREDI", "JEUDI", "VENDREDI"],
-  "active": true
+  "frequenceMinutes": 30,
+  "nombreBus": 2,
+  "tempsArretMinutes": 2,
+  "tempsPauseMinutes": 15,
+  "dureeAllerMinutes": 45,
+  "dureeRetourMinutes": 45
 }
 ```
 
