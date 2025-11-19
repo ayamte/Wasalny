@@ -2,6 +2,8 @@ server:
   port: 8082  
   
 spring:  
+  application:
+    name: paiement-service 
   datasource:  
     url: jdbc:postgresql://postgres-auth:5433/paiement_db  
     username: ${PAIEMENT_DB_USER:wasalny_user}  

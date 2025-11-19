@@ -21,4 +21,5 @@ public class PaymentEvent {
     private LocalDateTime dateTransaction;  
     private String statut;  
     private String motifEchec;  
+    
 }
