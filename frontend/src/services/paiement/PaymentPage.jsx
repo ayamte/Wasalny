@@ -13,7 +13,7 @@ export const PaymentPage = () => {
   // Données exemple - Montant retiré
   const mockData = {
     clientId: '550e8400-e29b-41d4-a716-446655440000',
-    referenceService: '660e8400-e29b-41d4-a716-446655440000'
+    referenceService: '57e76827-88b9-43c1-a836-c8eb3b6ef003'
   };
 
   const handleSelectService = (typeService) => {

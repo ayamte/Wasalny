@@ -2,7 +2,6 @@ package com.wasalny.abonnement.service;
   
 import com.wasalny.abonnement.config.RabbitMQConfig;  
 import com.wasalny.abonnement.dto.AbonnementEvent;  
-import com.wasalny.abonnement.dto.AbonnementResponse;  
 import com.wasalny.abonnement.dto.PaymentEvent;
 import com.wasalny.abonnement.dto.TypeAbonnementRequest;
 import com.wasalny.abonnement.entity.Abonnement;

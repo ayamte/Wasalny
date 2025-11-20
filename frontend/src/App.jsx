@@ -1,7 +1,9 @@
 import React from 'react'  
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'  
 import PaymentPage from './services/paiement/PaymentPage';
-  
+import TicketPage from './services/ticket/TicketPage';
+import AbonnementPage from './services/abonnement/AbonnementPage';
+
 function App() {  
   return (  
     <Router>  
@@ -23,10 +25,12 @@ function App() {
             
           {/* Page de paiement */}  
           <Route path="/paiement" element={<PaymentPage />} />
+          {/* Page des tickets */}
+          <Route path="/tickets" element={<TicketPage />} />
             
+          <Route path="/abonnements" element={<AbonnementPage />} />
           {/* Autres routes à ajouter plus tard */}  
-          {/* <Route path="/tickets" element={<TicketPage />} /> */}  
-          {/* <Route path="/abonnements" element={<AbonnementPage />} /> */}  
+          
         </Routes>  
       </div>  
     </Router>  
