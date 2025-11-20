@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: user-service
+  config:
+    import: "optional:configserver:http://config-server:8888"
+
+# Configuration Feign avec timeouts
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
+  httpclient:
+    enabled: true
+    max-connections: 200
+    max-connections-per-route: 50
+
+# Désactiver le lazy loading Feign au démarrage
+spring.cloud.openfeign.lazy-attributes-resolution: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always

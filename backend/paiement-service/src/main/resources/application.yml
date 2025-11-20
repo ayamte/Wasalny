@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: paiement-service
+  config:
+    import: "optional:configserver:http://config-server:8888"
+  redis:
+    host: ${SPRING_REDIS_HOST:redis}
+    port: ${SPRING_REDIS_PORT:6379}
+    password: ${SPRING_REDIS_PASSWORD}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+  health:
+    redis:
+      enabled: false

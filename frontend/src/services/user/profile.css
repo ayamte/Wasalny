@@ -1,0 +1,379 @@
+/* Profile Page Styles */
+
+.profile-container {
+  min-height: 100vh;
+  background-color: #F5F5F5;
+}
+
+.profile-content {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .profile-content {
+    padding: 2rem;
+  }
+}
+
+/* Header */
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.profile-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #000000;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .profile-title {
+    font-size: 2.25rem;
+  }
+}
+
+.profile-edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background-color: #FF6B35;
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.profile-edit-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Card Sections */
+.profile-card {
+  background-color: #FFFFFF;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-top: 4px solid #FF6B35;
+}
+
+@media (min-width: 768px) {
+  .profile-card {
+    padding: 2rem;
+  }
+}
+
+.profile-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.profile-card-icon {
+  color: #FF6B35;
+}
+
+.profile-card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #000000;
+  margin: 0;
+}
+
+/* Form Styles */
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile-form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .profile-form-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.profile-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 0.5rem;
+}
+
+.profile-input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: 2px solid #CCCCCC;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #000000;
+  background-color: #FFFFFF;
+  transition: border-color 0.2s ease;
+}
+
+.profile-input:focus {
+  outline: none;
+  border-color: #FF6B35;
+}
+
+.profile-input:disabled {
+  background-color: #F5F5F5;
+  cursor: not-allowed;
+}
+
+.profile-input-hint {
+  font-size: 0.75rem;
+  color: #999999;
+  margin-top: 0.25rem;
+}
+
+/* Action Buttons */
+.profile-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding-top: 1rem;
+}
+
+.profile-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  flex: 1;
+  transition: all 0.3s ease;
+}
+
+.profile-btn-save {
+  background-color: #FF6B35;
+  color: #FFFFFF;
+}
+
+.profile-btn-save:hover {
+  opacity: 0.9;
+}
+
+.profile-btn-cancel {
+  background-color: #E0E0E0;
+  color: #000000;
+}
+
+.profile-btn-cancel:hover {
+  background-color: #D0D0D0;
+}
+
+/* Display Mode */
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile-info-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .profile-info-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.profile-info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-info-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #999999;
+}
+
+.profile-info-value {
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: #000000;
+  margin-top: 0.25rem;
+}
+
+.profile-info-phone {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Grid Layout */
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .profile-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Subscription Badge */
+.profile-subscription-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  background-color: #FF6B35;
+  color: #FFFFFF;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+/* Credit Card */
+.profile-credit-card {
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #FF6B35 0%, #FF8C5A 100%);
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.profile-credit-card:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.profile-card-type {
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.profile-card-number {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 2rem;
+  letter-spacing: 0.1em;
+}
+
+.profile-card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.profile-card-holder,
+.profile-card-expiry {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-card-label {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.profile-card-value {
+  font-weight: 600;
+}
+
+/* Card Details Expanded */
+.profile-card-details {
+  background-color: #F5F5F5;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.profile-card-details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.profile-card-details-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.profile-card-detail-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #999999;
+}
+
+.profile-card-detail-value {
+  font-size: 0.875rem;
+  color: #000000;
+  margin-top: 0.25rem;
+  font-family: monospace;
+}
+
+/* Add Card Button */
+.profile-add-card-btn {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background-color: #E0E0E0;
+  color: #000000;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.profile-add-card-btn:hover {
+  background-color: #D0D0D0;
+}
+
+/* Loading State */
+.profile-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: #FF6B35;
+}
+
+/* Error State */
+.profile-error {
+  background-color: rgba(229, 62, 62, 0.1);
+  border-left: 3px solid #E53E3E;
+  border-radius: 0.375rem;
+  padding: 1rem;
+  color: #E53E3E;
+  margin-bottom: 1rem;
+}

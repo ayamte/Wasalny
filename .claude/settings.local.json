@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker logs:*)",
+      "Bash(docker ps:*)",
+      "Bash(findstr:*)",
+      "Bash(curl:*)",
+      "Bash(docker network:*)",
+      "Bash(mkdir:*)",
+      "Bash(docker-compose up:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
