@@ -31,7 +31,7 @@ public class UserProfileService {
 
     // Création de profil (appelé par auth-service)
     @Transactional
-    public UserProfile createProfile(String email, String username, RoleUtilisateur role, LocalDateTime dateCreation) {
+    public UserProfile createProfile(String uuid, String email, String username, RoleUtilisateur role, LocalDateTime dateCreation, String nom, String prenom, String telephone) {
         if (userProfileRepository.existsByEmail(email)) {
             throw new RuntimeException("Profile already exists for email: " + email);
         }
@@ -39,10 +39,18 @@ public class UserProfileService {
         UserProfile profile;
         switch (role) {
             case CLIENT:
-                profile = new ClientProfile();
+                ClientProfile clientProfile = new ClientProfile();
+                if (nom != null && !nom.isEmpty()) clientProfile.setNom(nom);
+                if (prenom != null && !prenom.isEmpty()) clientProfile.setPrenom(prenom);
+                if (telephone != null && !telephone.isEmpty()) clientProfile.setTelephone(telephone);
+                profile = clientProfile;
                 break;
             case CONDUCTEUR:
-                profile = new ConducteurProfile();
+                ConducteurProfile conducteurProfile = new ConducteurProfile();
+                if (nom != null && !nom.isEmpty()) conducteurProfile.setNom(nom);
+                if (prenom != null && !prenom.isEmpty()) conducteurProfile.setPrenom(prenom);
+                if (telephone != null && !telephone.isEmpty()) conducteurProfile.setTelephone(telephone);
+                profile = conducteurProfile;
                 break;
             case ADMIN:
                 profile = new AdminProfile();
@@ -51,6 +59,7 @@ public class UserProfileService {
                 throw new RuntimeException("Invalid role: " + role);
         }
 
+        profile.setUuid(java.util.UUID.fromString(uuid));
         profile.setEmail(email);
         profile.setUsername(username);
         profile.setRole(role);

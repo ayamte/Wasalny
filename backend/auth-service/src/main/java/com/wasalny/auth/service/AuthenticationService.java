@@ -59,14 +59,19 @@ public class AuthenticationService {
             // Appeler user-service pour créer le profil
             try {
                 userProfileClient.createProfile(
+                    savedUser.getUuid().toString(),
                     savedUser.getEmail(),
                     savedUser.getUsername(),
                     savedUser.getRole().name(),
-                    dateCreation.toString()
+                    dateCreation.toString(),
+                    input.getNom(),
+                    input.getPrenom(),
+                    input.getTelephone()
                 );
             } catch (Exception e) {
                 // Log l'erreur mais ne bloque pas l'inscription
                 System.err.println("Error creating user profile: " + e.getMessage());
+                e.printStackTrace();
             }
 
             return savedUser;

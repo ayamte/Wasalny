@@ -181,6 +181,9 @@ export default function AuthPage() {
           email: formData.email,
           password: formData.password,
           role: 'CLIENT',
+          nom: formData.lastName,
+          prenom: formData.firstName,
+          telephone: formData.phone,
         })
 
         setVerificationEmail(formData.email)

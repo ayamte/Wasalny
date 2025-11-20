@@ -63,14 +63,18 @@ public class AdminController {
     // Endpoint de création de profil (appelé par auth-service)
     @PostMapping("/users/create")
     public ResponseEntity<UserProfile> createProfile(
+            @RequestParam String uuid,
             @RequestParam String email,
             @RequestParam String username,
             @RequestParam String role,
-            @RequestParam String dateCreation
+            @RequestParam String dateCreation,
+            @RequestParam(required = false) String nom,
+            @RequestParam(required = false) String prenom,
+            @RequestParam(required = false) String telephone
     ) {
         RoleUtilisateur roleEnum = RoleUtilisateur.valueOf(role.toUpperCase());
         LocalDateTime date = LocalDateTime.parse(dateCreation);
-        UserProfile profile = userProfileService.createProfile(email, username, roleEnum, date);
+        UserProfile profile = userProfileService.createProfile(uuid, email, username, roleEnum, date, nom, prenom, telephone);
         return ResponseEntity.ok(profile);
     }
 }
