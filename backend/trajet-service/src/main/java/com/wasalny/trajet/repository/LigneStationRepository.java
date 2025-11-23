@@ -8,8 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;  
 import java.util.UUID;  
   
-@Repository  
-public interface LigneStationRepository extends JpaRepository<LigneStation, UUID> {  
-    List<LigneStation> findByLigneIdOrderByOrdreAsc(UUID ligneId);  
+@Repository
+public interface LigneStationRepository extends JpaRepository<LigneStation, UUID> {
+    List<LigneStation> findByLigneIdOrderByOrdreAsc(UUID ligneId);
     List<LigneStation> findByLigneOrderByOrdreAsc(Ligne ligne);
+    void deleteByLigneId(UUID ligneId);
 }

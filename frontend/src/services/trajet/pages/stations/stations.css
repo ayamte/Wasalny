@@ -269,6 +269,10 @@
   font-size: 1.125rem;
   font-weight: 600;
   color: #000000;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .stations-station-coords {
@@ -280,6 +284,46 @@
   display: flex;
   gap: 0.5rem;
   flex-shrink: 0;
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.status-badge.active {
+  background-color: #10B981;
+  color: #FFFFFF;
+}
+
+.status-badge.inactive {
+  background-color: #6B7280;
+  color: #FFFFFF;
+}
+
+/* Loading & Empty States */
+.stations-loading,
+.stations-empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: #6B7280;
+  font-size: 1rem;
+  border: 2px dashed #E5E7EB;
+  border-radius: 0.5rem;
+}
+
+.stations-loading {
+  background-color: #F9FAFB;
+}
+
+.stations-empty {
+  background-color: #FFF5F0;
 }
 
 /* Toast Notification */

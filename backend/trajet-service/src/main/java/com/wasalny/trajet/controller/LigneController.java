@@ -1,10 +1,11 @@
-package com.wasalny.trajet.controller;  
-  
-import com.wasalny.trajet.dto.request.LigneCreateDTO;  
-import com.wasalny.trajet.dto.response.LigneResponseDTO;  
-import com.wasalny.trajet.dto.simple.StationSimpleDTO;  
-import com.wasalny.trajet.service.LigneService;  
-import jakarta.validation.Valid;  
+package com.wasalny.trajet.controller;
+
+import com.wasalny.trajet.dto.request.LigneCreateDTO;
+import com.wasalny.trajet.dto.request.LigneUpdateDTO;
+import com.wasalny.trajet.dto.response.LigneResponseDTO;
+import com.wasalny.trajet.dto.simple.StationSimpleDTO;
+import com.wasalny.trajet.service.LigneService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -85,5 +86,29 @@ public class LigneController {
     public ResponseEntity<Void> activerLigne(@PathVariable UUID id) {
         ligneService.activerLigne(id);
         return ResponseEntity.noContent().build();
-    }  
+    }
+
+    /**
+     * PUT /lignes/{id} - Mettre à jour une ligne
+     * Accessible par ADMIN seulement
+     */
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<LigneResponseDTO> mettreAJourLigne(
+            @PathVariable UUID id,
+            @Valid @RequestBody LigneUpdateDTO dto) {
+        LigneResponseDTO ligne = ligneService.mettreAJourLigne(id, dto);
+        return ResponseEntity.ok(ligne);
+    }
+
+    /**
+     * DELETE /lignes/{id} - Supprimer une ligne
+     * Accessible par ADMIN seulement
+     */
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> supprimerLigne(@PathVariable UUID id) {
+        ligneService.supprimerLigne(id);
+        return ResponseEntity.noContent().build();
+    }
 }

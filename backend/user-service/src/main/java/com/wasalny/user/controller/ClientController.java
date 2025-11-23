@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/client")
+@RequestMapping("/users/client")
 public class ClientController {
     private final UserProfileService userProfileService;
     private final PasswordService passwordService;

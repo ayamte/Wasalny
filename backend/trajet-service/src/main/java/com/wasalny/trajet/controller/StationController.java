@@ -1,6 +1,7 @@
 package com.wasalny.trajet.controller;
 
 import com.wasalny.trajet.dto.request.StationCreateDTO;
+import com.wasalny.trajet.dto.request.StationUpdateDTO;
 import com.wasalny.trajet.dto.response.StationResponseDTO;
 import com.wasalny.trajet.service.StationService;
 import jakarta.validation.Valid;
@@ -81,8 +82,32 @@ public class StationController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/activer")
-    public ResponseEntity<Void> activerStation(@PathVariable UUID id) {  
-        stationService.activerStation(id);  
-        return ResponseEntity.noContent().build();  
-    }  
+    public ResponseEntity<Void> activerStation(@PathVariable UUID id) {
+        stationService.activerStation(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * PUT /stations/{id} - Mettre à jour une station
+     * Accessible uniquement par les ADMIN
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}")
+    public ResponseEntity<StationResponseDTO> mettreAJourStation(
+            @PathVariable UUID id,
+            @Valid @RequestBody StationUpdateDTO dto) {
+        StationResponseDTO station = stationService.mettreAJourStation(id, dto);
+        return ResponseEntity.ok(station);
+    }
+
+    /**
+     * DELETE /stations/{id} - Supprimer une station
+     * Accessible uniquement par les ADMIN
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> supprimerStation(@PathVariable UUID id) {
+        stationService.supprimerStation(id);
+        return ResponseEntity.noContent().build();
+    }
 }

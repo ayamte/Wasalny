@@ -31,7 +31,7 @@ public class UserProfileService {
 
     // Création de profil (appelé par auth-service)
     @Transactional
-    public UserProfile createProfile(String uuid, String email, String username, RoleUtilisateur role, LocalDateTime dateCreation, String nom, String prenom, String telephone) {
+    public UserProfile createProfile(String uuid, String email, String username, RoleUtilisateur role, LocalDateTime dateCreation, String nom, String prenom, String telephone, String numeroPermis) {
         if (userProfileRepository.existsByEmail(email)) {
             throw new RuntimeException("Profile already exists for email: " + email);
         }
@@ -50,6 +50,7 @@ public class UserProfileService {
                 if (nom != null && !nom.isEmpty()) conducteurProfile.setNom(nom);
                 if (prenom != null && !prenom.isEmpty()) conducteurProfile.setPrenom(prenom);
                 if (telephone != null && !telephone.isEmpty()) conducteurProfile.setTelephone(telephone);
+                if (numeroPermis != null && !numeroPermis.isEmpty()) conducteurProfile.setNumeroPermis(numeroPermis);
                 profile = conducteurProfile;
                 break;
             case ADMIN:

@@ -8,6 +8,7 @@ public class RegisterUserDto {
     private String nom;
     private String prenom;
     private String telephone;
+    private String numeroPermis;
 
     // Getters et Setters
     public String getUsername() { return username; }
@@ -30,4 +31,7 @@ public class RegisterUserDto {
 
     public String getTelephone() { return telephone; }
     public void setTelephone(String telephone) { this.telephone = telephone; }
+
+    public String getNumeroPermis() { return numeroPermis; }
+    public void setNumeroPermis(String numeroPermis) { this.numeroPermis = numeroPermis; }
 }

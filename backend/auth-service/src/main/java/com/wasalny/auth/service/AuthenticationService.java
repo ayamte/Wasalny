@@ -1,16 +1,17 @@
-package com.wasalny.auth.service;  
-  
-import com.wasalny.auth.dto.LoginUserDto;  
-import com.wasalny.auth.dto.RegisterUserDto;  
-import com.wasalny.auth.dto.VerifyUserDto;  
-import com.wasalny.auth.entity.RoleUtilisateur;  
-import com.wasalny.auth.entity.User;  
-import com.wasalny.auth.repository.UserRepository;  
-import org.springframework.security.authentication.AuthenticationManager;  
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;  
-import org.springframework.security.crypto.password.PasswordEncoder;  
-import org.springframework.stereotype.Service;  
-  
+package com.wasalny.auth.service;
+
+import com.wasalny.auth.dto.LoginUserDto;
+import com.wasalny.auth.dto.RegisterUserDto;
+import com.wasalny.auth.dto.VerifyUserDto;
+import com.wasalny.auth.entity.RoleUtilisateur;
+import com.wasalny.auth.entity.User;
+import com.wasalny.auth.repository.UserRepository;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;  
   
 @Service
@@ -66,7 +67,8 @@ public class AuthenticationService {
                     dateCreation.toString(),
                     input.getNom(),
                     input.getPrenom(),
-                    input.getTelephone()
+                    input.getTelephone(),
+                    input.getNumeroPermis()
                 );
             } catch (Exception e) {
                 // Log l'erreur mais ne bloque pas l'inscription
@@ -150,7 +152,11 @@ public class AuthenticationService {
         }  
     }  
   
-    private String generateVerificationCode() {  
-        return String.valueOf((int) ((Math.random() * (999999 - 100000)) + 100000));  
-    }  
+    private String generateVerificationCode() {
+        return String.valueOf((int) ((Math.random() * (999999 - 100000)) + 100000));
+    }
+
+    public ResponseEntity<?> getUserProfile(String userId) {
+        return userProfileClient.getUserProfile(userId);
+    }
 }

@@ -152,13 +152,16 @@ export default function AuthPage() {
         })
         
         console.log('Login Response:', response)
-        
+
         localStorage.setItem('token', response.token)
         localStorage.setItem('user', JSON.stringify({
           id: response.userId,
           email: response.email,
           username: response.username,
           role: response.role,
+          prenom: response.prenom,
+          nom: response.nom,
+          telephone: response.telephone,
         }))
 
         console.log('User stored:', {
@@ -166,6 +169,9 @@ export default function AuthPage() {
           email: response.email,
           username: response.username,
           role: response.role,
+          prenom: response.prenom,
+          nom: response.nom,
+          telephone: response.telephone,
         })
 
         showToast('Login successful!', 'success')

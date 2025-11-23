@@ -58,7 +58,27 @@ export default function ProfilePage() {
           throw new Error('ID utilisateur manquant')
         }
 
-        const endpoint = `${API_URL}/user-service/api/users/${userId}`
+        // First, try to use data from localStorage (if available from login response)
+        if (user.prenom || user.nom || user.telephone) {
+          console.log('Using user data from localStorage (login response)')
+          const userInfo = {
+            id: userId,
+            firstName: user.prenom || '',
+            lastName: user.nom || '',
+            email: user.email || '',
+            phone: user.telephone || '',
+            username: user.username || '',
+            subscription: 'Standard',
+            subscriptionExpiry: '2025-12-31',
+          }
+          setUserData(userInfo)
+          setEditData(userInfo)
+          setLoading(false)
+          return
+        }
+
+        // If not in localStorage, try fetching from backend
+        const endpoint = `${API_URL}/api/users/${userId}`
         console.log('Fetching from:', endpoint)
 
         // Fetch user details from backend
@@ -118,20 +138,20 @@ export default function ProfilePage() {
         const userId = user?.id
         setUserData({
           id: userId,
-          firstName: '',
-          lastName: '',
+          firstName: user?.prenom || '',
+          lastName: user?.nom || '',
           email: user?.email || '',
-          phone: '',
+          phone: user?.telephone || '',
           username: user?.username || '',
           subscription: 'Standard',
           subscriptionExpiry: '2025-12-31',
         })
         setEditData({
           id: userId,
-          firstName: '',
-          lastName: '',
+          firstName: user?.prenom || '',
+          lastName: user?.nom || '',
           email: user?.email || '',
-          phone: '',
+          phone: user?.telephone || '',
           username: user?.username || '',
           subscription: 'Standard',
           subscriptionExpiry: '2025-12-31',
@@ -164,7 +184,7 @@ export default function ProfilePage() {
       }
 
       // Update user data on backend
-      const response = await fetch(`${API_URL}/user-service/api/users/${userId}`, {
+      const response = await fetch(`${API_URL}/api/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -183,12 +203,25 @@ export default function ProfilePage() {
 
       const updatedData = await response.json()
 
-      setUserData({
+      const newUserData = {
         ...userData,
         firstName: updatedData.prenom || editData.firstName,
         lastName: updatedData.nom || editData.lastName,
         phone: updatedData.telephone || editData.phone,
-      })
+      }
+
+      setUserData(newUserData)
+
+      // Update localStorage with new data
+      const currentUser = authService.getUser()
+      if (currentUser) {
+        localStorage.setItem('user', JSON.stringify({
+          ...currentUser,
+          prenom: newUserData.firstName,
+          nom: newUserData.lastName,
+          telephone: newUserData.phone,
+        }))
+      }
 
       setIsEditing(false)
     } catch (err) {

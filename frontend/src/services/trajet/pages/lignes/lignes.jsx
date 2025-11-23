@@ -1,43 +1,49 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Edit2, Trash2, ChevronLeft, Zap, Save, X, ArrowRight, Bus } from 'lucide-react'
+import { Plus, Edit2, Trash2, ChevronLeft, Zap, Save, X, ArrowRight } from 'lucide-react'
 import './lignes.css'
-
-// Mock data
-const mockStations = [
-  { id: '1', name: 'Casablanca', latitude: 33.5731, longitude: -7.5898 },
-  { id: '2', name: 'Rabat', latitude: 34.0209, longitude: -6.8416 },
-  { id: '3', name: 'Fès', latitude: 34.0331, longitude: -5.0033 },
-  { id: '4', name: 'Marrakech', latitude: 31.6295, longitude: -8.0089 },
-  { id: '5', name: 'Tanger', latitude: 35.7595, longitude: -5.8345 },
-  { id: '6', name: 'Agadir', latitude: 30.4278, longitude: -9.5975 },
-]
-
-const mockLines = [
-  {
-    id: '1',
-    number: 'Ligne 1',
-    stations: [
-      { stationId: '1', order: 1, stationType: 'depart' },
-      { stationId: '2', order: 2, stationType: 'intermediaire' },
-      { stationId: '3', order: 3, stationType: 'arrivee' },
-    ],
-    buses: ['BUS-001', 'BUS-002'],
-  },
-]
+import { ligneService, stationService, busService } from '../../configurationService'
 
 export default function LinesPage() {
   const navigate = useNavigate()
-  const [lines, setLines] = useState(mockLines)
+  const [lines, setLines] = useState([])
+  const [stations, setStations] = useState([])
+  const [buses, setBuses] = useState([])
+  const [loading, setLoading] = useState(false)
   const [editingLineId, setEditingLineId] = useState(null)
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({
     number: '',
+    nom: '',
     selectedStations: [],
-    buses: [],
-    newBusInput: '',
+    selectedBusId: '',
+    prixStandard: 10.0,
+    vitesseStandardKmH: 40.0,
   })
   const [toastMessage, setToastMessage] = useState('')
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  const loadData = async () => {
+    try {
+      setLoading(true)
+      const [stationsData, linesData, busesData] = await Promise.all([
+        stationService.getAllStations(),
+        ligneService.getAllLines(),
+        busService.getAllBuses()
+      ])
+      setStations(stationsData.filter(s => s.active))
+      setLines(linesData)
+      setBuses(busesData.filter(b => b.active))
+    } catch (error) {
+      console.error('Error loading data:', error)
+      showToast('❌ Erreur lors du chargement des données')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const showToast = (message) => {
     setToastMessage(message)
@@ -48,20 +54,26 @@ export default function LinesPage() {
     setEditingLineId(null)
     setFormData({
       number: '',
+      nom: '',
       selectedStations: [],
-      buses: [],
-      newBusInput: '',
+      selectedBusId: '',
+      prixStandard: 10.0,
+      vitesseStandardKmH: 40.0,
     })
     setShowForm(true)
   }
 
   const handleEditLine = (line) => {
     setEditingLineId(line.id)
+    // Extract station IDs in order from the line's stations array
+    const stationIds = line.stations ? line.stations.map(s => s.id) : []
     setFormData({
-      number: line.number,
-      selectedStations: line.stations.map(ls => ls.stationId),
-      buses: [...line.buses],
-      newBusInput: '',
+      number: line.numero,
+      nom: line.nom,
+      selectedStations: stationIds,
+      selectedBusId: '',
+      prixStandard: line.prixStandard || 10.0,
+      vitesseStandardKmH: line.vitesseStandardKmH || 40.0,
     })
     setShowForm(true)
   }
@@ -82,75 +94,64 @@ export default function LinesPage() {
     })
   }
 
-  const handleAddBus = () => {
-    if (formData.newBusInput.trim() && !formData.buses.includes(formData.newBusInput)) {
-      setFormData({
-        ...formData,
-        buses: [...formData.buses, formData.newBusInput],
-        newBusInput: '',
-      })
-    }
-  }
-
-  const handleRemoveBus = (bus) => {
-    setFormData({
-      ...formData,
-      buses: formData.buses.filter(b => b !== bus),
-    })
-  }
-
-  const handleSaveLine = () => {
-    if (!formData.number || formData.selectedStations.length < 2 || formData.buses.length === 0) {
-      showToast('Veuillez remplir tous les champs requis')
+  const handleSaveLine = async () => {
+    if (!formData.number || !formData.nom || formData.selectedStations.length < 2) {
+      showToast('❌ Veuillez remplir tous les champs requis (au moins 2 stations)')
       return
     }
 
-    if (editingLineId) {
-      setLines(
-        lines.map(l =>
-          l.id === editingLineId
-            ? {
-                ...l,
-                number: formData.number,
-                stations: formData.selectedStations.map((stationId, idx) => ({
-                  stationId,
-                  order: idx + 1,
-                  stationType:
-                    idx === 0 ? 'depart' : idx === formData.selectedStations.length - 1 ? 'arrivee' : 'intermediaire',
-                })),
-                buses: formData.buses,
-              }
-            : l
-        )
-      )
-      showToast('Ligne modifiée avec succès')
-    } else {
-      const newLine = {
-        id: Date.now().toString(),
-        number: formData.number,
-        stations: formData.selectedStations.map((stationId, idx) => ({
-          stationId,
-          order: idx + 1,
-          stationType:
-            idx === 0 ? 'depart' : idx === formData.selectedStations.length - 1 ? 'arrivee' : 'intermediaire',
-        })),
-        buses: formData.buses,
-      }
-      setLines([...lines, newLine])
-      showToast('Ligne ajoutée avec succès')
-    }
+    try {
+      setLoading(true)
 
-    setShowForm(false)
+      // Build DTO for backend
+      const dto = {
+        numero: formData.number,
+        nom: formData.nom,
+        stationDepartId: formData.selectedStations[0],
+        stationsIntermediairesIds: formData.selectedStations.slice(1, -1),
+        stationArriveeId: formData.selectedStations[formData.selectedStations.length - 1],
+        prixStandard: parseFloat(formData.prixStandard),
+        vitesseStandardKmH: parseFloat(formData.vitesseStandardKmH),
+        active: true
+      }
+
+      if (editingLineId) {
+        await ligneService.updateLine(editingLineId, dto)
+        showToast('✅ Ligne modifiée avec succès')
+      } else {
+        await ligneService.createLine(dto)
+        showToast('✅ Ligne ajoutée avec succès')
+      }
+
+      setShowForm(false)
+      loadData()
+    } catch (error) {
+      console.error('Error saving line:', error)
+      showToast('❌ Erreur: ' + (error.message || 'Erreur lors de l\'enregistrement'))
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleDeleteLine = (id) => {
-    setLines(lines.filter(l => l.id !== id))
-    showToast('Ligne supprimée avec succès')
+  const handleDeleteLine = async (id) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette ligne ?')) return
+
+    try {
+      setLoading(true)
+      await ligneService.deleteLine(id)
+      showToast('✅ Ligne supprimée avec succès')
+      loadData()
+    } catch (error) {
+      console.error('Error deleting line:', error)
+      showToast('❌ Erreur: ' + (error.message || 'Erreur lors de la suppression'))
+    } finally {
+      setLoading(false)
+    }
   }
 
   const getStationName = (stationId) => {
-    const station = mockStations.find(s => s.id === stationId)
-    return station?.name || 'Station inconnue'
+    const station = stations.find(s => s.id === stationId)
+    return station?.nom || 'Station inconnue'
   }
 
   return (
@@ -226,34 +227,88 @@ export default function LinesPage() {
                 <div className="lignes-form-grid">
                   {/* Ligne Number */}
                   <div>
-                    <label className="lignes-label">Numéro de Ligne</label>
+                    <label className="lignes-label">Numéro de Ligne *</label>
                     <input
                       type="text"
-                      placeholder="Ex: Ligne 1, L01, Casa-Rabat"
+                      placeholder="Ex: L01, L02"
                       value={formData.number}
                       onChange={(e) => setFormData({ ...formData, number: e.target.value })}
                       className="lignes-input"
+                      disabled={loading}
+                      required
+                    />
+                  </div>
+
+                  {/* Ligne Name */}
+                  <div>
+                    <label className="lignes-label">Nom de Ligne *</label>
+                    <input
+                      type="text"
+                      placeholder="Ex: Casa-Rabat, Ligne Express"
+                      value={formData.nom}
+                      onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
+                      className="lignes-input"
+                      disabled={loading}
+                      required
+                    />
+                  </div>
+
+                  {/* Prix Standard */}
+                  <div>
+                    <label className="lignes-label">Prix Standard (MAD) *</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="Ex: 10.00"
+                      value={formData.prixStandard}
+                      onChange={(e) => setFormData({ ...formData, prixStandard: e.target.value })}
+                      className="lignes-input"
+                      disabled={loading}
+                      required
+                    />
+                  </div>
+
+                  {/* Vitesse Standard */}
+                  <div>
+                    <label className="lignes-label">Vitesse Standard (km/h) *</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      placeholder="Ex: 40.0"
+                      value={formData.vitesseStandardKmH}
+                      onChange={(e) => setFormData({ ...formData, vitesseStandardKmH: e.target.value })}
+                      className="lignes-input"
+                      disabled={loading}
+                      required
                     />
                   </div>
 
                   {/* Stations Selection */}
                   <div>
-                    <label className="lignes-label">Stations (dans l'ordre du trajet)</label>
-                    <div className="lignes-stations-selector">
-                      <p className="lignes-stations-title">Stations disponibles:</p>
-                      <div className="lignes-stations-buttons">
-                        {mockStations.map(station => (
-                          <button
-                            key={station.id}
-                            onClick={() => handleAddStationToLine(station.id)}
-                            disabled={formData.selectedStations.includes(station.id)}
-                            className={`lignes-station-btn ${formData.selectedStations.includes(station.id) ? 'active' : ''}`}
-                          >
-                            {station.name}
-                          </button>
-                        ))}
+                    <label className="lignes-label">Stations (dans l'ordre du trajet) *</label>
+                    {loading ? (
+                      <p className="lignes-loading-text">Chargement des stations...</p>
+                    ) : stations.length === 0 ? (
+                      <p className="lignes-empty-text">Aucune station active trouvée</p>
+                    ) : (
+                      <div className="lignes-stations-selector">
+                        <p className="lignes-stations-title">Stations disponibles:</p>
+                        <div className="lignes-stations-buttons">
+                          {stations.map(station => (
+                            <button
+                              key={station.id}
+                              onClick={() => handleAddStationToLine(station.id)}
+                              disabled={loading || formData.selectedStations.includes(station.id)}
+                              className={`lignes-station-btn ${formData.selectedStations.includes(station.id) ? 'active' : ''}`}
+                            >
+                              {station.nom}
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     {/* Selected Stations Order */}
                     {formData.selectedStations.length > 0 && (
@@ -285,45 +340,6 @@ export default function LinesPage() {
                     )}
                   </div>
 
-                  {/* Buses */}
-                  <div>
-                    <label className="lignes-label">Bus au départ de la ligne</label>
-                    <div className="lignes-bus-input-group">
-                      <input
-                        type="text"
-                        placeholder="Ex: BUS-001"
-                        value={formData.newBusInput}
-                        onChange={(e) => setFormData({ ...formData, newBusInput: e.target.value })}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault()
-                            handleAddBus()
-                          }
-                        }}
-                        className="lignes-input"
-                      />
-                      <button
-                        onClick={handleAddBus}
-                        className="lignes-btn lignes-btn-primary"
-                      >
-                        <Plus size={18} />
-                      </button>
-                    </div>
-                    <div className="lignes-buses-list">
-                      {formData.buses.map(bus => (
-                        <div key={bus} className="lignes-bus-tag">
-                          <Bus size={16} />
-                          <span>{bus}</span>
-                          <button
-                            onClick={() => handleRemoveBus(bus)}
-                            className="lignes-bus-remove"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
 
                   <div className="lignes-form-actions">
                     <button
@@ -331,12 +347,15 @@ export default function LinesPage() {
                         setShowForm(false)
                         setFormData({
                           number: '',
+                          nom: '',
                           selectedStations: [],
-                          buses: [],
-                          newBusInput: '',
+                          selectedBusId: '',
+                          prixStandard: 10.0,
+                          vitesseStandardKmH: 40.0,
                         })
                       }}
                       className="lignes-btn lignes-btn-outline"
+                      disabled={loading}
                     >
                       <X size={18} />
                       Annuler
@@ -344,9 +363,10 @@ export default function LinesPage() {
                     <button
                       onClick={handleSaveLine}
                       className="lignes-btn lignes-btn-primary"
+                      disabled={loading}
                     >
                       <Save size={18} />
-                      Enregistrer
+                      {loading ? 'Enregistrement...' : 'Enregistrer'}
                     </button>
                   </div>
                 </div>
@@ -356,51 +376,66 @@ export default function LinesPage() {
 
           {/* Lines List */}
           <div className="lignes-list">
-            {lines.map(line => (
-              <div key={line.id} className="lignes-card">
-                <div className="lignes-card-content lignes-line-item">
-                  <div className="lignes-line-info">
-                    <h3 className="lignes-line-number">{line.number}</h3>
-                    <p className="lignes-line-label">Trajet:</p>
-                    <div className="lignes-line-trajectory">
-                      {line.stations.map((ls, idx) => (
-                        <div key={ls.stationId} className="lignes-line-station-item">
-                          <span className="lignes-line-station">
-                            {getStationName(ls.stationId)}
-                          </span>
-                          {idx < line.stations.length - 1 && (
-                            <ArrowRight size={14} />
-                          )}
-                        </div>
-                      ))}
+            {loading ? (
+              <div className="lignes-loading">
+                <p>Chargement des lignes...</p>
+              </div>
+            ) : lines.length === 0 ? (
+              <div className="lignes-empty">
+                <p>Aucune ligne trouvée. Créez votre première ligne!</p>
+              </div>
+            ) : (
+              lines.map(line => (
+                <div key={line.id} className="lignes-card">
+                  <div className="lignes-card-content lignes-line-item">
+                    <div className="lignes-line-info">
+                      <h3 className="lignes-line-number">{line.numero}</h3>
+                      <p className="lignes-line-subtitle">{line.nom}</p>
+                      <p className="lignes-line-label">Trajet:</p>
+                      <div className="lignes-line-trajectory">
+                        {line.stations && line.stations.map((station, idx) => (
+                          <div key={station.id} className="lignes-line-station-item">
+                            <span className="lignes-line-station">
+                              {station.nom}
+                            </span>
+                            {idx < line.stations.length - 1 && (
+                              <ArrowRight size={14} />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="lignes-line-details">
+                        <p className="lignes-line-detail">
+                          <strong>Prix:</strong> {line.prixStandard} MAD
+                        </p>
+                        <p className="lignes-line-detail">
+                          <strong>Vitesse:</strong> {line.vitesseStandardKmH} km/h
+                        </p>
+                        <p className="lignes-line-detail">
+                          <strong>Distance:</strong> {line.distanceTotaleKm ? line.distanceTotaleKm.toFixed(2) : '0'} km
+                        </p>
+                      </div>
                     </div>
-                    <p className="lignes-line-label">Bus au départ:</p>
-                    <div className="lignes-line-buses">
-                      {line.buses.map(bus => (
-                        <span key={bus} className="lignes-bus-badge">
-                          <Bus size={14} />
-                          {bus}
-                        </span>
-                      ))}
+                    <div className="lignes-actions">
+                      <button
+                        onClick={() => handleEditLine(line)}
+                        className="lignes-btn lignes-btn-edit"
+                        disabled={loading}
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteLine(line.id)}
+                        className="lignes-btn lignes-btn-delete"
+                        disabled={loading}
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
-                  </div>
-                  <div className="lignes-actions">
-                    <button
-                      onClick={() => handleEditLine(line)}
-                      className="lignes-btn lignes-btn-edit"
-                    >
-                      <Edit2 size={16} />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteLine(line.id)}
-                      className="lignes-btn lignes-btn-delete"
-                    >
-                      <Trash2 size={16} />
-                    </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>

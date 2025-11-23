@@ -54,6 +54,11 @@ security:
 support:
   email: ${SUPPORT_EMAIL:noreply@wasalny.com}
 
+# User Service URL
+user:
+  service:
+    url: ${USER_SERVICE_URL:http://user-service:8083}
+
 # Actuator
 management:
   endpoints:

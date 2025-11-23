@@ -8,18 +8,25 @@ import com.wasalny.auth.responses.LoginResponse;
 import com.wasalny.auth.responses.SignupResponse;
 import com.wasalny.auth.service.AuthenticationService;
 import com.wasalny.auth.service.JwtService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 @RequestMapping("/auth")
 @RestController
 public class AuthenticationController {
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
+    private final RestTemplate restTemplate;
 
-    public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService) {
+    @Value("${user.service.url:http://user-service:8083}")
+    private String userServiceUrl;
+
+    public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService, RestTemplate restTemplate) {
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
+        this.restTemplate = restTemplate;
     }
 
     @PostMapping("/signup")
@@ -36,13 +43,42 @@ public class AuthenticationController {
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto){
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
         String jwtToken = jwtService.generateToken(authenticatedUser);
+
+        // Try to get user profile data from user-service
+        String prenom = null;
+        String nom = null;
+        String telephone = null;
+
+        try {
+            // Call user-service directly via RestTemplate
+            String url = userServiceUrl + "/api/users/" + authenticatedUser.getUuid().toString();
+            System.out.println("Fetching user profile from: " + url);
+
+            @SuppressWarnings("unchecked")
+            java.util.Map<String, Object> profileData = restTemplate.getForObject(url, java.util.Map.class);
+
+            if (profileData != null) {
+                prenom = (String) profileData.get("prenom");
+                nom = (String) profileData.get("nom");
+                telephone = (String) profileData.get("telephone");
+                System.out.println("Successfully fetched profile data: prenom=" + prenom + ", nom=" + nom + ", telephone=" + telephone);
+            }
+        } catch (Exception e) {
+            // Log error but continue with login - profile data is optional
+            System.err.println("Could not fetch user profile: " + e.getMessage());
+            e.printStackTrace();
+        }
+
         LoginResponse loginResponse = new LoginResponse(
                 jwtToken,
                 jwtService.getExpirationTime(),
                 authenticatedUser.getUuid(),
                 authenticatedUser.getEmail(),
                 authenticatedUser.getUsername(),
-                authenticatedUser.getRole().name()
+                authenticatedUser.getRole().name(),
+                prenom,
+                nom,
+                telephone
         );
         return ResponseEntity.ok(loginResponse);
     }

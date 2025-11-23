@@ -54,7 +54,7 @@ export const login = async (credentials) => {
 
 /**
  * Signup new user
- * @param {Object} userData - { username, email, password, role }
+ * @param {Object} userData - { username, email, password, role, nom, prenom, telephone }
  * @returns {Promise} Signup confirmation
  */
 export const signup = async (userData) => {
@@ -64,6 +64,9 @@ export const signup = async (userData) => {
       email: userData.email,
       password: userData.password,
       role: userData.role || 'CLIENT',
+      nom: userData.nom,
+      prenom: userData.prenom,
+      telephone: userData.telephone,
     })
     return response.data
   } catch (error) {

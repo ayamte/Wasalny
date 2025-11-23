@@ -1,27 +1,23 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus, Edit2, Trash2, ChevronLeft, MapPin, Save, X } from 'lucide-react'
+import { stationService } from '../../configurationService'
 import './stations.css'
-
-// Mock data
-const mockStations = [
-  { id: '1', name: 'Casablanca', latitude: 33.5731, longitude: -7.5898 },
-  { id: '2', name: 'Rabat', latitude: 34.0209, longitude: -6.8416 },
-  { id: '3', name: 'Fès', latitude: 34.0331, longitude: -5.0033 },
-  { id: '4', name: 'Marrakech', latitude: 31.6295, longitude: -8.0089 },
-  { id: '5', name: 'Tanger', latitude: 35.7595, longitude: -5.8345 },
-  { id: '6', name: 'Agadir', latitude: 30.4278, longitude: -9.5975 },
-]
 
 export default function StationsPage() {
   const navigate = useNavigate()
-  const [stations, setStations] = useState(mockStations)
+  const [stations, setStations] = useState([])
   const [editingId, setEditingId] = useState(null)
   const [showForm, setShowForm] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  // Force reload - integrated with backend API
   const [formData, setFormData] = useState({
     name: '',
     latitude: '',
     longitude: '',
+    capacity: 50,
+    active: true,
   })
   const [toastMessage, setToastMessage] = useState('')
 
@@ -30,79 +26,132 @@ export default function StationsPage() {
     setTimeout(() => setToastMessage(''), 3000)
   }
 
+  const showError = (message) => {
+    showToast(`❌ ${message}`)
+  }
+
+  const showSuccess = (message) => {
+    showToast(`✅ ${message}`)
+  }
+
+  // Load stations on component mount
+  useEffect(() => {
+    loadStations()
+  }, [])
+
+  const loadStations = async () => {
+    try {
+      setLoading(true)
+      const data = await stationService.getAllStations()
+      setStations(data)
+    } catch (error) {
+      console.error('Error loading stations:', error)
+      showError(error.message || 'Erreur lors du chargement des stations')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleAddStation = () => {
     setEditingId(null)
-    setFormData({ name: '', latitude: '', longitude: '' })
+    setFormData({
+      name: '',
+      latitude: '',
+      longitude: '',
+      capacity: 50,
+      active: true
+    })
     setShowForm(true)
   }
 
   const handleEditStation = (station) => {
     setEditingId(station.id)
     setFormData({
-      name: station.name,
+      name: station.nom || station.name,
       latitude: station.latitude.toString(),
       longitude: station.longitude.toString(),
+      capacity: station.capacite || station.capacity || 50,
+      active: station.active === true || station.active === false ? station.active : true,
     })
     setShowForm(true)
   }
 
-  const handleSaveStation = () => {
+  const handleSaveStation = async () => {
     if (!formData.name || !formData.latitude || !formData.longitude) {
-      showToast('Tous les champs sont obligatoires')
+      showError('Tous les champs sont obligatoires')
       return
     }
 
     // Validate latitude and longitude
     const lat = parseFloat(formData.latitude)
     const lon = parseFloat(formData.longitude)
-    
+
     if (isNaN(lat) || isNaN(lon)) {
-      showToast('Latitude et longitude doivent être des nombres')
+      showError('Latitude et longitude doivent être des nombres')
       return
     }
 
     if (lat < -90 || lat > 90) {
-      showToast('Latitude doit être entre -90 et 90')
+      showError('Latitude doit être entre -90 et 90')
       return
     }
 
     if (lon < -180 || lon > 180) {
-      showToast('Longitude doit être entre -180 et 180')
+      showError('Longitude doit être entre -180 et 180')
       return
     }
 
-    if (editingId) {
-      setStations(
-        stations.map(s =>
-          s.id === editingId
-            ? {
-                ...s,
-                name: formData.name,
-                latitude: lat,
-                longitude: lon,
-              }
-            : s
-        )
-      )
-      showToast('Station modifiée avec succès')
-    } else {
-      const newStation = {
-        id: Date.now().toString(),
-        name: formData.name,
-        latitude: lat,
-        longitude: lon,
-      }
-      setStations([...stations, newStation])
-      showToast('Station ajoutée avec succès')
-    }
+    try {
+      setLoading(true)
 
-    setShowForm(false)
-    setFormData({ name: '', latitude: '', longitude: '' })
+      if (editingId) {
+        // Update existing station
+        await stationService.updateStation(editingId, {
+          nom: formData.name,
+          latitude: lat,
+          longitude: lon,
+          capacite: parseInt(formData.capacity),
+          active: formData.active,
+        })
+        showSuccess('Station modifiée avec succès')
+      } else {
+        // Create new station
+        await stationService.createStation({
+          nom: formData.name,
+          latitude: lat,
+          longitude: lon,
+          capacite: parseInt(formData.capacity),
+        })
+        showSuccess('Station ajoutée avec succès')
+      }
+
+      setShowForm(false)
+      setFormData({ name: '', latitude: '', longitude: '', capacity: 50, active: true })
+      loadStations()
+    } catch (error) {
+      console.error('Error saving station:', error)
+      showError(error.message || 'Erreur lors de la sauvegarde de la station')
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleDeleteStation = (id) => {
-    setStations(stations.filter(s => s.id !== id))
-    showToast('Station supprimée avec succès')
+  const handleDeleteStation = async (id) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette station ?')) {
+      return
+    }
+
+    try {
+      setLoading(true)
+      await stationService.deleteStation(id)
+      showSuccess('Station supprimée avec succès')
+      loadStations()
+    } catch (error) {
+      console.error('Error deleting station:', error)
+      showError(error.message || 'Erreur lors de la suppression de la station')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -146,6 +195,7 @@ export default function StationsPage() {
             <button
               className="stations-btn stations-btn-primary"
               onClick={handleAddStation}
+              disabled={loading}
             >
               <Plus size={18} />
               Nouvelle Station
@@ -169,18 +219,19 @@ export default function StationsPage() {
               <div className="stations-card-content">
                 <div className="stations-form-grid">
                   <div>
-                    <label className="stations-label">Nom de la Station</label>
+                    <label className="stations-label">Nom de la Station *</label>
                     <input
                       type="text"
                       placeholder="Ex: Casablanca"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className="stations-input"
+                      disabled={loading}
                     />
                   </div>
                   <div className="stations-coords-grid">
                     <div>
-                      <label className="stations-label">Latitude</label>
+                      <label className="stations-label">Latitude *</label>
                       <input
                         type="number"
                         step="0.0001"
@@ -188,10 +239,11 @@ export default function StationsPage() {
                         value={formData.latitude}
                         onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
                         className="stations-input"
+                        disabled={loading}
                       />
                     </div>
                     <div>
-                      <label className="stations-label">Longitude</label>
+                      <label className="stations-label">Longitude *</label>
                       <input
                         type="number"
                         step="0.0001"
@@ -199,16 +251,50 @@ export default function StationsPage() {
                         value={formData.longitude}
                         onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
                         className="stations-input"
+                        disabled={loading}
                       />
                     </div>
                   </div>
+                  <div>
+                    <label className="stations-label">Capacité</label>
+                    <input
+                      type="number"
+                      step="1"
+                      placeholder="Ex: 50"
+                      value={formData.capacity}
+                      onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
+                      className="stations-input"
+                      disabled={loading}
+                    />
+                  </div>
+                  {editingId && (
+                    <div>
+                      <label className="stations-label">Statut *</label>
+                      <select
+                        value={formData.active === true ? 'active' : 'inactive'}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            active: e.target.value === 'active',
+                          })
+                        }
+                        className="stations-input"
+                        disabled={loading}
+                        required
+                      >
+                        <option value="active">Actif</option>
+                        <option value="inactive">Inactif</option>
+                      </select>
+                    </div>
+                  )}
                   <div className="stations-form-actions">
                     <button
                       onClick={() => {
                         setShowForm(false)
-                        setFormData({ name: '', latitude: '', longitude: '' })
+                        setFormData({ name: '', latitude: '', longitude: '', capacity: 50, active: true })
                       }}
                       className="stations-btn stations-btn-outline"
+                      disabled={loading}
                     >
                       <X size={18} />
                       Annuler
@@ -216,9 +302,10 @@ export default function StationsPage() {
                     <button
                       onClick={handleSaveStation}
                       className="stations-btn stations-btn-primary"
+                      disabled={loading}
                     >
                       <Save size={18} />
-                      Enregistrer
+                      {loading ? 'Enregistrement...' : 'Enregistrer'}
                     </button>
                   </div>
                 </div>
@@ -228,35 +315,49 @@ export default function StationsPage() {
 
           {/* Stations List */}
           <div className="stations-list">
-            {stations.map(station => (
-              <div key={station.id} className="stations-card">
-                <div className="stations-card-content stations-station-item">
-                  <div className="stations-station-icon">
-                    <MapPin size={20} />
-                  </div>
-                  <div className="stations-station-info">
-                    <h3 className="stations-station-name">{station.name}</h3>
-                    <p className="stations-station-coords">
-                      Lat: {station.latitude.toFixed(4)} | Long: {station.longitude.toFixed(4)}
-                    </p>
-                  </div>
-                  <div className="stations-actions">
-                    <button
-                      onClick={() => handleEditStation(station)}
-                      className="stations-btn stations-btn-edit"
-                    >
-                      <Edit2 size={16} />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteStation(station.id)}
-                      className="stations-btn stations-btn-delete"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+            {loading && stations.length === 0 ? (
+              <div className="stations-loading">Chargement des stations...</div>
+            ) : stations.length === 0 ? (
+              <div className="stations-empty">Aucune station trouvée</div>
+            ) : (
+              stations.map(station => (
+                <div key={station.id} className="stations-card">
+                  <div className="stations-card-content stations-station-item">
+                    <div className="stations-station-icon">
+                      <MapPin size={20} />
+                    </div>
+                    <div className="stations-station-info">
+                      <h3 className="stations-station-name">
+                        {station.nom || station.name}
+                        <span className={`status-badge ${station.active ? 'active' : 'inactive'}`}>
+                          {station.active ? 'Actif' : 'Inactif'}
+                        </span>
+                      </h3>
+                      <p className="stations-station-coords">
+                        Lat: {station.latitude.toFixed(4)} | Long: {station.longitude.toFixed(4)}
+                        {station.capacite && ` | Capacité: ${station.capacite}`}
+                      </p>
+                    </div>
+                    <div className="stations-actions">
+                      <button
+                        onClick={() => handleEditStation(station)}
+                        className="stations-btn stations-btn-edit"
+                        disabled={loading}
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteStation(station.id)}
+                        className="stations-btn stations-btn-delete"
+                        disabled={loading}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>

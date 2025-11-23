@@ -1,6 +1,7 @@
 package com.wasalny.trajet.controller;
 
 import com.wasalny.trajet.dto.request.BusCreateDTO;
+import com.wasalny.trajet.dto.request.BusUpdateDTO;
 import com.wasalny.trajet.dto.response.BusResponseDTO;
 import com.wasalny.trajet.service.BusService;
 import jakarta.validation.Valid;
@@ -81,8 +82,32 @@ public class BusController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/activer")
-    public ResponseEntity<Void> activerBus(@PathVariable UUID id) {  
-        busService.activerBus(id);  
-        return ResponseEntity.noContent().build();  
-    }  
+    public ResponseEntity<Void> activerBus(@PathVariable UUID id) {
+        busService.activerBus(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * PUT /buses/{id} - Mettre à jour un bus
+     * Accessible uniquement par les ADMIN
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}")
+    public ResponseEntity<BusResponseDTO> mettreAJourBus(
+            @PathVariable UUID id,
+            @Valid @RequestBody BusUpdateDTO dto) {
+        BusResponseDTO bus = busService.mettreAJourBus(id, dto);
+        return ResponseEntity.ok(bus);
+    }
+
+    /**
+     * DELETE /buses/{id} - Supprimer un bus
+     * Accessible uniquement par les ADMIN
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> supprimerBus(@PathVariable UUID id) {
+        busService.supprimerBus(id);
+        return ResponseEntity.noContent().build();
+    }
 }

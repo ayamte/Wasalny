@@ -605,3 +605,43 @@
     color: #FFFFFF;
   }
 }
+
+/* Loading and Empty States */
+.lignes-loading,
+.lignes-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6B7280;
+}
+
+.lignes-loading-text,
+.lignes-empty-text {
+  color: #6B7280;
+  font-size: 0.875rem;
+  margin: 0.5rem 0;
+}
+
+/* Line Details */
+.lignes-line-subtitle {
+  color: #6B7280;
+  font-size: 0.875rem;
+  margin: 0.25rem 0 0.75rem 0;
+}
+
+.lignes-line-details {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.lignes-line-detail {
+  font-size: 0.875rem;
+  color: #374151;
+  margin: 0;
+}
+
+.lignes-line-detail strong {
+  color: #111827;
+  font-weight: 600;
+}

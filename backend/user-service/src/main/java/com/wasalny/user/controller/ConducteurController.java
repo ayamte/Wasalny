@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/conducteur")
+@RequestMapping("/users/conducteur")
 public class ConducteurController {
     private final UserProfileService userProfileService;
 

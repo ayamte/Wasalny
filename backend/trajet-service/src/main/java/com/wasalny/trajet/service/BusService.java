@@ -1,6 +1,7 @@
 package com.wasalny.trajet.service;  
   
-import com.wasalny.trajet.dto.request.BusCreateDTO;  
+import com.wasalny.trajet.dto.request.BusCreateDTO;
+import com.wasalny.trajet.dto.request.BusUpdateDTO;
 import com.wasalny.trajet.dto.response.BusResponseDTO;  
 import com.wasalny.trajet.entity.Bus;  
 import com.wasalny.trajet.repository.BusRepository;  
@@ -87,27 +88,59 @@ public class BusService {
         busRepository.save(bus);  
     }  
       
-    /**  
-     * Obtenir l'entité Bus (pour usage interne)  
-     */  
-    public Bus obtenirBusEntity(UUID id) {  
-        return busRepository.findById(id)  
-            .orElseThrow(() -> new RuntimeException("Bus non trouvé avec l'ID: " + id));  
-    }  
-      
-    /**  
-     * Conversion entité -> DTO  
-     */  
-    private BusResponseDTO convertToResponseDTO(Bus bus) {  
-        BusResponseDTO dto = new BusResponseDTO();  
-        dto.setId(bus.getId());  
-        dto.setNumeroImmatriculation(bus.getNumeroImmatriculation());  
-        dto.setCapacite(bus.getCapacite());  
-        dto.setModele(bus.getModele());  
-        dto.setActive(bus.getActive());  
-        dto.setLatitudeActuelle(bus.getLatitudeActuelle());  
-        dto.setLongitudeActuelle(bus.getLongitudeActuelle());  
-        dto.setMetreAvantArret(bus.getMetreAvantArret());  
-        return dto;  
-    }  
+    /**
+     * Mettre à jour un bus
+     */
+    public BusResponseDTO mettreAJourBus(UUID id, BusUpdateDTO dto) {
+        Bus bus = busRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Bus non trouvé avec l'ID: " + id));
+
+        // Vérifier l'unicité de l'immatriculation si elle a changé
+        if (!bus.getNumeroImmatriculation().equals(dto.getNumeroImmatriculation())) {
+            if (busRepository.findByNumeroImmatriculation(dto.getNumeroImmatriculation()).isPresent()) {
+                throw new IllegalArgumentException("Un bus avec cette immatriculation existe déjà");
+            }
+        }
+
+        bus.setNumeroImmatriculation(dto.getNumeroImmatriculation());
+        bus.setCapacite(dto.getCapacite());
+        bus.setModele(dto.getModele());
+        bus.setActive(dto.getActive());
+
+        Bus updated = busRepository.save(bus);
+        return convertToResponseDTO(updated);
+    }
+
+    /**
+     * Supprimer un bus
+     */
+    public void supprimerBus(UUID id) {
+        Bus bus = busRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Bus non trouvé avec l'ID: " + id));
+        busRepository.delete(bus);
+    }
+
+    /**
+     * Obtenir l'entité Bus (pour usage interne)
+     */
+    public Bus obtenirBusEntity(UUID id) {
+        return busRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Bus non trouvé avec l'ID: " + id));
+    }
+
+    /**
+     * Conversion entité -> DTO
+     */
+    private BusResponseDTO convertToResponseDTO(Bus bus) {
+        BusResponseDTO dto = new BusResponseDTO();
+        dto.setId(bus.getId());
+        dto.setNumeroImmatriculation(bus.getNumeroImmatriculation());
+        dto.setCapacite(bus.getCapacite());
+        dto.setModele(bus.getModele());
+        dto.setActive(bus.getActive());
+        dto.setLatitudeActuelle(bus.getLatitudeActuelle());
+        dto.setLongitudeActuelle(bus.getLongitudeActuelle());
+        dto.setMetreAvantArret(bus.getMetreAvantArret());
+        return dto;
+    }
 }
