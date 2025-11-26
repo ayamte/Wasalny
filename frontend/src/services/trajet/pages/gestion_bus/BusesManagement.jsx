@@ -238,6 +238,10 @@ const BusesManagement = () => {
     setSelectedBusForAssignment(bus)
 
     // Reset form data
+    const today = new Date()
+    const oneMonthLater = new Date(today)
+    oneMonthLater.setMonth(oneMonthLater.getMonth() + 1)
+
     setAssignmentFormData({
       ligneId: '',
       stationDepartId: '',
@@ -245,8 +249,8 @@ const BusesManagement = () => {
       heureDepartAller: '09:00',
       commenceAStationDepart: true,
       driverId: '',
-      startDate: new Date().toISOString().split('T')[0],
-      endDate: '',
+      startDate: today.toISOString().split('T')[0],
+      endDate: oneMonthLater.toISOString().split('T')[0],
     })
 
     setShowAssignmentModal(true)
@@ -680,7 +684,7 @@ const BusesManagement = () => {
                 </div>
 
                 <div className="buses-form-group">
-                  <label>Conducteur (Optionnel)</label>
+                  <label>Conducteur</label>
                   <select
                     value={assignmentFormData.driverId}
                     onChange={(e) =>
@@ -701,7 +705,7 @@ const BusesManagement = () => {
                 </div>
 
                 <div className="buses-form-group">
-                  <label>Date de Début (Optionnel)</label>
+                  <label>Date de Début</label>
                   <input
                     type="date"
                     value={assignmentFormData.startDate}
@@ -719,7 +723,7 @@ const BusesManagement = () => {
                 </div>
 
                 <div className="buses-form-group">
-                  <label>Date de Fin (Optionnel)</label>
+                  <label>Date de Fin</label>
                   <input
                     type="date"
                     value={assignmentFormData.endDate}
