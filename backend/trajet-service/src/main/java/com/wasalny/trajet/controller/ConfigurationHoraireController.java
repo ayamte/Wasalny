@@ -41,13 +41,13 @@ public class ConfigurationHoraireController {
       
     /**
      * GET /configurations-horaires/{id} - Obtenir une configuration par ID
-     * Accessible par ADMIN, CONDUCTEUR
+     * Accessible uniquement par les ADMIN
      */
-    @PreAuthorize("hasAnyRole('ADMIN', 'CONDUCTEUR')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
-    public ResponseEntity<ConfigurationHoraireResponseDTO> obtenirConfiguration(@PathVariable UUID id) {  
-        ConfigurationHoraireResponseDTO config = configService.obtenirConfigurationParId(id);  
-        return ResponseEntity.ok(config);  
+    public ResponseEntity<ConfigurationHoraireResponseDTO> obtenirConfiguration(@PathVariable UUID id) {
+        ConfigurationHoraireResponseDTO config = configService.obtenirConfigurationParId(id);
+        return ResponseEntity.ok(config);
     }  
       
     /**
@@ -58,40 +58,73 @@ public class ConfigurationHoraireController {
     @PostMapping("/{configId}/generer-trips")
     public ResponseEntity<List<TripResponseDTO>> genererTripsJournee(
             @PathVariable UUID configId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {  
-          
-        // Générer les trips (retourne List<Trip>)  
-        List<Trip> trips = configService.genererTripsJournee(configId, date);  
-          
-        // Convertir en DTOs  
-        List<TripResponseDTO> tripDTOs = trips.stream()  
-            .map(trip -> tripService.convertToResponseDTO(trip))  
-            .collect(Collectors.toList());  
-          
-        return ResponseEntity.status(HttpStatus.CREATED).body(tripDTOs);  
-    }  
-      
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+
+        // Générer les trips (retourne List<Trip>)
+        List<Trip> trips = configService.genererTripsJournee(configId, date);
+
+        // Convertir en DTOs
+        List<TripResponseDTO> tripDTOs = trips.stream()
+            .map(trip -> tripService.convertToResponseDTO(trip))
+            .collect(Collectors.toList());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(tripDTOs);
+    }
+
+    /**
+     * POST /configurations-horaires/{configId}/generer-trips-periode - Générer les trips pour une période
+     * Accessible uniquement par les ADMIN
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/{configId}/generer-trips-periode")
+    public ResponseEntity<List<TripResponseDTO>> genererTripsPeriode(
+            @PathVariable UUID configId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateDebut,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFin) {
+
+        // Générer les trips pour toute la période
+        List<Trip> trips = configService.genererTripsPeriode(configId, dateDebut, dateFin);
+
+        // Convertir en DTOs
+        List<TripResponseDTO> tripDTOs = trips.stream()
+            .map(trip -> tripService.convertToResponseDTO(trip))
+            .collect(Collectors.toList());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(tripDTOs);
+    }
+
     /**
      * GET /configurations-horaires/ligne/{ligneId} - Obtenir les configurations d'une ligne
-     * Accessible par ADMIN, CONDUCTEUR
+     * Accessible uniquement par les ADMIN
      */
-    @PreAuthorize("hasAnyRole('ADMIN', 'CONDUCTEUR')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/ligne/{ligneId}")
     public ResponseEntity<List<ConfigurationHoraireResponseDTO>> obtenirConfigurationsParLigne(
-            @PathVariable UUID ligneId) {  
-        List<ConfigurationHoraireResponseDTO> configs = configService.obtenirConfigurationsParLigne(ligneId);  
-        return ResponseEntity.ok(configs);  
+            @PathVariable UUID ligneId) {
+        List<ConfigurationHoraireResponseDTO> configs = configService.obtenirConfigurationsParLigne(ligneId);
+        return ResponseEntity.ok(configs);
     }  
       
     /**
-     * GET /configurations-horaires/actives - Obtenir toutes les configurations actives
-     * Accessible par ADMIN, CONDUCTEUR
+     * GET /configurations-horaires - Obtenir toutes les configurations
+     * Accessible uniquement par les ADMIN
      */
-    @PreAuthorize("hasAnyRole('ADMIN', 'CONDUCTEUR')")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    public ResponseEntity<List<ConfigurationHoraireResponseDTO>> obtenirToutesConfigurations() {
+        List<ConfigurationHoraireResponseDTO> configs = configService.obtenirToutesConfigurations();
+        return ResponseEntity.ok(configs);
+    }
+
+    /**
+     * GET /configurations-horaires/actives - Obtenir toutes les configurations actives
+     * Accessible uniquement par les ADMIN
+     */
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/actives")
-    public ResponseEntity<List<ConfigurationHoraireResponseDTO>> obtenirConfigurationsActives() {  
-        List<ConfigurationHoraireResponseDTO> configs = configService.obtenirConfigurationsActives();  
-        return ResponseEntity.ok(configs);  
+    public ResponseEntity<List<ConfigurationHoraireResponseDTO>> obtenirConfigurationsActives() {
+        List<ConfigurationHoraireResponseDTO> configs = configService.obtenirConfigurationsActives();
+        return ResponseEntity.ok(configs);
     }  
       
     /**

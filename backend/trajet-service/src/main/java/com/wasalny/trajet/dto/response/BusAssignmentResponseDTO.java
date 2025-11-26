@@ -23,5 +23,6 @@ public class BusAssignmentResponseDTO {
     private String stationArriveeNom;
     private LocalTime heureDepartAller;
     private LocalTime heureDepartRetour;
+    private Boolean commenceAStationDepart;
     private Boolean active;
 }

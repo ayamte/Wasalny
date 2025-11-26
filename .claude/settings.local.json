@@ -7,7 +7,8 @@
       "Bash(curl:*)",
       "Bash(docker network:*)",
       "Bash(mkdir:*)",
-      "Bash(docker-compose up:*)"
+      "Bash(docker-compose up:*)",
+      "Bash(docker exec:*)"
     ],
     "deny": [],
     "ask": []

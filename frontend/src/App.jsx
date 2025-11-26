@@ -10,7 +10,10 @@ import AdminDashboard from './commun/admin/AdminDashboard'
 import ClientsManagement from './services/user/gestion_client/ClientsManagement'
 import DriversManagement from './services/user/gestion_conducteur/DriversManagement'
 import BusesManagement from './services/trajet/pages/gestion_bus/BusesManagement'
+import DriverDashboard from './services/trajet/pages/ProfilConducteur/profil'
 import AdminLayout from './components/admin/AdminLayout'
+import DriverLayout from './components/driver/DriverLayout'
+import BusDriverDashboard from './components/BusDriverDashboard'
 import * as authService from './services/auth/authService'
 
 // Protected Route Component
@@ -270,6 +273,30 @@ function App() {
           element={
             <ProtectedRoute>
               <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Driver Dashboard - Protected for CONDUCTEUR only */}
+        <Route
+          path="/conducteur/dashboard"
+          element={
+            <ProtectedRoute>
+              <DriverLayout>
+                <BusDriverDashboard />
+              </DriverLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Driver other pages */}
+        <Route
+          path="/conducteur/mes-trajets"
+          element={
+            <ProtectedRoute>
+              <DriverLayout>
+                <DriverDashboard />
+              </DriverLayout>
             </ProtectedRoute>
           }
         />

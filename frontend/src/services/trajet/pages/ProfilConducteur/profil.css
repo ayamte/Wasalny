@@ -1,0 +1,465 @@
+
+.driver-dashboard {
+  min-height: 100vh;
+  background-color: white;
+  padding: 2rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .driver-dashboard {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .driver-dashboard {
+    padding: 2rem 2rem;
+  }
+}
+
+.dashboard-container {
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+/* Dashboard Header */
+.dashboard-header {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid black;
+  padding-bottom: 1.5rem;
+}
+
+.dashboard-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: black;
+}
+
+@media (min-width: 640px) {
+  .dashboard-title {
+    font-size: 2.25rem;
+  }
+}
+
+.dashboard-subtitle {
+  margin-top: 0.5rem;
+  color: #4b5563;
+}
+
+/* Status Indicator */
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.status-dot {
+  height: 0.75rem;
+  width: 0.75rem;
+  border-radius: 9999px;
+}
+
+.status-idle {
+  background-color: #9ca3af;
+}
+
+.status-running {
+  background-color: #ea580c;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.status-finished {
+  background-color: #22c55e;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.status-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: black;
+  text-transform: capitalize;
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.controls-container {
+  margin-top: 2rem;
+}
+
+
+/* ===========================
+   INFO CARD STYLES (BusInfo & TripInfo)
+   =========================== */
+
+.info-card {
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background-color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 2px solid;
+}
+
+.card-header-orange {
+  background-color: #ea580c;
+  border-bottom-color: #ea580c;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.header-icon {
+  height: 1.5rem;
+  width: 1.5rem;
+  color: white;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: white;
+}
+
+.card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.info-row.no-border {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.info-label {
+  color: #4b5563;
+}
+
+.info-value {
+  font-weight: bold;
+  color: black;
+}
+
+.info-value-orange {
+  font-weight: bold;
+  color: #ea580c;
+}
+
+.info-value-green {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #22c55e;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* Capacity Section (BusInfo) */
+.capacity-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+  height: 0.5rem;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 9999px;
+  background-color: #e5e7eb;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #ea580c;
+  transition: width 0.3s ease;
+}
+
+.capacity-text {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+
+/* ===========================
+   TRIP INFO SPECIFIC STYLES
+   =========================== */
+
+.line-text {
+  font-size: 1.125rem;
+}
+
+/* Trip Times */
+.trip-times {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.time-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.time-label {
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.time-value {
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: bold;
+  color: black;
+}
+
+.time-icon {
+  height: 1rem;
+  width: 1rem;
+}
+
+/* Section Titles */
+.section-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.section-title-orange {
+  color: #ea580c;
+}
+
+/* Station Display */
+.station-name {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: black;
+}
+
+.station-icon {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.station-icon-orange {
+  color: #ea580c;
+}
+
+.station-icon-gray {
+  color: #9ca3af;
+}
+
+/* Last Confirmed Box */
+.confirmed-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  background-color: #f0fdf4;
+  padding: 0.75rem 1rem;
+}
+
+.confirmed-icon {
+  height: 1.25rem;
+  width: 1.25rem;
+  color: #22c55e;
+  flex-shrink: 0;
+}
+
+.confirmed-label {
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.confirmed-value {
+  font-weight: 600;
+  color: black;
+}
+
+/* Station Progress */
+.progress-section {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1rem;
+}
+
+.progress-title {
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.stations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.station-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.station-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  width: 2rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: bold;
+}
+
+.station-passed {
+  background-color: #22c55e;
+  color: white;
+}
+
+.station-current {
+  background-color: #ea580c;
+  color: white;
+  box-shadow: 0 0 0 2px #ea580c, 0 0 0 4px white;
+}
+
+.station-future {
+  background-color: #e5e7eb;
+  color: #4b5563;
+}
+
+.station-text {
+  font-size: 0.875rem;
+}
+
+.station-text-passed {
+  color: #22c55e;
+  text-decoration: line-through;
+}
+
+.station-text-current {
+  font-weight: bold;
+  color: black;
+}
+
+.station-text-future {
+  color: #4b5563;
+}
+
+
+/* ===========================
+   TRIP CONTROLS STYLES
+   =========================== */
+
+.trip-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .trip-controls {
+    flex-direction: row;
+  }
+}
+
+.control-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.control-btn:hover:not(:disabled) {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.control-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-icon {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+/* Button Variants */
+.control-btn-start {
+  background-color: #ea580c;
+}
+
+.control-btn-start:hover:not(:disabled) {
+  background-color: #c2410c;
+}
+
+.control-btn-confirm {
+  background-color: #22c55e;
+}
+
+.control-btn-confirm:hover:not(:disabled) {
+  background-color: #16a34a;
+}
+
+.control-btn-stop {
+  background-color: #dc2626;
+}
+
+.control-btn-stop:hover:not(:disabled) {
+  background-color: #b91c1c;
+}

@@ -110,4 +110,15 @@ public class BusController {
         busService.supprimerBus(id);
         return ResponseEntity.noContent().build();
     }
+
+    /**
+     * GET /buses/assigned - Obtenir le bus assigné au conducteur actuel
+     * Accessible uniquement par les CONDUCTEUR
+     */
+    @PreAuthorize("hasRole('CONDUCTEUR')")
+    @GetMapping("/assigned")
+    public ResponseEntity<BusResponseDTO> obtenirBusAssigne() {
+        BusResponseDTO bus = busService.obtenirBusAssigne();
+        return ResponseEntity.ok(bus);
+    }
 }

@@ -58,18 +58,27 @@ public class StationService {
         return convertToResponseDTO(station);  
     }  
       
-    /**  
-     * Obtenir une station par nom  
-     */  
-    public StationResponseDTO obtenirStationParNom(String nom) {  
-        Station station = stationRepository.findByNom(nom)  
-            .orElseThrow(() -> new RuntimeException("Station non trouvée avec le nom: " + nom));  
-        return convertToResponseDTO(station);  
-    }  
-      
-    /**  
-     * Désactiver une station  
-     */  
+    /**
+     * Obtenir une station par nom
+     */
+    public StationResponseDTO obtenirStationParNom(String nom) {
+        Station station = stationRepository.findByNom(nom)
+            .orElseThrow(() -> new RuntimeException("Station non trouvée avec le nom: " + nom));
+        return convertToResponseDTO(station);
+    }
+
+    /**
+     * Obtenir toutes les stations d'une ligne
+     */
+    public List<StationResponseDTO> obtenirStationsParLigne(UUID ligneId) {
+        return stationRepository.findStationsByLigneId(ligneId).stream()
+            .map(this::convertToResponseDTO)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Désactiver une station
+     */
     public void desactiverStation(UUID id) {  
         Station station = stationRepository.findById(id)  
             .orElseThrow(() -> new RuntimeException("Station non trouvée avec l'ID: " + id));  

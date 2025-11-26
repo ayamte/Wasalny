@@ -51,6 +51,10 @@ export const busAssignmentService = {
         busId: assignmentData.busId,
         ligneId: assignmentData.ligneId,
         stationDepartId: assignmentData.stationDepartId,
+        stationArriveeId: assignmentData.stationArriveeId,
+        heureDepartAller: assignmentData.heureDepartAller ? `${assignmentData.heureDepartAller}:00` : null,
+        heureDepartRetour: assignmentData.heureDepartRetour ? `${assignmentData.heureDepartRetour}:00` : null,
+        commenceAStationDepart: assignmentData.commenceAStationDepart !== undefined ? assignmentData.commenceAStationDepart : true,
       });
       return response.data;
     } catch (error) {

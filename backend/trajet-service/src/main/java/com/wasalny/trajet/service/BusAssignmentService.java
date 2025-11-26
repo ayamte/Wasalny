@@ -65,6 +65,7 @@ public class BusAssignmentService {
         assignment.setStationArrivee(stationArrivee);
         assignment.setHeureDepartAller(dto.getHeureDepartAller());
         assignment.setHeureDepartRetour(dto.getHeureDepartRetour());
+        assignment.setCommenceAStationDepart(dto.getCommenceAStationDepart() != null ? dto.getCommenceAStationDepart() : true);
         assignment.setActive(true);
 
         BusAssignment saved = busAssignmentRepository.save(assignment);
@@ -76,6 +77,58 @@ public class BusAssignmentService {
                 .stream()
                 .map(this::convertToResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Modifier une assignation existante
+     */
+    public BusAssignmentResponseDTO modifierAssignment(UUID assignmentId, BusAssignmentCreateDTO dto) {
+        BusAssignment assignment = busAssignmentRepository.findById(assignmentId)
+                .orElseThrow(() -> new RuntimeException("Assignation non trouvée: " + assignmentId));
+
+        // Vérifications
+        Bus bus = busRepository.findById(dto.getBusId())
+                .orElseThrow(() -> new RuntimeException("Bus non trouvé: " + dto.getBusId()));
+
+        Ligne ligne = ligneRepository.findById(dto.getLigneId())
+                .orElseThrow(() -> new RuntimeException("Ligne non trouvée: " + dto.getLigneId()));
+
+        Station stationDepart = stationRepository.findById(dto.getStationDepartId())
+                .orElseThrow(() -> new RuntimeException("Station de départ non trouvée: " + dto.getStationDepartId()));
+
+        Station stationArrivee = stationRepository.findById(dto.getStationArriveeId())
+                .orElseThrow(() -> new RuntimeException("Station d'arrivée non trouvée: " + dto.getStationArriveeId()));
+
+        // Vérifier que les stations appartiennent à la ligne
+        boolean departInLigne = ligne.getLigneStations().stream()
+                .anyMatch(ls -> ls.getStation().getId().equals(dto.getStationDepartId()));
+        boolean arriveeInLigne = ligne.getLigneStations().stream()
+                .anyMatch(ls -> ls.getStation().getId().equals(dto.getStationArriveeId()));
+        if (!departInLigne || !arriveeInLigne) {
+            throw new RuntimeException("Les stations de départ et d'arrivée doivent appartenir à la ligne");
+        }
+
+        // Mettre à jour l'assignation
+        assignment.setBus(bus);
+        assignment.setLigne(ligne);
+        assignment.setStationDepart(stationDepart);
+        assignment.setStationArrivee(stationArrivee);
+        assignment.setHeureDepartAller(dto.getHeureDepartAller());
+        assignment.setHeureDepartRetour(dto.getHeureDepartRetour());
+        assignment.setCommenceAStationDepart(dto.getCommenceAStationDepart() != null ? dto.getCommenceAStationDepart() : true);
+
+        BusAssignment updated = busAssignmentRepository.save(assignment);
+        return convertToResponseDTO(updated);
+    }
+
+    /**
+     * Supprimer une assignation
+     */
+    public void supprimerAssignment(UUID assignmentId) {
+        if (!busAssignmentRepository.existsById(assignmentId)) {
+            throw new RuntimeException("Assignation non trouvée: " + assignmentId);
+        }
+        busAssignmentRepository.deleteById(assignmentId);
     }
 
     public void desactiverAssignment(UUID assignmentId) {
@@ -98,6 +151,7 @@ public class BusAssignmentService {
         dto.setStationArriveeNom(assignment.getStationArrivee().getNom());
         dto.setHeureDepartAller(assignment.getHeureDepartAller());
         dto.setHeureDepartRetour(assignment.getHeureDepartRetour());
+        dto.setCommenceAStationDepart(assignment.getCommenceAStationDepart());
         dto.setActive(assignment.getActive());
         return dto;
     }

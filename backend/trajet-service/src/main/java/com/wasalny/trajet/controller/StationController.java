@@ -60,9 +60,20 @@ public class StationController {
      */
     @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN', 'CONDUCTEUR')")
     @GetMapping("/nom/{nom}")
-    public ResponseEntity<StationResponseDTO> obtenirStationParNom(@PathVariable String nom) {  
-        StationResponseDTO station = stationService.obtenirStationParNom(nom);  
-        return ResponseEntity.ok(station);  
+    public ResponseEntity<StationResponseDTO> obtenirStationParNom(@PathVariable String nom) {
+        StationResponseDTO station = stationService.obtenirStationParNom(nom);
+        return ResponseEntity.ok(station);
+    }
+
+    /**
+     * GET /stations/ligne/{ligneId} - Obtenir toutes les stations d'une ligne
+     * Accessible par CLIENT, ADMIN, CONDUCTEUR
+     */
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN', 'CONDUCTEUR')")
+    @GetMapping("/ligne/{ligneId}")
+    public ResponseEntity<List<StationResponseDTO>> obtenirStationsParLigne(@PathVariable UUID ligneId) {
+        List<StationResponseDTO> stations = stationService.obtenirStationsParLigne(ligneId);
+        return ResponseEntity.ok(stations);
     }  
       
     /**

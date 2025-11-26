@@ -17,11 +17,13 @@ public class ConfigurationHoraireResponseDTO {
     private LocalTime heureDebut;  
     private LocalTime heureFin;  
     private Integer frequenceMinutes;  
-    private Integer dureeAllerMinutes;      // ✅ Ajouté  
-    private Integer dureeRetourMinutes;     // ✅ Ajouté  
-    private Integer tempsPauseMinutes;  
-    private Integer tempsArretMinutes;  
-    private Integer nombreBus;  
-    private Boolean active;  
-    private LigneSimpleDTO ligne;  
+    private Integer dureeAllerMinutes;      // ✅ Ajouté
+    private Integer dureeRetourMinutes;     // ✅ Ajouté
+    private Integer tempsPauseMinutes;
+    private Integer tempsArretMinutes;
+    private Integer nombreBus;
+    private Integer nombreBusDepart;        // ✅ NOUVEAU: Nombre de bus au départ
+    private Integer nombreBusDestination;   // ✅ NOUVEAU: Nombre de bus à la destination
+    private Boolean active;
+    private LigneSimpleDTO ligne;
 }

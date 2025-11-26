@@ -46,4 +46,8 @@ public class BusAssignment {
 
     @Column(name = "active", nullable = false)
     private Boolean active = true;
+
+    // ✅ NOUVEAU: Indique si le bus commence sa journée à la station de départ (true) ou de destination (false)
+    @Column(name = "commence_a_station_depart", nullable = false)
+    private Boolean commenceAStationDepart = true;
 }

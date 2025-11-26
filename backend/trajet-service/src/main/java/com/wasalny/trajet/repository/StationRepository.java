@@ -1,15 +1,20 @@
-package com.wasalny.trajet.repository;  
-  
-import com.wasalny.trajet.entity.Station;  
-import org.springframework.data.jpa.repository.JpaRepository;  
-import org.springframework.stereotype.Repository;  
-  
-import java.util.List;  
-import java.util.Optional;  
-import java.util.UUID;  
-  
-@Repository  
-public interface StationRepository extends JpaRepository<Station, UUID> {  
-    Optional<Station> findByNom(String nom);  
-    List<Station> findByActiveTrue();  
+package com.wasalny.trajet.repository;
+
+import com.wasalny.trajet.entity.Station;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@Repository
+public interface StationRepository extends JpaRepository<Station, UUID> {
+    Optional<Station> findByNom(String nom);
+    List<Station> findByActiveTrue();
+
+    @Query("SELECT ls.station FROM LigneStation ls WHERE ls.ligne.id = :ligneId ORDER BY ls.ordre ASC")
+    List<Station> findStationsByLigneId(@Param("ligneId") UUID ligneId);
 }

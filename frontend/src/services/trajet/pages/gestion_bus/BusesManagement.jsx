@@ -3,11 +3,15 @@ import { Trash2, Plus, X, Edit2, Loader, UserCheck } from 'lucide-react'
 import { busService, handleApiError } from '../../configurationService'
 import { driversService } from '../../../user/driversService'
 import { assignationBusConducteurService } from '../../assignationBusConducteurService'
+import { ligneService, stationService } from '../../../../services/trajetService'
+import { busAssignmentService } from '../../busAssignmentService'
 import './BusesManagement.css'
 
 const BusesManagement = () => {
   const [buses, setBuses] = useState([])
   const [drivers, setDrivers] = useState([])
+  const [lines, setLines] = useState([])
+  const [stations, setStations] = useState([])
   const [busAssignments, setBusAssignments] = useState({})
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [showAssignmentModal, setShowAssignmentModal] = useState(false)
@@ -23,15 +27,22 @@ const BusesManagement = () => {
     active: true,
   })
   const [assignmentFormData, setAssignmentFormData] = useState({
+    ligneId: '',
+    stationDepartId: '',
+    stationArriveeId: '',
+    heureDepartAller: '09:00',
+    commenceAStationDepart: true,
     driverId: '',
     startDate: '',
     endDate: '',
   })
 
-  // Load buses and drivers on component mount
+  // Load buses, drivers, lines, and stations on component mount
   useEffect(() => {
     loadBuses()
     loadDrivers()
+    loadLines()
+    loadStations()
   }, [])
 
   // Load bus assignments
@@ -78,6 +89,28 @@ const BusesManagement = () => {
       setDrivers(data)
     } catch (err) {
       console.error('Error loading drivers:', err)
+    }
+  }
+
+  // Load all lines
+  const loadLines = async () => {
+    try {
+      const data = await ligneService.getAllLines()
+      setLines(data || [])
+    } catch (err) {
+      console.error('Error loading lines:', err)
+      setLines([])
+    }
+  }
+
+  // Load all stations
+  const loadStations = async () => {
+    try {
+      const data = await stationService.getAllStations()
+      setStations(data || [])
+    } catch (err) {
+      console.error('Error loading stations:', err)
+      setStations([])
     }
   }
 
@@ -204,33 +237,36 @@ const BusesManagement = () => {
   const handleOpenAssignmentModal = (bus) => {
     setSelectedBusForAssignment(bus)
 
-    // Pre-fill if there's an active assignment
-    const assignment = busAssignments[bus.id]
-    if (assignment) {
-      setAssignmentFormData({
-        driverId: assignment.conducteurId || '',
-        startDate: assignment.dateDebut || '',
-        endDate: assignment.dateFin || '',
-      })
-    } else {
-      setAssignmentFormData({
-        driverId: '',
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: '',
-      })
-    }
+    // Reset form data
+    setAssignmentFormData({
+      ligneId: '',
+      stationDepartId: '',
+      stationArriveeId: '',
+      heureDepartAller: '09:00',
+      commenceAStationDepart: true,
+      driverId: '',
+      startDate: new Date().toISOString().split('T')[0],
+      endDate: '',
+    })
 
     setShowAssignmentModal(true)
   }
 
   const handleAssignDriver = async () => {
-    // Validation
-    if (!assignmentFormData.driverId || !assignmentFormData.startDate || !assignmentFormData.endDate) {
-      showError('Veuillez remplir tous les champs')
+    // Validation - at least ligne/stations OR driver must be filled
+    const hasLigneAssignment = assignmentFormData.ligneId &&
+                                assignmentFormData.stationDepartId &&
+                                assignmentFormData.stationArriveeId;
+    const hasDriverAssignment = assignmentFormData.driverId &&
+                                 assignmentFormData.startDate &&
+                                 assignmentFormData.endDate;
+
+    if (!hasLigneAssignment && !hasDriverAssignment) {
+      showError('Veuillez remplir soit l\'assignation à une ligne (ligne + stations) soit l\'assignation à un conducteur')
       return
     }
 
-    if (new Date(assignmentFormData.endDate) <= new Date(assignmentFormData.startDate)) {
+    if (hasDriverAssignment && new Date(assignmentFormData.endDate) <= new Date(assignmentFormData.startDate)) {
       showError('La date de fin doit être après la date de début')
       return
     }
@@ -239,14 +275,35 @@ const BusesManagement = () => {
       setLoading(true)
       setError(null)
 
-      await assignationBusConducteurService.createAssignment({
-        busId: selectedBusForAssignment.id,
-        conducteurId: assignmentFormData.driverId,
-        dateDebut: assignmentFormData.startDate,
-        dateFin: assignmentFormData.endDate,
-      })
+      // Assign bus to ligne if ligne/stations are provided
+      if (hasLigneAssignment) {
+        await busAssignmentService.assignBus({
+          busId: selectedBusForAssignment.id,
+          ligneId: assignmentFormData.ligneId,
+          stationDepartId: assignmentFormData.stationDepartId,
+          stationArriveeId: assignmentFormData.stationArriveeId,
+          heureDepartAller: assignmentFormData.heureDepartAller,
+          commenceAStationDepart: assignmentFormData.commenceAStationDepart,
+        })
+      }
 
-      showSuccess('Conducteur assigné avec succès')
+      // Assign driver if driver info is provided
+      if (hasDriverAssignment) {
+        await assignationBusConducteurService.createAssignment({
+          busId: selectedBusForAssignment.id,
+          conducteurId: assignmentFormData.driverId,
+          dateDebut: assignmentFormData.startDate,
+          dateFin: assignmentFormData.endDate,
+        })
+      }
+
+      const successMsg = hasLigneAssignment && hasDriverAssignment
+        ? 'Bus assigné à la ligne et au conducteur avec succès'
+        : hasLigneAssignment
+          ? 'Bus assigné à la ligne avec succès'
+          : 'Conducteur assigné avec succès'
+
+      showSuccess(successMsg)
 
       // Reload buses and assignments
       await loadBuses()
@@ -257,7 +314,7 @@ const BusesManagement = () => {
     } catch (err) {
       const errorMsg = handleApiError(err)
       showError(errorMsg)
-      console.error('Error assigning driver:', err)
+      console.error('Error assigning bus:', err)
     } finally {
       setLoading(false)
     }
@@ -265,11 +322,11 @@ const BusesManagement = () => {
 
   return (
     <div className="buses-management">
-      <div className="page-container">
-        <div className="page-header">
-          <h1 className="page-title">Gestion des Bus</h1>
+      <div className="buses-page-container">
+        <div className="buses-page-header">
+          <h1 className="buses-page-title">Gestion des Bus</h1>
           <button
-            className="add-btn"
+            className="buses-add-btn"
             onClick={() => {
               setEditingId(null)
               setFormData({
@@ -289,30 +346,30 @@ const BusesManagement = () => {
 
         {/* Success Message */}
         {success && (
-          <div className="alert alert-success">
+          <div className="buses-alert buses-alert-success">
             {success}
           </div>
         )}
 
         {/* Error Message */}
         {error && (
-          <div className="alert alert-error">
+          <div className="buses-alert buses-alert-error">
             {error}
           </div>
         )}
 
         {/* Loading State */}
         {loading && !isModalOpen && (
-          <div className="loading-container">
-            <Loader className="spinner" size={40} />
+          <div className="buses-loading-container">
+            <Loader className="buses-spinner" size={40} />
             <p>Chargement...</p>
           </div>
         )}
 
         {/* Buses Table */}
         {!loading && (
-          <div className="table-container">
-            <table className="data-table">
+          <div className="buses-table-container">
+            <table className="buses-data-table">
               <thead>
                 <tr>
                   <th>Numéro d'Immatriculation</th>
@@ -352,12 +409,12 @@ const BusesManagement = () => {
                           )}
                         </td>
                         <td>
-                          <span className={`status-badge ${bus.active ? 'active' : 'inactive'}`}>
+                          <span className={`buses-status-badge ${bus.active ? 'active' : 'inactive'}`}>
                             {bus.active ? 'Actif' : 'Inactif'}
                           </span>
                         </td>
                         <td className="text-center">
-                          <div className="action-buttons">
+                          <div className="buses-action-buttons">
                             <button
                               className="assign-btn"
                               onClick={() => handleOpenAssignmentModal(bus)}
@@ -368,7 +425,7 @@ const BusesManagement = () => {
                               Assigner
                             </button>
                             <button
-                              className="edit-btn"
+                              className="buses-edit-btn"
                               onClick={() => handleEditBus(bus)}
                               disabled={loading}
                             >
@@ -376,7 +433,7 @@ const BusesManagement = () => {
                               Modifier
                             </button>
                             <button
-                              className="delete-btn"
+                              className="buses-delete-btn"
                               onClick={() => handleDeleteBus(bus.id)}
                               disabled={loading}
                             >
@@ -396,14 +453,14 @@ const BusesManagement = () => {
 
         {/* Add/Edit Modal */}
         {isModalOpen && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h2 className="modal-title">
+          <div className="buses-modal-overlay">
+            <div className="buses-modal-content">
+              <div className="buses-modal-header">
+                <h2 className="buses-modal-title">
                   {editingId ? 'Modifier Bus' : 'Ajouter un Bus'}
                 </h2>
                 <button
-                  className="close-btn"
+                  className="buses-close-btn"
                   onClick={() => setIsModalOpen(false)}
                   disabled={loading}
                 >
@@ -411,8 +468,8 @@ const BusesManagement = () => {
                 </button>
               </div>
 
-              <div className="modal-body">
-                <div className="form-group">
+              <div className="buses-modal-body">
+                <div className="buses-form-group">
                   <label>Numéro d'Immatriculation *</label>
                   <input
                     type="text"
@@ -428,7 +485,7 @@ const BusesManagement = () => {
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="buses-form-group">
                   <label>Modèle *</label>
                   <input
                     type="text"
@@ -441,7 +498,7 @@ const BusesManagement = () => {
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="buses-form-group">
                   <label>Capacité *</label>
                   <input
                     type="number"
@@ -459,7 +516,7 @@ const BusesManagement = () => {
                 </div>
 
                 {editingId && (
-                  <div className="form-group">
+                  <div className="buses-form-group">
                     <label>Statut *</label>
                     <select
                       value={formData.active === true ? 'active' : 'inactive'}
@@ -479,22 +536,22 @@ const BusesManagement = () => {
                 )}
               </div>
 
-              <div className="modal-footer">
+              <div className="buses-modal-footer">
                 <button
-                  className="cancel-btn"
+                  className="buses-cancel-btn"
                   onClick={() => setIsModalOpen(false)}
                   disabled={loading}
                 >
                   Annuler
                 </button>
                 <button
-                  className="submit-btn"
+                  className="buses-submit-btn"
                   onClick={handleAddOrUpdateBus}
                   disabled={loading}
                 >
                   {loading ? (
                     <>
-                      <Loader className="spinner-small" size={16} />
+                      <Loader className="buses-spinner-small" size={16} />
                       {editingId ? 'Modification...' : 'Ajout...'}
                     </>
                   ) : (
@@ -508,14 +565,14 @@ const BusesManagement = () => {
 
         {/* Assignment Modal */}
         {showAssignmentModal && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h2 className="modal-title">
-                  Assigner Conducteur - {selectedBusForAssignment?.numeroImmatriculation || selectedBusForAssignment?.registrationNumber}
+          <div className="buses-modal-overlay">
+            <div className="buses-modal-content">
+              <div className="buses-modal-header">
+                <h2 className="buses-modal-title">
+                  Assigner Bus à une Ligne - {selectedBusForAssignment?.numeroImmatriculation || selectedBusForAssignment?.registrationNumber}
                 </h2>
                 <button
-                  className="close-btn"
+                  className="buses-close-btn"
                   onClick={() => setShowAssignmentModal(false)}
                   disabled={loading}
                 >
@@ -523,9 +580,107 @@ const BusesManagement = () => {
                 </button>
               </div>
 
-              <div className="modal-body">
-                <div className="form-group">
-                  <label>Conducteur *</label>
+              <div className="buses-modal-body">
+                <div className="buses-form-group">
+                  <label>Ligne *</label>
+                  <select
+                    value={assignmentFormData.ligneId}
+                    onChange={(e) =>
+                      setAssignmentFormData({
+                        ...assignmentFormData,
+                        ligneId: e.target.value,
+                      })
+                    }
+                    disabled={loading}
+                  >
+                    <option value="">Sélectionner une ligne</option>
+                    {lines.map((line) => (
+                      <option key={line.id} value={line.id}>
+                        {line.nom || line.numero} - {line.numero}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="buses-form-group">
+                  <label>Station de Départ *</label>
+                  <select
+                    value={assignmentFormData.stationDepartId}
+                    onChange={(e) =>
+                      setAssignmentFormData({
+                        ...assignmentFormData,
+                        stationDepartId: e.target.value,
+                      })
+                    }
+                    disabled={loading}
+                  >
+                    <option value="">Sélectionner station de départ</option>
+                    {stations.map((station) => (
+                      <option key={station.id} value={station.id}>
+                        {station.nom}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="buses-form-group">
+                  <label>Station d'Arrivée *</label>
+                  <select
+                    value={assignmentFormData.stationArriveeId}
+                    onChange={(e) =>
+                      setAssignmentFormData({
+                        ...assignmentFormData,
+                        stationArriveeId: e.target.value,
+                      })
+                    }
+                    disabled={loading}
+                  >
+                    <option value="">Sélectionner station d'arrivée</option>
+                    {stations.map((station) => (
+                      <option key={station.id} value={station.id}>
+                        {station.nom}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="buses-form-group">
+                  <label>Heure de Départ (Aller) *</label>
+                  <input
+                    type="time"
+                    value={assignmentFormData.heureDepartAller}
+                    onChange={(e) =>
+                      setAssignmentFormData({
+                        ...assignmentFormData,
+                        heureDepartAller: e.target.value,
+                      })
+                    }
+                    disabled={loading}
+                  />
+                </div>
+
+                <div className="buses-form-group">
+                  <label>Le bus commence à *</label>
+                  <select
+                    value={assignmentFormData.commenceAStationDepart ? 'depart' : 'destination'}
+                    onChange={(e) =>
+                      setAssignmentFormData({
+                        ...assignmentFormData,
+                        commenceAStationDepart: e.target.value === 'depart',
+                      })
+                    }
+                    disabled={loading}
+                  >
+                    <option value="depart">Station de Départ (A)</option>
+                    <option value="destination">Station de Destination (B)</option>
+                  </select>
+                  <small style={{ color: '#666', marginTop: '5px', display: 'block' }}>
+                    Choisissez où ce bus commence sa journée pour la génération automatique des trips
+                  </small>
+                </div>
+
+                <div className="buses-form-group">
+                  <label>Conducteur (Optionnel)</label>
                   <select
                     value={assignmentFormData.driverId}
                     onChange={(e) =>
@@ -545,8 +700,8 @@ const BusesManagement = () => {
                   </select>
                 </div>
 
-                <div className="form-group">
-                  <label>Date de Début *</label>
+                <div className="buses-form-group">
+                  <label>Date de Début (Optionnel)</label>
                   <input
                     type="date"
                     value={assignmentFormData.startDate}
@@ -558,10 +713,13 @@ const BusesManagement = () => {
                     }
                     disabled={loading}
                   />
+                  <small style={{ color: '#666', marginTop: '5px', display: 'block' }}>
+                    Requis seulement si vous assignez un conducteur
+                  </small>
                 </div>
 
-                <div className="form-group">
-                  <label>Date de Fin *</label>
+                <div className="buses-form-group">
+                  <label>Date de Fin (Optionnel)</label>
                   <input
                     type="date"
                     value={assignmentFormData.endDate}
@@ -573,25 +731,28 @@ const BusesManagement = () => {
                     }
                     disabled={loading}
                   />
+                  <small style={{ color: '#666', marginTop: '5px', display: 'block' }}>
+                    Requis seulement si vous assignez un conducteur
+                  </small>
                 </div>
               </div>
 
-              <div className="modal-footer">
+              <div className="buses-modal-footer">
                 <button
-                  className="cancel-btn"
+                  className="buses-cancel-btn"
                   onClick={() => setShowAssignmentModal(false)}
                   disabled={loading}
                 >
                   Annuler
                 </button>
                 <button
-                  className="submit-btn"
+                  className="buses-submit-btn"
                   onClick={handleAssignDriver}
                   disabled={loading}
                 >
                   {loading ? (
                     <>
-                      <Loader className="spinner-small" size={16} />
+                      <Loader className="buses-spinner-small" size={16} />
                       Assignation...
                     </>
                   ) : (

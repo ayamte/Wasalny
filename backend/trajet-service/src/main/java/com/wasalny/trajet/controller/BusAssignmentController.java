@@ -43,6 +43,30 @@ public class BusAssignmentController {
     }
 
     /**
+     * PUT /bus-assignments/{id} - Modifier une assignation existante
+     * Accessible uniquement par les ADMIN
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}")
+    public ResponseEntity<BusAssignmentResponseDTO> modifierAssignment(
+            @PathVariable UUID id,
+            @Valid @RequestBody BusAssignmentCreateDTO dto) {
+        BusAssignmentResponseDTO assignment = busAssignmentService.modifierAssignment(id, dto);
+        return ResponseEntity.ok(assignment);
+    }
+
+    /**
+     * DELETE /bus-assignments/{id} - Supprimer une assignation
+     * Accessible uniquement par les ADMIN
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> supprimerAssignment(@PathVariable UUID id) {
+        busAssignmentService.supprimerAssignment(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
      * PUT /bus-assignments/{id}/desactiver - Désactiver une assignation
      * Accessible uniquement par les ADMIN
      */

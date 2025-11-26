@@ -1,25 +1,33 @@
-package com.wasalny.trajet.service;  
-  
+package com.wasalny.trajet.service;
+
 import com.wasalny.trajet.dto.request.BusCreateDTO;
 import com.wasalny.trajet.dto.request.BusUpdateDTO;
-import com.wasalny.trajet.dto.response.BusResponseDTO;  
-import com.wasalny.trajet.entity.Bus;  
-import com.wasalny.trajet.repository.BusRepository;  
-import lombok.RequiredArgsConstructor;  
-import org.springframework.stereotype.Service;  
-import org.springframework.transaction.annotation.Transactional;  
-  
-import java.math.BigDecimal;  
-import java.util.List;  
-import java.util.UUID;  
-import java.util.stream.Collectors;  
-  
-@Service  
-@Transactional  
-@RequiredArgsConstructor  
-public class BusService {  
-      
-    private final BusRepository busRepository;  
+import com.wasalny.trajet.dto.response.BusResponseDTO;
+import com.wasalny.trajet.entity.Bus;
+import com.wasalny.trajet.entity.AssignationBusConducteur;
+import com.wasalny.trajet.repository.BusRepository;
+import com.wasalny.trajet.repository.AssignationBusConducteurRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class BusService {
+
+    private final BusRepository busRepository;
+    private final AssignationBusConducteurRepository assignationRepository;  
       
     /**  
      * Créer un nouveau bus  
@@ -126,6 +134,43 @@ public class BusService {
     public Bus obtenirBusEntity(UUID id) {
         return busRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Bus non trouvé avec l'ID: " + id));
+    }
+
+    /**
+     * Obtenir le bus assigné au conducteur actuel
+     */
+    public BusResponseDTO obtenirBusAssigne() {
+        // Récupérer l'ID du conducteur depuis le contexte de sécurité
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non authentifié");
+        }
+
+        String conducteurIdStr = authentication.getName(); // L'ID utilisateur du JWT
+        UUID conducteurId;
+        try {
+            conducteurId = UUID.fromString(conducteurIdStr);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID conducteur invalide");
+        }
+
+        // Chercher l'assignation active pour aujourd'hui
+        LocalDate today = LocalDate.now();
+        List<AssignationBusConducteur> assignations = assignationRepository
+            .findByConducteurId(conducteurId)
+            .stream()
+            .filter(a -> a.getActive() &&
+                        !today.isBefore(a.getDateDebut()) &&
+                        !today.isAfter(a.getDateFin()))
+            .toList();
+
+        if (assignations.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Aucun bus assigné au conducteur");
+        }
+
+        // Prendre la première assignation active
+        Bus bus = assignations.get(0).getBus();
+        return convertToResponseDTO(bus);
     }
 
     /**

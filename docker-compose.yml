@@ -664,31 +664,31 @@
           cpus: '1'  
           memory: 1G  
   
-  # ==================== FRONTEND ====================  
-  frontend:  
-    build:  
-      context: ./frontend  
-      dockerfile: Dockerfile  
-    container_name: wasalny-frontend  
-    ports:  
-      - "3000:80"  
-    networks:  
-      - wasalny-network  
-    environment:  
-      - VITE_API_GATEWAY_URL=http://localhost:8080  
-    depends_on:  
-      api-gateway:  
-        condition: service_healthy  
-    restart: unless-stopped  
-    healthcheck:  
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:80"]  
-      interval: 30s  
-      timeout: 10s  
-      retries: 3  
-    deploy:  
-      resources:  
-        limits:  
-          cpus: '0.5'  
+  # ==================== FRONTEND ====================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: wasalny-frontend
+    ports:
+      - "3000:80"
+    networks:
+      - wasalny-network
+    environment:
+      - VITE_API_GATEWAY_URL=http://localhost:8080
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
           memory: 256M  
   
 # ==================== VOLUMES ====================  

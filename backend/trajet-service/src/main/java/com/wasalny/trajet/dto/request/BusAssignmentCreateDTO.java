@@ -29,4 +29,11 @@ public class BusAssignmentCreateDTO {
     private LocalTime heureDepartAller;
 
     private LocalTime heureDepartRetour;
+
+    /**
+     * Indique si le bus commence son cycle à la station de départ (true)
+     * ou à la station de destination (false)
+     * Par défaut: true (station de départ)
+     */
+    private Boolean commenceAStationDepart = true;
 }

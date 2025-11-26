@@ -1,10 +1,12 @@
-FROM node:18-alpine AS build  
-WORKDIR /app  
-  
-COPY package*.json ./  
-RUN npm install  
-  
-COPY . .  
+FROM node:18-alpine AS build
+WORKDIR /app
+
+COPY package*.json ./
+RUN rm -rf node_modules package-lock.json && \
+    npm install --legacy-peer-deps && \
+    npm install esbuild@latest --save-exact
+
+COPY . .
 RUN npm run build  
   
 FROM nginx:alpine  

@@ -1,6 +1,7 @@
 package com.wasalny.trajet.controller;
 
 import com.wasalny.trajet.dto.request.ConfirmerPassageDTO;
+import com.wasalny.trajet.dto.request.TripUpdateDTO;
 import com.wasalny.trajet.dto.response.TripResponseDTO;
 import com.wasalny.trajet.dto.search.TripSearchDTO;
 import com.wasalny.trajet.service.TripService;
@@ -207,8 +208,76 @@ public class TripController {
      */
     @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN', 'CONDUCTEUR')")
     @GetMapping("/{tripId}/places-disponibles")
-    public ResponseEntity<Integer> obtenirPlacesDisponibles(@PathVariable UUID tripId) {  
-        Integer places = tripService.obtenirPlacesDisponibles(tripId);  
-        return ResponseEntity.ok(places);  
-    }  
+    public ResponseEntity<Integer> obtenirPlacesDisponibles(@PathVariable UUID tripId) {
+        Integer places = tripService.obtenirPlacesDisponibles(tripId);
+        return ResponseEntity.ok(places);
+    }
+
+    /**
+     * DELETE /trips/{tripId} - Supprimer un trip
+     * Accessible uniquement par les ADMIN
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{tripId}")
+    public ResponseEntity<Void> supprimerTrip(@PathVariable UUID tripId) {
+        tripService.supprimerTrip(tripId);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * GET /trips - Obtenir tous les trips avec filtres optionnels
+     * Accessible uniquement par les ADMIN
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    public ResponseEntity<List<TripResponseDTO>> obtenirTousLesTrips(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateDebut,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFin,
+            @RequestParam(required = false) UUID ligneId,
+            @RequestParam(required = false) StatutTrip statut) {
+        System.out.println("=== GET /trips ===");
+        System.out.println("dateDebut: " + dateDebut);
+        System.out.println("dateFin: " + dateFin);
+        System.out.println("ligneId: " + ligneId);
+        System.out.println("statut: " + statut);
+
+        List<TripResponseDTO> trips = tripService.obtenirTripsAvecFiltres(dateDebut, dateFin, ligneId, statut);
+        System.out.println("Nombre de trips retournés: " + trips.size());
+        return ResponseEntity.ok(trips);
+    }
+
+    /**
+     * PUT /trips/{tripId} - Modifier un trip
+     * Accessible uniquement par les ADMIN
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{tripId}")
+    public ResponseEntity<TripResponseDTO> modifierTrip(
+            @PathVariable UUID tripId,
+            @RequestBody @Valid TripUpdateDTO updateDTO) {
+        TripResponseDTO tripModifie = tripService.modifierTrip(tripId, updateDTO);
+        return ResponseEntity.ok(tripModifie);
+    }
+
+    /**
+     * GET /trips/assigned - Obtenir le trip assigné au conducteur actuel
+     * Accessible uniquement par les CONDUCTEUR
+     */
+    @PreAuthorize("hasRole('CONDUCTEUR')")
+    @GetMapping("/assigned")
+    public ResponseEntity<TripResponseDTO> obtenirTripAssigne() {
+        TripResponseDTO trip = tripService.obtenirTripAssigne();
+        return ResponseEntity.ok(trip);
+    }
+
+    /**
+     * GET /trips/active - Obtenir le trip actif du conducteur actuel
+     * Accessible uniquement par les CONDUCTEUR
+     */
+    @PreAuthorize("hasRole('CONDUCTEUR')")
+    @GetMapping("/active")
+    public ResponseEntity<TripResponseDTO> obtenirTripActif() {
+        TripResponseDTO trip = tripService.obtenirTripActif();
+        return ResponseEntity.ok(trip);
+    }
 }

@@ -43,13 +43,21 @@ public class ConfigurationHoraire {
     @Column(name = "temps_arret_minutes", nullable = false)  
     private Integer tempsArretMinutes;  
       
-    @Column(name = "nombre_bus", nullable = false)  
-    private Integer nombreBus;  
-      
-    @Column(name = "active", nullable = false)  
-    private Boolean active = true;  // ✅ Changé de "actif" à "active"  
-      
-    @ManyToOne(fetch = FetchType.LAZY)  
-    @JoinColumn(name = "ligne_id", nullable = false)  
-    private Ligne ligne;  
+    @Column(name = "nombre_bus", nullable = false)
+    private Integer nombreBus;
+
+    // ✅ NOUVEAU: Nombre de bus assignés au départ (station A)
+    @Column(name = "nombre_bus_depart", nullable = false)
+    private Integer nombreBusDepart;
+
+    // ✅ NOUVEAU: Nombre de bus assignés à la destination (station B)
+    @Column(name = "nombre_bus_destination", nullable = false)
+    private Integer nombreBusDestination;
+
+    @Column(name = "active", nullable = false)
+    private Boolean active = true;  // ✅ Changé de "actif" à "active"
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ligne_id", nullable = false)
+    private Ligne ligne;
 }

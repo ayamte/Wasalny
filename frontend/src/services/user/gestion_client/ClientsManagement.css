@@ -4,25 +4,25 @@
   background-color: #F5F5F5;
 }
 
-.page-container {
+.clients-page-container {
   max-width: 1400px;
   margin: 0 auto;
 }
 
-.page-header {
+.clients-page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
 }
 
-.page-title {
+.clients-page-title {
   font-size: 2rem;
   font-weight: bold;
   color: #000000;
 }
 
-.add-btn {
+.clients-add-btn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -36,11 +36,11 @@
   transition: opacity 0.2s;
 }
 
-.add-btn:hover {
+.clients-add-btn:hover {
   opacity: 0.9;
 }
 
-.table-container {
+.clients-table-container {
   background-color: #FFFFFF;
   border: 1px solid #E0E0E0;
   border-radius: 0.5rem;
@@ -48,16 +48,16 @@
   overflow: hidden;
 }
 
-.data-table {
+.clients-data-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.data-table thead {
+.clients-data-table thead {
   background-color: #000000;
 }
 
-.data-table th {
+.clients-data-table th {
   padding: 1rem 1.5rem;
   text-align: left;
   font-size: 0.875rem;
@@ -65,30 +65,30 @@
   color: #FFFFFF;
 }
 
-.data-table th.text-center {
+.clients-data-table th.text-center {
   text-align: center;
 }
 
-.data-table tbody tr {
+.clients-data-table tbody tr {
   border-top: 1px solid #E0E0E0;
   transition: background-color 0.2s;
 }
 
-.data-table tbody tr:hover {
+.clients-data-table tbody tr:hover {
   background-color: #F5F5F5;
 }
 
-.data-table td {
+.clients-data-table td {
   padding: 1rem 1.5rem;
   font-size: 0.875rem;
   color: #000000;
 }
 
-.data-table td.text-center {
+.clients-data-table td.text-center {
   text-align: center;
 }
 
-.delete-btn {
+.clients-delete-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -102,12 +102,12 @@
   transition: opacity 0.2s;
 }
 
-.delete-btn:hover {
+.clients-delete-btn:hover {
   opacity: 0.8;
 }
 
 /* Modal Styles */
-.modal-overlay {
+.clients-modal-overlay {
   position: fixed;
   inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
@@ -118,7 +118,7 @@
   z-index: 50;
 }
 
-.modal-content {
+.clients-modal-content {
   background-color: #FFFFFF;
   border: 2px solid #FF6B35;
   border-radius: 0.5rem;
@@ -128,20 +128,20 @@
   padding: 1.5rem;
 }
 
-.modal-header {
+.clients-modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
 }
 
-.modal-title {
+.clients-modal-title {
   font-size: 1.5rem;
   font-weight: bold;
   color: #000000;
 }
 
-.close-btn {
+.clients-close-btn {
   padding: 0.5rem;
   background-color: #F5F5F5;
   border: none;
@@ -150,30 +150,30 @@
   transition: background-color 0.2s;
 }
 
-.close-btn:hover {
+.clients-close-btn:hover {
   background-color: #E0E0E0;
 }
 
-.modal-body {
+.clients-modal-body {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.form-group {
+.clients-form-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.form-group label {
+.clients-form-group label {
   font-size: 0.875rem;
   font-weight: 500;
   color: #000000;
 }
 
-.form-group input,
-.form-group select {
+.clients-form-group input,
+.clients-form-group select {
   padding: 0.75rem;
   border: 1px solid #333333;
   border-radius: 0.5rem;
@@ -181,21 +181,21 @@
   transition: border-color 0.2s;
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.clients-form-group input:focus,
+.clients-form-group select:focus {
   outline: none;
   border-color: #FF6B35;
   box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.1);
 }
 
-.modal-footer {
+.clients-modal-footer {
   display: flex;
   gap: 1rem;
   margin-top: 1.5rem;
 }
 
-.cancel-btn,
-.submit-btn {
+.clients-cancel-btn,
+.clients-submit-btn {
   flex: 1;
   padding: 0.75rem;
   border: none;
@@ -205,20 +205,20 @@
   transition: opacity 0.2s;
 }
 
-.cancel-btn {
+.clients-cancel-btn {
   background-color: #F5F5F5;
   color: #000000;
 }
 
-.cancel-btn:hover {
+.clients-cancel-btn:hover {
   opacity: 0.8;
 }
 
-.submit-btn {
+.clients-submit-btn {
   background-color: #FF6B35;
   color: #FFFFFF;
 }
 
-.submit-btn:hover {
+.clients-submit-btn:hover {
   opacity: 0.9;
 }

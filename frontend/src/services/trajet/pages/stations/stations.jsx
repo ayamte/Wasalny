@@ -164,7 +164,7 @@ export default function StationsPage() {
       )}
 
       {/* Navigation Bar */}
-      <nav className="stations-nav">
+      {/* <nav className="stations-nav">
         <div className="stations-nav-content">
           <p className="stations-nav-title">Gestion des Stations et Lignes</p>
           <button
@@ -174,7 +174,7 @@ export default function StationsPage() {
             Configuration Horaires
           </button>
         </div>
-      </nav>
+      </nav> */}
 
       {/* Header */}
       <header className="stations-header">

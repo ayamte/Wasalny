@@ -9,10 +9,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;  
 import java.util.UUID;  
   
-@Repository  
-public interface PassageStationRepository extends JpaRepository<PassageStation, UUID> {  
-    List<PassageStation> findByTripIdOrderByOrdreAsc(UUID tripId);  
-      
-    @Query("SELECT ps FROM PassageStation ps WHERE ps.trip.id = :tripId AND ps.confirme = false ORDER BY ps.ordre")  
-    List<PassageStation> findNonConfirmesByTrip(@Param("tripId") UUID tripId);  
+@Repository
+public interface PassageStationRepository extends JpaRepository<PassageStation, UUID> {
+    List<PassageStation> findByTripIdOrderByOrdreAsc(UUID tripId);
+    void deleteByTripId(UUID tripId);
+
+    @Query("SELECT ps FROM PassageStation ps WHERE ps.trip.id = :tripId AND ps.confirme = false ORDER BY ps.ordre")
+    List<PassageStation> findNonConfirmesByTrip(@Param("tripId") UUID tripId);
 }

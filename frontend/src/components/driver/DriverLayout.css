@@ -1,0 +1,203 @@
+/* Driver Layout - Toutes les classes sont préfixées avec "driver-" pour éviter les conflits */
+
+/* Container principal */
+.driver-layout-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+/* Sidebar */
+.driver-layout-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background-color: #ffffff;
+  border-right: 1px solid #000000;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+  z-index: 1000;
+}
+
+.driver-layout-sidebar.driver-sidebar-open {
+  width: 280px;
+}
+
+.driver-layout-sidebar.driver-sidebar-closed {
+  width: 80px;
+}
+
+/* Header de la sidebar */
+.driver-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 1.25rem;
+  border-bottom: 1px solid #000000;
+  background-color: #ea580c;
+}
+
+.driver-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.driver-logo-icon {
+  width: 32px;
+  height: 32px;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.driver-logo-text {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #ffffff;
+  white-space: nowrap;
+  transition: opacity 0.3s ease;
+}
+
+.driver-logo-text.driver-hidden {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+.driver-toggle-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  transition: background-color 0.2s ease;
+}
+
+.driver-toggle-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Navigation */
+.driver-sidebar-nav {
+  flex: 1;
+  padding: 1.5rem 0;
+  overflow-y: auto;
+}
+
+.driver-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  color: #000000;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+}
+
+.driver-nav-item:hover {
+  background-color: #f5f5f5;
+  border-left-color: #ea580c;
+}
+
+.driver-nav-item.driver-nav-active {
+  background-color: #fff5f0;
+  border-left-color: #ea580c;
+  color: #ea580c;
+  font-weight: 600;
+}
+
+.driver-nav-label {
+  font-size: 0.9375rem;
+  white-space: nowrap;
+  transition: opacity 0.3s ease;
+}
+
+.driver-nav-label.driver-hidden {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+/* Footer de la sidebar */
+.driver-sidebar-footer {
+  padding: 1.25rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.driver-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  color: #000000;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.driver-logout-btn:hover {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+/* Contenu principal */
+.driver-layout-main {
+  flex: 1;
+  transition: margin-left 0.3s ease;
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+.driver-layout-main.driver-main-sidebar-open {
+  margin-left: 280px;
+}
+
+.driver-layout-main.driver-main-sidebar-closed {
+  margin-left: 80px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .driver-layout-sidebar {
+    transform: translateX(-100%);
+  }
+
+  .driver-layout-sidebar.driver-sidebar-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .driver-layout-main {
+    margin-left: 0 !important;
+  }
+}
+
+/* Scrollbar personnalisée */
+.driver-sidebar-nav::-webkit-scrollbar {
+  width: 6px;
+}
+
+.driver-sidebar-nav::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+.driver-sidebar-nav::-webkit-scrollbar-thumb {
+  background: #ea580c;
+  border-radius: 3px;
+}
+
+.driver-sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: #c2410c;
+}

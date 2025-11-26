@@ -92,18 +92,18 @@ public class AssignationBusConducteurService {
             .collect(Collectors.toList());  
     }  
       
-    /**  
-     * Obtenir l'assignation active d'un bus à une date donnée  
-     */  
-    public AssignationBusConducteurResponseDTO obtenirAssignationActive(UUID busId, LocalDate date) {  
-        List<AssignationBusConducteur> assignations =   
-            assignationRepository.findActiveAssignationForBusAtDate(busId, date, date);  
-          
-        if (assignations.isEmpty()) {  
-            throw new RuntimeException("Aucune assignation active trouvée pour ce bus à cette date");  
-        }  
-          
-        return convertToResponseDTO(assignations.get(0));  
+    /**
+     * Obtenir l'assignation active d'un bus à une date donnée
+     */
+    public AssignationBusConducteurResponseDTO obtenirAssignationActive(UUID busId, LocalDate date) {
+        List<AssignationBusConducteur> assignations =
+            assignationRepository.findActiveAssignationForBusAtDate(busId, date, date);
+
+        if (assignations.isEmpty()) {
+            return null; // Pas d'assignation active, retourner null au lieu d'erreur
+        }
+
+        return convertToResponseDTO(assignations.get(0));
     }  
       
     /**  

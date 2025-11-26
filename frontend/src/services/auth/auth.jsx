@@ -28,7 +28,15 @@ export default function AuthPage() {
     if (authService.isAuthenticated()) {
       const user = authService.getUser()
       console.log('User already authenticated:', user)
-      const redirectPath = user?.role === 'ADMIN' ? '/admin/dashboard' : '/trajet/recherche'
+
+      // Redirect based on user role
+      let redirectPath = '/trajet/recherche' // Default for CLIENT
+      if (user?.role === 'ADMIN') {
+        redirectPath = '/admin/dashboard'
+      } else if (user?.role === 'CONDUCTEUR') {
+        redirectPath = '/conducteur/dashboard'
+      }
+
       console.log('Redirecting authenticated user to:', redirectPath)
       navigate(redirectPath, { replace: true })
     }
@@ -177,7 +185,12 @@ export default function AuthPage() {
         showToast('Login successful!', 'success')
 
         // Redirect based on role
-        const redirectPath = response.role === 'ADMIN' ? '/admin/dashboard' : '/trajet/recherche'
+        let redirectPath = '/trajet/recherche' // Default for CLIENT
+        if (response.role === 'ADMIN') {
+          redirectPath = '/admin/dashboard'
+        } else if (response.role === 'CONDUCTEUR') {
+          redirectPath = '/conducteur/dashboard'
+        }
         console.log('Redirecting to:', redirectPath, 'Role:', response.role)
         setTimeout(() => navigate(redirectPath), 1500)
       } else {

@@ -42,9 +42,12 @@ public class AssignationBusConducteurController {
     @GetMapping("/bus/{busId}/active")
     public ResponseEntity<AssignationBusConducteurResponseDTO> obtenirAssignationActive(
             @PathVariable UUID busId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {  
-        AssignationBusConducteurResponseDTO assignation = assignationService.obtenirAssignationActive(busId, date);  
-        return ResponseEntity.ok(assignation);  
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        AssignationBusConducteurResponseDTO assignation = assignationService.obtenirAssignationActive(busId, date);
+        if (assignation == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(assignation);
     }  
       
     /**

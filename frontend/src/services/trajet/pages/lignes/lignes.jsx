@@ -164,7 +164,7 @@ export default function LinesPage() {
       )}
 
       {/* Navigation Bar */}
-      <nav className="lignes-nav">
+      {/* <nav className="lignes-nav">
         <div className="lignes-nav-content">
           <p className="lignes-nav-title">Gestion des Stations et Lignes</p>
           <div className="lignes-nav-buttons">
@@ -182,7 +182,7 @@ export default function LinesPage() {
             </button>
           </div>
         </div>
-      </nav>
+      </nav> */}
 
       {/* Header */}
       <header className="lignes-header">

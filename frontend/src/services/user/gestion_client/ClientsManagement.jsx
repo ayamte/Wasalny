@@ -48,17 +48,17 @@ const ClientsManagement = () => {
 
   return (
     <div className="clients-management">
-      <div className="page-container">
-        <div className="page-header">
-          <h1 className="page-title">Gestion des Clients</h1>
-          <button className="add-btn" onClick={() => setIsModalOpen(true)}>
+      <div className="clients-page-container">
+        <div className="clients-page-header">
+          <h1 className="clients-page-title">Gestion des Clients</h1>
+          <button className="clients-add-btn" onClick={() => setIsModalOpen(true)}>
             <Plus size={20} />
             Ajouter Client
           </button>
         </div>
 
-        <div className="table-container">
-          <table className="data-table">
+        <div className="clients-table-container">
+          <table className="clients-data-table">
             <thead>
               <tr>
                 <th>Nom</th>
@@ -79,7 +79,7 @@ const ClientsManagement = () => {
                   <td>{client.username}</td>
                   <td className="text-center">
                     <button
-                      className="delete-btn"
+                      className="clients-delete-btn"
                       onClick={() => handleDeleteClient(client.id)}
                     >
                       <Trash2 size={16} />
@@ -93,20 +93,20 @@ const ClientsManagement = () => {
         </div>
 
         {isModalOpen && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h2 className="modal-title">Ajouter un Client</h2>
+          <div className="clients-modal-overlay">
+            <div className="clients-modal-content">
+              <div className="clients-modal-header">
+                <h2 className="clients-modal-title">Ajouter un Client</h2>
                 <button
-                  className="close-btn"
+                  className="clients-close-btn"
                   onClick={() => setIsModalOpen(false)}
                 >
                   <X size={20} />
                 </button>
               </div>
 
-              <div className="modal-body">
-                <div className="form-group">
+              <div className="clients-modal-body">
+                <div className="clients-form-group">
                   <label>Prénom</label>
                   <input
                     type="text"
@@ -117,7 +117,7 @@ const ClientsManagement = () => {
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="clients-form-group">
                   <label>Nom</label>
                   <input
                     type="text"
@@ -128,7 +128,7 @@ const ClientsManagement = () => {
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="clients-form-group">
                   <label>Email</label>
                   <input
                     type="email"
@@ -139,7 +139,7 @@ const ClientsManagement = () => {
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="clients-form-group">
                   <label>Mot de passe</label>
                   <input
                     type="password"
@@ -150,7 +150,7 @@ const ClientsManagement = () => {
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="clients-form-group">
                   <label>Téléphone</label>
                   <input
                     type="text"
@@ -161,7 +161,7 @@ const ClientsManagement = () => {
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="clients-form-group">
                   <label>Nom d'utilisateur</label>
                   <input
                     type="text"
@@ -173,14 +173,14 @@ const ClientsManagement = () => {
                 </div>
               </div>
 
-              <div className="modal-footer">
+              <div className="clients-modal-footer">
                 <button
-                  className="cancel-btn"
+                  className="clients-cancel-btn"
                   onClick={() => setIsModalOpen(false)}
                 >
                   Annuler
                 </button>
-                <button className="submit-btn" onClick={handleAddClient}>
+                <button className="clients-submit-btn" onClick={handleAddClient}>
                   Ajouter
                 </button>
               </div>
