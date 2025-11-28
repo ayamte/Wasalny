@@ -23,6 +23,7 @@ export default function Navbar() {
   const navLinks = [
     { label: 'Accueil', href: '/trajet/recherche' },
     { label: 'Abonnement', href: '/abonnement' },
+    { label: 'Mes Tickets', href: '/tickets' },
     { label: 'Mes Trajets', href: '/mes-trajets' },
   ]
 

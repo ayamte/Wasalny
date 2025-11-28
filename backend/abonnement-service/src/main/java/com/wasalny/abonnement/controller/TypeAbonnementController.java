@@ -71,11 +71,15 @@ public class TypeAbonnementController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TypeAbonnementResponse> creerTypeAbonnement(
-            @RequestBody @Valid TypeAbonnementRequest request) {  
-        log.info("Création d'un nouveau type d'abonnement: {}", request.getNom());  
-        
-        TypeAbonnement typeAbonnement = abonnementService.creerTypeAbonnement(request);  
-        return ResponseEntity.status(HttpStatus.CREATED)  
-                .body(TypeAbonnementResponse.fromEntity(typeAbonnement));  
+            @RequestBody @Valid TypeAbonnementRequest request) {
+        log.info("=== DÉBUT Création type abonnement ===");
+        log.info("Utilisateur authentifié: {}", org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName());
+        log.info("Autorités: {}", org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+        log.info("Création d'un nouveau type d'abonnement: {}", request.getNom());
+
+        TypeAbonnement typeAbonnement = abonnementService.creerTypeAbonnement(request);
+        log.info("=== FIN Création type abonnement - Succès ===");
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(TypeAbonnementResponse.fromEntity(typeAbonnement));
     }
 }
