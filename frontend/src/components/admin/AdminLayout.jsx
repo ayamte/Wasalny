@@ -9,6 +9,7 @@ import {
   Bus,
   UserCheck,
   CreditCard,
+  Bell,
   LogOut,
   Menu,
   X
@@ -29,6 +30,7 @@ const AdminLayout = ({ children }) => {
     { path: '/admin/bus', icon: Bus, label: 'Gestion Bus' },
     { path: '/admin/clients', icon: Users, label: 'Gestion Clients' },
     { path: '/admin/abonnements', icon: CreditCard, label: 'Gestion Abonnements' },
+    { path: '/admin/notifications', icon: Bell, label: 'Notifications' },
   ]
 
   const handleLogout = () => {

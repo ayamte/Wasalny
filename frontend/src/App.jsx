@@ -14,6 +14,7 @@ import DriverDashboard from './services/trajet/pages/ProfilConducteur/profil'
 import AdminLayout from './components/admin/AdminLayout'
 import DriverLayout from './components/driver/DriverLayout'
 import BusDriverDashboard from './components/BusDriverDashboard'
+import NotificationsManagement from './services/notification/NotificationsManagement'
 import * as authService from './services/auth/authService'
 
 // Protected Route Component
@@ -250,7 +251,27 @@ function App() {
             </ProtectedRoute>
           }
         />
-        
+        <Route
+          path="/admin/notifications"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <AdminLayout>
+                <NotificationsManagement />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Notifications for regular users */}
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <NotificationsManagement />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Trip Search routes - Main landing page after login */}
         <Route
           path="/trajet/recherche"
