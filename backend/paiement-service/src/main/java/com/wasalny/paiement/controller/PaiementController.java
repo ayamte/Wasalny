@@ -45,13 +45,13 @@ public class PaiementController {
     }  
       
     @PostMapping("/{id}/traiter")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TransactionResponse> traiterPaiement(@PathVariable UUID id) {  
-        log.info("Traitement paiement: {}", id);  
-          
-        Transaction transaction = paiementService.traiterPaiement(id);  
-          
-        return ResponseEntity.ok(TransactionResponse.fromEntity(transaction));  
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
+    public ResponseEntity<TransactionResponse> traiterPaiement(@PathVariable UUID id) {
+        log.info("Traitement paiement: {}", id);
+
+        Transaction transaction = paiementService.traiterPaiement(id);
+
+        return ResponseEntity.ok(TransactionResponse.fromEntity(transaction));
     }  
       
     @GetMapping("/{id}")

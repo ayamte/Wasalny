@@ -46,10 +46,10 @@ public class TicketController {
     }  
       
     @PutMapping("/{id}/annuler")
-    @PreAuthorize("hasRole('CLIENT')")
-    public ResponseEntity<TicketResponse> annulerTicket(@PathVariable UUID id) {  
-        Ticket ticket = ticketService.annulerTicket(id);  
-        return ResponseEntity.ok(TicketResponse.fromEntity(ticket));  
+    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
+    public ResponseEntity<TicketResponse> annulerTicket(@PathVariable UUID id) {
+        Ticket ticket = ticketService.annulerTicket(id);
+        return ResponseEntity.ok(TicketResponse.fromEntity(ticket));
     }  
     @PutMapping("/{id}/rembourser")
     @PreAuthorize("hasRole('ADMIN')")
