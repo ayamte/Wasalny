@@ -11,6 +11,7 @@ import ClientsManagement from './services/user/gestion_client/ClientsManagement'
 import DriversManagement from './services/user/gestion_conducteur/DriversManagement'
 import BusesManagement from './services/trajet/pages/gestion_bus/BusesManagement'
 import AdminLayout from './components/admin/AdminLayout'
+import NotificationsPage from './services/notification/pages/notifications/notifications'
 import * as authService from './services/auth/authService'
 
 // Protected Route Component
@@ -136,6 +137,18 @@ function HomePage() {
             Chercher et réserver des trajets
           </p>
         </Link>
+          
+        <Link   
+          to={isAuth ? "/notifications" : "/auth"}  
+          className="p-6 bg-yellow-50 border-2 border-yellow-200 rounded-lg hover:shadow-lg transition"  
+        >  
+          <h2 className="text-xl font-bold text-yellow-600 mb-2">  
+            🔔 Notifications  
+          </h2>  
+          <p className="text-gray-600">  
+            Voir vos notifications  
+          </p>  
+        </Link> 
       </div>
     </div>
   )
@@ -272,6 +285,15 @@ function App() {
               <ProfilePage />
             </ProtectedRoute>
           }
+        />
+        {/* Notifications Page - Protected */}  
+        <Route  
+          path="/notifications"  
+          element={  
+            <ProtectedRoute>  
+              <NotificationsPage />  
+            </ProtectedRoute>  
+          }  
         />
 
         {/* Redirect unknown routes to home */}
