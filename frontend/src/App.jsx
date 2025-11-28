@@ -4,6 +4,7 @@ import ConfigurationPage from './services/trajet/pages/configuration/configurati
 import { SearchTripsPage, TripsPage } from './services/trajet/pages/recherche/recherche'
 import LinesPage from './services/trajet/pages/lignes/lignes'
 import StationsPage from './services/trajet/pages/stations/stations'
+import GeolocalisationPage from './services/trajet/pages/geolocalisation/geolocalisation'
 import AuthPage from './services/auth/auth'
 import ProfilePage from './services/user/profile'
 import AdminDashboard from './commun/admin/AdminDashboard'
@@ -226,6 +227,16 @@ function App() {
               </AdminLayout>
             </ProtectedRoute>
           }
+        />
+        <Route  
+          path="/admin/geolocalisation"  
+          element={  
+            <ProtectedRoute adminOnly={true}>  
+              <AdminLayout>  
+                <GeolocalisationPage />  
+              </AdminLayout>  
+            </ProtectedRoute>  
+          }  
         />
         <Route
           path="/admin/clients"

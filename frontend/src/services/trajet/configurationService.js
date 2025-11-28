@@ -350,3 +350,19 @@ export const handleApiError = (error) => {
 };
 
 export default api;
+export const locationService = {  
+  getLatestLocation: async (busId) => {  
+    const response = await api.get(`/locations/latest?busId=${busId}`)  
+    return response.data  
+  },  
+    
+  getBusLocations: async (busId) => {  
+    const response = await api.get(`/locations?busId=${busId}`)  
+    return response.data  
+  },  
+  
+  getNearbyLocations: async (latitude, longitude, radiusKm = 5) => {  
+    const response = await api.get(`/locations/nearby?latitude=${latitude}&longitude=${longitude}&radiusKm=${radiusKm}`)  
+    return response.data  
+  }  
+}

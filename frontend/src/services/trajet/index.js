@@ -8,6 +8,7 @@ export {
   stationService,
   busService,
   tripService,
+  locationService,
   handleApiError,
 } from './configurationService';
 
@@ -106,6 +107,7 @@ export default {
   stationService,
   busService,
   tripService,
+  locationService,
   handleApiError,
   ENDPOINTS,
   trajetUtils,
