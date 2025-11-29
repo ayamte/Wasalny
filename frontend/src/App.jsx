@@ -20,6 +20,7 @@ import PaymentPage from './services/paiement/PaymentPage'
 import TicketPage from './services/ticket/TicketPage'
 import AbonnementPage from './services/abonnement/AbonnementPage'
 import TypeAbonnementSelection from './services/abonnement/components/TypeAbonnementSelection'
+import NotificationPage from './services/notification/NotificationPage'
 import * as authService from './services/auth/authService'  
   
 // Protected Route Component  
@@ -334,6 +335,14 @@ function App() {
           element={
             <ProtectedRoute>
               <TypeAbonnementSelection />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <NotificationPage />
             </ProtectedRoute>
           }
         />

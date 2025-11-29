@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Menu, X, ChevronDown, LogOut, Settings, User } from 'lucide-react'
+import { Menu, X, ChevronDown, LogOut, Settings, User, Bell } from 'lucide-react'
 import * as authService from '../services/auth/authService'
 import './Navbar.css'
 
@@ -22,6 +22,7 @@ export default function Navbar() {
 
   const navLinks = [
     { label: 'Accueil', href: '/trajet/recherche' },
+    { label: 'Notifications', href: '/notifications' },
     { label: 'Abonnement', href: '/abonnement' },
     { label: 'Mes Tickets', href: '/tickets' },
     { label: 'Mes Trajets', href: '/mes-trajets' },

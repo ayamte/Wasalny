@@ -1,0 +1,23 @@
+export const NOTIFICATION_TYPES = {
+  PAYMENT: 'PAYMENT',
+  TICKET: 'TICKET',
+  SUBSCRIPTION: 'SUBSCRIPTION'
+};
+
+export const NOTIFICATION_TYPE_LABELS = {
+  PAYMENT: 'Paiement',
+  TICKET: 'Ticket',
+  SUBSCRIPTION: 'Abonnement'
+};
+
+export const NOTIFICATION_TYPE_COLORS = {
+  PAYMENT: '#10b981',
+  TICKET: '#3b82f6',
+  SUBSCRIPTION: '#f59e0b'
+};
+
+export const NOTIFICATION_TYPE_ICONS = {
+  PAYMENT: '💰',
+  TICKET: '🎫',
+  SUBSCRIPTION: '📅'
+};

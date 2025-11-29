@@ -1,0 +1,197 @@
+/* Notification Page Styles */
+
+.notification-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffffff 0%, #fff5f0 100%);
+  padding: 2rem 1rem;
+}
+
+.notification-container {
+  max-width: 64rem;
+  margin: 0 auto;
+}
+
+/* Header Styles */
+.notification-header {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Badge Styles */
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background-color: #ef4444;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 0.125rem 0.375rem;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Card Styles */
+.notification-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.notification-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.notification-card.unread {
+  background-color: #f0f9ff;
+  border: 2px solid #3b82f6;
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.1);
+}
+
+.notification-card.read {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Filter Styles */
+.notification-filter-button {
+  transition: all 0.3s ease;
+}
+
+.notification-filter-button:hover {
+  transform: translateY(-1px);
+}
+
+.notification-filter-button.active {
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
+}
+
+/* Alert Styles */
+.notification-alert {
+  animation: slideInDown 0.3s ease-out;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modal Styles */
+.notification-modal-overlay {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.notification-modal-content {
+  animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading Spinner */
+.notification-loading {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .notification-page {
+    padding: 1rem 0.5rem;
+  }
+
+  .notification-header {
+    padding: 1.5rem;
+  }
+
+  .notification-container {
+    padding: 0;
+  }
+
+  .notification-card {
+    padding: 1rem;
+  }
+}
+
+/* Empty State */
+.notification-empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #9ca3af;
+}
+
+.notification-empty-icon {
+  margin: 0 auto 1rem;
+  opacity: 0.3;
+}
+
+/* Type Colors */
+.notification-type-payment {
+  color: #10b981;
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.notification-type-ticket {
+  color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.notification-type-subscription {
+  color: #f59e0b;
+  background-color: rgba(245, 158, 11, 0.1);
+}
+
+/* Unread Indicator */
+.notification-unread-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #3b82f6;
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
