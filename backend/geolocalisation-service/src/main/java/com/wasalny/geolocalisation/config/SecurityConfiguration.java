@@ -24,6 +24,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/ws/**").permitAll() // Allow WebSocket connections
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
