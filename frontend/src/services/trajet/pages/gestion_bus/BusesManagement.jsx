@@ -673,10 +673,18 @@ const BusesManagement = () => {
                         commenceAStationDepart: e.target.value === 'depart',
                       })
                     }
-                    disabled={loading}
+                    disabled={loading || !assignmentFormData.stationDepartId || !assignmentFormData.stationArriveeId}
                   >
-                    <option value="depart">Station de Départ (A)</option>
-                    <option value="destination">Station de Destination (B)</option>
+                    <option value="depart">
+                      {assignmentFormData.stationDepartId
+                        ? stations.find(s => s.id === assignmentFormData.stationDepartId)?.nom || 'Station de Départ'
+                        : 'Station de Départ'}
+                    </option>
+                    <option value="destination">
+                      {assignmentFormData.stationArriveeId
+                        ? stations.find(s => s.id === assignmentFormData.stationArriveeId)?.nom || 'Station de Destination'
+                        : 'Station de Destination'}
+                    </option>
                   </select>
                   <small style={{ color: '#666', marginTop: '5px', display: 'block' }}>
                     Choisissez où ce bus commence sa journée pour la génération automatique des trips

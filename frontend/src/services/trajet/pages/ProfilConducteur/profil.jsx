@@ -1,529 +1,747 @@
 import React, { useState, useEffect } from 'react';
-import './profil.css';
-import * as authService from '../../../auth/authService';
-import * as conducteurService from '../../../conducteurService';
+import { Bus, Play, CheckCircle, Square, MapPin, Clock, AlertCircle } from 'lucide-react';
+import {
+  getTripAssigne,
+  getTripActif,
+  demarrerTrip,
+  terminerTrip,
+  confirmerPassage
+} from '../../../../conducteurService';
 
-// BusInfo Component - Affiche les infos du bus assigné
-function BusInfo({ assignation, currentTrip }) {
-  if (!assignation || !assignation.bus) {
-    return (
-      <div className="info-card">
-        <div className="card-header card-header-orange">
-          <div className="header-content">
-            <svg className="header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-            </svg>
-            <h2 className="header-title">Mon Bus</h2>
-          </div>
-        </div>
-        <div className="card-body">
-          <p className="no-data">Aucun bus assigné</p>
-        </div>
-      </div>
-    );
-  }
+export default function BusDriverDashboard() {
+  // Inject CSS styles directly
+  const styles = `
+    /* ========================================
+       Bus Driver Dashboard - Styles
+       ======================================== */
 
-  const bus = assignation.bus;
-  const passengers = currentTrip?.ticketsVendus || 0;
-  const capacity = bus.capacite || 50;
-  const occupancyPercentage = (passengers / capacity) * 100;
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  return (
-    <div className="info-card">
-      <div className="card-header card-header-orange">
-        <div className="header-content">
-          <svg className="header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-          </svg>
-          <h2 className="header-title">Mon Bus</h2>
-        </div>
-      </div>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #ffffff;
+      color: #000000;
+    }
 
-      <div className="card-body">
-        <div className="info-row">
-          <span className="info-label">Immatriculation</span>
-          <span className="info-value info-value-orange mono">{bus.numeroImmatriculation}</span>
-        </div>
+    /* Dashboard Container */
+    .dashboard {
+      min-height: 100vh;
+      background-color: #ffffff;
+      padding: 2rem 1rem;
+    }
 
-        <div className="info-row">
-          <span className="info-label">Modèle</span>
-          <span className="info-value">{bus.modele || 'N/A'}</span>
-        </div>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-        <div className="info-row">
-          <div className="capacity-header">
-            <span className="info-label">Capacité Passagers</span>
-            <span className="info-value">
-              {passengers}/{capacity}
-            </span>
-          </div>
-          <div className="progress-bar">
-            <div className="progress-fill" style={{ width: `${occupancyPercentage}%` }}></div>
-          </div>
-          <p className="capacity-text">{occupancyPercentage.toFixed(0)}% de capacité</p>
-        </div>
+    /* Header Section */
+    .header {
+      margin-bottom: 2rem;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 1.5rem;
+    }
 
-        <div className="info-row no-border">
-          <span className="info-label">Période d'assignation</span>
-          <span className="info-value-green">
-            {new Date(assignation.dateDebut).toLocaleDateString()} - {new Date(assignation.dateFin).toLocaleDateString()}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
+    .header h1 {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #000000;
+      margin-bottom: 0.5rem;
+    }
 
-// TripInfo Component - Affiche les infos du trip actuel
-function TripInfo({ trip, tripState, lastConfirmedStation, passages }) {
-  if (!trip) {
-    return (
-      <div className="info-card">
-        <div className="card-header card-header-orange">
-          <div className="header-content">
-            <svg className="header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <h2 className="header-title">Mon Trajet</h2>
-          </div>
-        </div>
-        <div className="card-body">
-          <p className="no-data">Aucun trip disponible aujourd'hui</p>
-        </div>
-      </div>
-    );
-  }
+    .header p {
+      color: #6b7280;
+    }
 
-  // Trier les passages par ordre
-  const sortedPassages = passages ? [...passages].sort((a, b) => a.ordre - b.ordre) : [];
+    /* Status Indicator */
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
 
-  // Trouver le passage actuel (premier non confirmé)
-  const currentPassageIndex = sortedPassages.findIndex(p => !p.confirme);
-  const currentPassage = currentPassageIndex >= 0 ? sortedPassages[currentPassageIndex] : null;
-  const nextPassage = currentPassageIndex >= 0 && currentPassageIndex < sortedPassages.length - 1
-    ? sortedPassages[currentPassageIndex + 1]
-    : null;
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
 
-  return (
-    <div className="info-card">
-      <div className="card-header card-header-orange">
-        <div className="header-content">
-          <svg className="header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          <h2 className="header-title">Mon Trajet</h2>
-        </div>
-      </div>
+    .status-dot.idle {
+      background-color: #9ca3af;
+    }
 
-      <div className="card-body">
-        <div className="info-row">
-          <span className="info-label">Ligne</span>
-          <span className="info-value info-value-orange line-text">{trip.ligne?.numero || 'N/A'}</span>
-        </div>
+    .status-dot.running {
+      background-color: #ea580c;
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
 
-        <div className="info-row">
-          <span className="info-label">Direction</span>
-          <span className="info-value">{trip.estAller ? 'ALLER' : 'RETOUR'}</span>
-        </div>
+    .status-dot.finished {
+      background-color: #22c55e;
+    }
 
-        <div className="trip-times">
-          <div className="time-item">
-            <p className="time-label">Heure de départ</p>
-            <p className="time-value">
-              <svg className="time-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              {trip.heureDepart ? trip.heureDepart.substring(0, 5) : 'N/A'}
-            </p>
-          </div>
-          <div className="time-item">
-            <p className="time-label">Arrivée estimée</p>
-            <p className="time-value">
-              <svg className="time-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              {trip.heureArriveeEstimee ? trip.heureArriveeEstimee.substring(0, 5) : 'N/A'}
-            </p>
-          </div>
-        </div>
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
 
-        {tripState !== "idle" && currentPassage && (
-          <div className="info-row">
-            <p className="section-title section-title-orange">Station actuelle</p>
-            <p className="station-name">
-              <svg className="station-icon station-icon-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              {currentPassage.station?.nom}
-            </p>
-            <p className="station-time">Prévu: {currentPassage.heureEstimee?.substring(0, 5)}</p>
-          </div>
-        )}
+    .status-text {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #000000;
+      text-transform: capitalize;
+    }
 
-        {tripState === "running" && nextPassage && (
-          <div className="info-row">
-            <p className="section-title">Prochaine station</p>
-            <p className="station-name">
-              <svg className="station-icon station-icon-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              {nextPassage.station?.nom}
-            </p>
-          </div>
-        )}
+    /* Grid Layout */
+    .grid {
+      display: grid;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
 
-        {lastConfirmedStation && (
-          <div className="confirmed-box">
-            <svg className="confirmed-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div>
-              <p className="confirmed-label">Dernière confirmée</p>
-              <p className="confirmed-value">{lastConfirmedStation}</p>
-            </div>
-          </div>
-        )}
+    @media (min-width: 1024px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
 
-        <div className="progress-section">
-          <p className="progress-title">Progression du trajet</p>
-          <div className="stations-list">
-            {sortedPassages.map((passage, index) => {
-              const isPassed = passage.confirme;
-              const isCurrent = index === currentPassageIndex;
-              const isFuture = !isPassed && !isCurrent;
+    /* Card Component */
+    .card {
+      background-color: #ffffff;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
 
-              return (
-                <div key={passage.id} className="station-item">
-                  <div className={`station-number ${isPassed ? 'station-passed' : ''} ${isCurrent ? 'station-current' : ''} ${isFuture ? 'station-future' : ''}`}>
-                    {passage.ordre}
-                  </div>
-                  <span className={`station-text ${isPassed ? 'station-text-passed' : ''} ${isCurrent ? 'station-text-current' : ''} ${isFuture ? 'station-text-future' : ''}`}>
-                    {passage.station?.nom}
-                  </span>
-                  {isPassed && (
-                    <svg className="station-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+    .card-header {
+      background-color: #ea580c;
+      border-bottom: 2px solid #ea580c;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
 
-// TripControls Component
-function TripControls({
-  tripState,
-  onStartTrip,
-  onConfirmArrival,
-  onStopTrip,
-  currentTrip,
-  passages
-}) {
-  if (!currentTrip) {
-    return null;
-  }
+    .card-header h2 {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: #ffffff;
+    }
 
-  const sortedPassages = passages ? [...passages].sort((a, b) => a.ordre - b.ordre) : [];
-  const currentPassageIndex = sortedPassages.findIndex(p => !p.confirme);
-  const isLastStation = currentPassageIndex === sortedPassages.length - 1;
+    .card-header svg {
+      color: #ffffff;
+    }
 
-  return (
-    <div className="trip-controls">
-      <button
-        onClick={onStartTrip}
-        disabled={tripState !== "idle" || currentTrip?.statut === 'EN_COURS' || currentTrip?.statut === 'TERMINE'}
-        className="control-btn control-btn-start"
-      >
-        <svg className="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        Démarrer le trip
-      </button>
+    .card-body {
+      padding: 1.5rem;
+    }
 
-      <button
-        onClick={onConfirmArrival}
-        disabled={tripState !== "running" || currentTrip?.statut !== 'EN_COURS'}
-        className="control-btn control-btn-confirm"
-      >
-        <svg className="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        {isLastStation ? "Terminer le trajet" : "Confirmer arrivée"}
-      </button>
+    /* Info Rows */
+    .info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+    }
 
-      <button
-        onClick={onStopTrip}
-        disabled={tripState === "idle" || currentTrip?.statut === 'TERMINE'}
-        className="control-btn control-btn-stop"
-      >
-        <svg className="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
-        </svg>
-        Arrêter le trip
-      </button>
-    </div>
-  );
-}
+    .info-row:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
 
-// Main DriverDashboard Component
-export default function DriverDashboard() {
-  const [tripState, setTripState] = useState("idle");
-  const [assignation, setAssignation] = useState(null);
-  const [currentTrip, setCurrentTrip] = useState(null);
-  const [passages, setPassages] = useState([]);
-  const [lastConfirmedStation, setLastConfirmedStation] = useState("");
+    .info-label {
+      color: #6b7280;
+    }
+
+    .info-value {
+      font-weight: bold;
+      color: #000000;
+    }
+
+    .info-value.orange {
+      color: #ea580c;
+      font-family: 'Courier New', monospace;
+    }
+
+    .info-value.green {
+      color: #22c55e;
+      font-size: 0.875rem;
+    }
+
+    /* Capacity Section */
+    .capacity-section {
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .capacity-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background-color: #e5e7eb;
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-bottom: 0.25rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: #ea580c;
+      transition: width 0.3s ease;
+    }
+
+    .capacity-text {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    /* Trip Information */
+    .trip-info-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .trip-detail {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .trip-detail svg {
+      color: #ea580c;
+    }
+
+    /* Stations List */
+    .stations-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .station-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      border-radius: 0.375rem;
+      background-color: #f9fafb;
+      transition: all 0.2s ease;
+    }
+
+    .station-item.current {
+      background-color: #fed7aa;
+      border: 2px solid #ea580c;
+    }
+
+    .station-item.completed {
+      background-color: #d1fae5;
+    }
+
+    .station-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.875rem;
+      background-color: #e5e7eb;
+      color: #6b7280;
+    }
+
+    .station-item.current .station-number {
+      background-color: #ea580c;
+      color: #ffffff;
+    }
+
+    .station-item.completed .station-number {
+      background-color: #22c55e;
+      color: #ffffff;
+    }
+
+    .station-name {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    /* Last Confirmed Station */
+    .last-confirmed {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background-color: #d1fae5;
+      border-radius: 0.375rem;
+      border-left: 4px solid #22c55e;
+    }
+
+    .last-confirmed-text {
+      font-size: 0.875rem;
+      color: #065f46;
+    }
+
+    /* Control Buttons */
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    @media (min-width: 640px) {
+      .controls {
+        flex-direction: row;
+      }
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      color: #ffffff;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover:not(:disabled) {
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-start {
+      background-color: #ea580c;
+    }
+
+    .btn-start:hover:not(:disabled) {
+      background-color: #c2410c;
+    }
+
+    .btn-confirm {
+      background-color: #22c55e;
+    }
+
+    .btn-confirm:hover:not(:disabled) {
+      background-color: #16a34a;
+    }
+
+    .btn-stop {
+      background-color: #dc2626;
+    }
+
+    .btn-stop:hover:not(:disabled) {
+      background-color: #b91c1c;
+    }
+
+    /* Responsive Typography */
+    @media (min-width: 640px) {
+      .header h1 {
+        font-size: 2.5rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .dashboard {
+        padding: 1rem 0.5rem;
+      }
+
+      .card-body {
+        padding: 1rem;
+      }
+    }
+  `;
+
+  const [tripData, setTripData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [tripState, setTripState] = useState('idle');
+  const [currentStationIndex, setCurrentStationIndex] = useState(0);
+  const [lastConfirmedStation, setLastConfirmedStation] = useState('');
 
-  // Charger les données du conducteur au montage
+  // Charger les données du trip au montage du composant
   useEffect(() => {
-    loadDriverData();
+    chargerTripData();
   }, []);
 
-  const loadDriverData = async () => {
+  const chargerTripData = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // Récupérer l'utilisateur connecté
-      const user = authService.getUser();
-      console.log('User from localStorage:', user);
+      // Essayer d'abord de récupérer un trip actif (en cours)
+      let trip = null;
+      try {
+        trip = await getTripActif();
+        setTripState('running');
 
-      if (!user || !user.id) {
-        setError("Utilisateur non connecté");
-        setLoading(false);
-        return;
-      }
-
-      console.log('Fetching assignations for conducteur ID:', user.id);
-
-      // Récupérer les assignations du conducteur
-      const assignations = await conducteurService.getAssignationsConducteur(user.id);
-
-      if (!assignations || assignations.length === 0) {
-        setError("Aucune assignation trouvée");
-        setLoading(false);
-        return;
-      }
-
-      // Prendre la première assignation active
-      const activeAssignation = assignations.find(a => a.active) || assignations[0];
-      setAssignation(activeAssignation);
-
-      // Récupérer les trips du bus pour aujourd'hui
-      const today = new Date().toISOString().split('T')[0];
-      const trips = await conducteurService.getTripsByBusAndDate(activeAssignation.bus.id, today);
-
-      if (trips && trips.length > 0) {
-        // Trouver le trip le plus proche de l'heure actuelle
-        const now = new Date();
-        const currentHour = now.getHours();
-        const currentMinute = now.getMinutes();
-
-        const closestTrip = trips.reduce((closest, trip) => {
-          if (!trip.heureDepart) return closest;
-
-          const [tripHour, tripMinute] = trip.heureDepart.split(':').map(Number);
-          const tripTimeMinutes = tripHour * 60 + tripMinute;
-          const currentTimeMinutes = currentHour * 60 + currentMinute;
-
-          // Prendre les trips qui sont dans les 2 heures avant ou après maintenant
-          const timeDiff = Math.abs(tripTimeMinutes - currentTimeMinutes);
-
-          if (!closest) return trip;
-
-          const [closestHour, closestMinute] = closest.heureDepart.split(':').map(Number);
-          const closestTimeMinutes = closestHour * 60 + closestMinute;
-          const closestTimeDiff = Math.abs(closestTimeMinutes - currentTimeMinutes);
-
-          return timeDiff < closestTimeDiff ? trip : closest;
-        }, null);
-
-        if (closestTrip) {
-          setCurrentTrip(closestTrip);
-
-          // Charger les passages du trip
-          const tripPassages = await conducteurService.getPassagesByTrip(closestTrip.id);
-          setPassages(tripPassages || []);
-
-          // Déterminer l'état du trip
-          if (closestTrip.statut === 'EN_COURS') {
-            setTripState('running');
-            // Trouver la dernière station confirmée
-            const confirmedPassages = (tripPassages || []).filter(p => p.confirme);
-            if (confirmedPassages.length > 0) {
-              const lastConfirmed = confirmedPassages[confirmedPassages.length - 1];
-              setLastConfirmedStation(lastConfirmed.station?.nom || '');
-            }
-          } else if (closestTrip.statut === 'TERMINE') {
-            setTripState('finished');
-          } else {
-            setTripState('idle');
-          }
+        // Trouver la dernière station confirmée
+        const passages = trip.passages || [];
+        const confirmedPassages = passages.filter(p => p.confirme);
+        if (confirmedPassages.length > 0) {
+          const lastConfirmed = confirmedPassages[confirmedPassages.length - 1];
+          setLastConfirmedStation(lastConfirmed.station.nom);
+          setCurrentStationIndex(lastConfirmed.ordre);
+        }
+      } catch (err) {
+        // Si pas de trip actif, récupérer le trip assigné (planifié)
+        if (err.response?.status === 404) {
+          trip = await getTripAssigne();
+          setTripState('idle');
+        } else {
+          throw err;
         }
       }
 
-      setLoading(false);
+      setTripData(trip);
     } catch (err) {
-      console.error('Erreur lors du chargement des données:', err);
-      setError(err.message || "Erreur lors du chargement des données");
+      console.error('Erreur lors du chargement du trip:', err);
+      setError(err.response?.data?.message || 'Aucun trip assigné pour le moment');
+    } finally {
       setLoading(false);
     }
   };
 
+  // Extraire les données du trip et du bus
+  const busData = tripData ? {
+    number: tripData.bus.numeroImmatriculation,
+    capacity: tripData.bus.capacite,
+    passengers: tripData.ticketsVendus || 0,
+    licensePlate: tripData.bus.numeroImmatriculation,
+    model: tripData.bus.modele,
+    lastMaintenance: "N/A", // Non disponible dans le backend
+  } : null;
+
+  const trip = tripData ? {
+    id: tripData.id,
+    line: `Ligne ${tripData.ligne.numero} - ${tripData.ligne.nom}`,
+    startStation: tripData.passages?.[0]?.station.nom || 'N/A',
+    endStation: tripData.passages?.[tripData.passages.length - 1]?.station.nom || 'N/A',
+    stations: tripData.passages?.map(p => ({
+      id: p.station.id,
+      name: p.station.nom,
+      ordre: p.ordre,
+      heurePrevu: p.heurePrevu,
+      heureEstimee: p.heureEstimee,
+      confirme: p.confirme,
+    })) || [],
+    departureTime: tripData.heureDepart,
+    estimatedArrivalTime: tripData.heureArriveeEstimee,
+  } : null;
+
+  const occupancyPercentage = busData ? (busData.passengers / busData.capacity) * 100 : 0;
+  const isLastStation = trip ? currentStationIndex === trip.stations.length - 1 : false;
+
   const handleStartTrip = async () => {
-    if (!currentTrip) return;
+    if (!tripData) return;
 
     try {
-      const updatedTrip = await conducteurService.demarrerTrip(currentTrip.id);
-      setCurrentTrip(updatedTrip);
-      setTripState("running");
+      setLoading(true);
+      const updatedTrip = await demarrerTrip(tripData.id);
+      setTripData(updatedTrip);
+      setTripState('running');
 
-      // Confirmer automatiquement la première station
-      const sortedPassages = [...passages].sort((a, b) => a.ordre - b.ordre);
-      if (sortedPassages.length > 0) {
-        const firstStation = sortedPassages[0];
-        setLastConfirmedStation(firstStation.station?.nom || '');
+      // La première station est automatiquement confirmée par le backend
+      if (updatedTrip.passages && updatedTrip.passages.length > 0) {
+        setLastConfirmedStation(updatedTrip.passages[0].station.nom);
+        setCurrentStationIndex(1);
       }
     } catch (err) {
       console.error('Erreur lors du démarrage du trip:', err);
-      alert('Erreur lors du démarrage du trip: ' + (err.message || 'Erreur inconnue'));
+      setError('Impossible de démarrer le trip');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleConfirmArrival = async () => {
-    if (!currentTrip || !passages) return;
+    if (!tripData || !trip) return;
 
     try {
-      // Trouver le prochain passage non confirmé
-      const sortedPassages = [...passages].sort((a, b) => a.ordre - b.ordre);
-      const nextPassage = sortedPassages.find(p => !p.confirme);
-
-      if (!nextPassage) {
-        alert('Toutes les stations ont déjà été confirmées');
-        return;
-      }
+      setLoading(true);
+      const currentStation = trip.stations[currentStationIndex];
 
       // Confirmer le passage avec l'heure actuelle
-      const now = new Date();
-      const heureReelle = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:00`;
+      const heureReelle = new Date().toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
 
-      await conducteurService.confirmerPassage(currentTrip.id, nextPassage.station.id, heureReelle);
+      const updatedTrip = await confirmerPassage(tripData.id, currentStation.id, heureReelle);
+      setTripData(updatedTrip);
+      setLastConfirmedStation(currentStation.name);
 
-      // Recharger les passages
-      const updatedPassages = await conducteurService.getPassagesByTrip(currentTrip.id);
-      setPassages(updatedPassages);
-      setLastConfirmedStation(nextPassage.station?.nom || '');
-
-      // Si c'était la dernière station, terminer le trip
-      if (nextPassage.ordre === sortedPassages[sortedPassages.length - 1].ordre) {
+      if (currentStationIndex < trip.stations.length - 1) {
+        setCurrentStationIndex(currentStationIndex + 1);
+      } else {
+        // Dernier arrêt - terminer le trip
         await handleStopTrip();
       }
     } catch (err) {
-      console.error('Erreur lors de la confirmation:', err);
-      alert('Erreur lors de la confirmation: ' + (err.message || 'Erreur inconnue'));
+      console.error('Erreur lors de la confirmation du passage:', err);
+      setError('Impossible de confirmer le passage');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleStopTrip = async () => {
-    if (!currentTrip) return;
+    if (!tripData) return;
 
     try {
-      const updatedTrip = await conducteurService.terminerTrip(currentTrip.id);
-      setCurrentTrip(updatedTrip);
-      setTripState("finished");
+      setLoading(true);
+      await terminerTrip(tripData.id);
+      setTripState('finished');
+
+      // Recharger les données pour obtenir le prochain trip
+      setTimeout(() => {
+        chargerTripData();
+      }, 2000);
     } catch (err) {
       console.error('Erreur lors de l\'arrêt du trip:', err);
-      alert('Erreur lors de l\'arrêt du trip: ' + (err.message || 'Erreur inconnue'));
+      setError('Impossible de terminer le trip');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const getStatusClass = () => {
-    if (tripState === "idle") return "status-idle";
-    if (tripState === "running") return "status-running";
-    return "status-finished";
-  };
-
-  const getStatusText = () => {
-    if (tripState === "idle") return "Prêt";
-    if (tripState === "running") return "Trip en cours";
-    return "Trip terminé";
-  };
-
-  if (loading) {
+  // État de chargement
+  if (loading && !tripData) {
     return (
-      <div className="driver-dashboard">
-        <div className="dashboard-container">
-          <div className="dashboard-header">
-            <h1 className="dashboard-title">Tableau de bord Conducteur</h1>
-            <p className="dashboard-subtitle">Chargement...</p>
+      <>
+        <style>{styles}</style>
+        <div className="dashboard">
+          <div className="container">
+            <div className="header">
+              <h1>Driver Dashboard</h1>
+              <p>Chargement des données...</p>
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
-  if (error) {
+  // État d'erreur
+  if (error && !tripData) {
     return (
-      <div className="driver-dashboard">
-        <div className="dashboard-container">
-          <div className="dashboard-header">
-            <h1 className="dashboard-title">Tableau de bord Conducteur</h1>
-            <p className="dashboard-subtitle" style={{ color: 'red' }}>Erreur: {error}</p>
+      <>
+        <style>{styles}</style>
+        <div className="dashboard">
+          <div className="container">
+            <div className="header">
+              <h1>Driver Dashboard</h1>
+              <p style={{ color: '#dc2626', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <AlertCircle size={20} />
+                {error}
+              </p>
+            </div>
+            <button
+              onClick={chargerTripData}
+              className="btn btn-start"
+              style={{ marginTop: '1rem' }}
+            >
+              Réessayer
+            </button>
           </div>
-          <button onClick={loadDriverData} className="control-btn control-btn-start">
-            Réessayer
-          </button>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="driver-dashboard">
-      <div className="dashboard-container">
-        <div className="dashboard-header">
-          <h1 className="dashboard-title">Tableau de bord Conducteur</h1>
-          <p className="dashboard-subtitle">Gérez votre trajet et les informations de votre bus</p>
-        </div>
+    <>
+      <style>{styles}</style>
 
-        <div className="status-indicator">
-          <div className={`status-dot ${getStatusClass()}`}></div>
-          <span className="status-text">Statut: {getStatusText()}</span>
-        </div>
+      <div className="dashboard">
+        <div className="container">
+          {/* Header */}
+          <div className="header">
+            <h1>Driver Dashboard</h1>
+            <p>Manage your route and bus information</p>
+          </div>
 
-        <div className="dashboard-grid">
-          <BusInfo assignation={assignation} currentTrip={currentTrip} />
-          <TripInfo
-            trip={currentTrip}
-            tripState={tripState}
-            lastConfirmedStation={lastConfirmedStation}
-            passages={passages}
-          />
-        </div>
+          {/* Message d'erreur temporaire */}
+          {error && (
+            <div style={{
+              backgroundColor: '#fee2e2',
+              border: '1px solid #dc2626',
+              borderRadius: '0.5rem',
+              padding: '1rem',
+              marginBottom: '1rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              color: '#dc2626'
+            }}>
+              <AlertCircle size={20} />
+              {error}
+            </div>
+          )}
 
-        <div className="controls-container">
-          <TripControls
-            tripState={tripState}
-            onStartTrip={handleStartTrip}
-            onConfirmArrival={handleConfirmArrival}
-            onStopTrip={handleStopTrip}
-            currentTrip={currentTrip}
-            passages={passages}
-          />
+          {/* Status Indicator */}
+          <div className="status-indicator">
+            <div className={`status-dot ${tripState}`} />
+            <span className="status-text">
+              Status: {tripState === 'idle' ? 'Ready' : tripState === 'running' ? 'Trip in Progress' : 'Trip Completed'}
+            </span>
+          </div>
+
+          {/* Main Grid */}
+          <div className="grid">
+            {/* Bus Info Card */}
+            <div className="card">
+              <div className="card-header">
+                <Bus size={24} />
+                <h2>My Bus</h2>
+              </div>
+              <div className="card-body">
+                <div className="info-row">
+                  <span className="info-label">Bus Number</span>
+                  <span className="info-value">{busData.number}</span>
+                </div>
+                <div className="info-row">
+                  <span className="info-label">License Plate</span>
+                  <span className="info-value orange">{busData.licensePlate}</span>
+                </div>
+                <div className="info-row">
+                  <span className="info-label">Model</span>
+                  <span className="info-value">{busData.model}</span>
+                </div>
+                <div className="capacity-section">
+                  <div className="capacity-header">
+                    <span className="info-label">Passenger Capacity</span>
+                    <span className="info-value">
+                      {busData.passengers}/{busData.capacity}
+                    </span>
+                  </div>
+                  <div className="progress-bar">
+                    <div className="progress-fill" style={{ width: `${occupancyPercentage}%` }} />
+                  </div>
+                  <p className="capacity-text">{occupancyPercentage.toFixed(0)}% capacity</p>
+                </div>
+                <div className="info-row">
+                  <span className="info-label">Last Maintenance</span>
+                  <span className="info-value green">{busData.lastMaintenance}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Trip Info Card */}
+            <div className="card">
+              <div className="card-header">
+                <MapPin size={24} />
+                <h2>Trip Information</h2>
+              </div>
+              <div className="card-body">
+                <div className="trip-info-section">
+                  <div className="trip-detail">
+                    <MapPin size={20} />
+                    <span><strong>{trip.line}</strong>: {trip.startStation} → {trip.endStation}</span>
+                  </div>
+                  <div className="trip-detail">
+                    <Clock size={20} />
+                    <span>Departure: <strong>{trip.departureTime}</strong> | Arrival: <strong>{trip.estimatedArrivalTime}</strong></span>
+                  </div>
+                </div>
+
+                <div className="stations-list">
+                  {trip.stations.map((station, index) => {
+                    const isConfirmed = station.confirme;
+                    const isCurrent = index === currentStationIndex && tripState === 'running';
+                    const isCompleted = (isConfirmed || index < currentStationIndex) && tripState === 'running';
+
+                    return (
+                      <div
+                        key={station.id}
+                        className={`station-item ${
+                          isCurrent ? 'current' : isCompleted ? 'completed' : ''
+                        }`}
+                      >
+                        <div className="station-number">{station.ordre}</div>
+                        <div style={{ flex: 1 }}>
+                          <span className="station-name">{station.name}</span>
+                          {station.heureEstimee && (
+                            <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.25rem' }}>
+                              Arrivée prévue: {station.heureEstimee}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {lastConfirmedStation && (
+                  <div className="last-confirmed">
+                    <p className="last-confirmed-text">
+                      Last confirmed: <strong>{lastConfirmedStation}</strong>
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div className="controls">
+            <button
+              onClick={handleStartTrip}
+              disabled={tripState !== 'idle' || loading}
+              className="btn btn-start"
+            >
+              <Play size={20} />
+              {loading ? 'Chargement...' : 'Start Trip'}
+            </button>
+
+            <button
+              onClick={handleConfirmArrival}
+              disabled={tripState !== 'running' || loading}
+              className="btn btn-confirm"
+            >
+              <CheckCircle size={20} />
+              {loading ? 'Confirmation...' : isLastStation ? 'Complete Route' : 'Confirm Arrival'}
+            </button>
+
+            <button
+              onClick={handleStopTrip}
+              disabled={tripState === 'idle' || loading}
+              className="btn btn-stop"
+            >
+              <Square size={20} />
+              {loading ? 'Arrêt...' : 'Stop Trip'}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -195,8 +195,76 @@ public TripResponseDTO confirmerPassageStation(UUID tripId, ConfirmerPassageDTO 
 
                     return ordreDepart != null && ordreArrivee != null && ordreDepart < ordreArrivee;
                 })
-                .map(this::convertToResponseDTO)
+                .map(trip -> this.convertToSearchResponseDTO(trip, searchDTO.getStationDepartId(), searchDTO.getStationArriveeId()))
                 .collect(Collectors.toList());
+    }
+
+    /** Conversion entité Trip -> DTO pour la recherche (affichage simplifié: départ + arrivée demandés) */
+    private TripResponseDTO convertToSearchResponseDTO(Trip trip, UUID stationDepartId, UUID stationArriveeId) {
+        TripResponseDTO dto = new TripResponseDTO();
+        dto.setId(trip.getId());
+        dto.setNumeroTrip(trip.getNumeroTrip());
+        dto.setDateTrip(trip.getDateTrip());
+        dto.setHeureDepart(trip.getHeureDepart());
+        dto.setEstAller(trip.getEstAller());
+        dto.setStatut(trip.getStatut());
+        dto.setTicketsVendus(trip.getTicketsVendus());
+
+        // Bus simplifié
+        Bus bus = trip.getBus();
+        BusSimpleDTO busDTO = new BusSimpleDTO();
+        busDTO.setId(bus.getId());
+        busDTO.setNumeroImmatriculation(bus.getNumeroImmatriculation());
+        busDTO.setCapacite(bus.getCapacite());
+        busDTO.setModele(bus.getModele());
+        dto.setBus(busDTO);
+
+        // Ligne simplifiée
+        Ligne ligne = trip.getLigne();
+        LigneSimpleDTO ligneDTO = new LigneSimpleDTO();
+        ligneDTO.setId(ligne.getId());
+        ligneDTO.setNumero(ligne.getNumero());
+        ligneDTO.setNom(ligne.getNom());
+        ligneDTO.setPrixStandard(ligne.getPrixStandard());
+        dto.setLigne(ligneDTO);
+
+        // Prix du trip = prix standard de la ligne
+        dto.setPrix(ligne.getPrixStandard());
+
+        // MODIFICATION POUR RECHERCHE: Ne retourner que la station de départ et la station d'arrivée demandées
+        List<PassageStation> tousLesPassages = passageStationRepository.findByTripIdOrderByOrdreAsc(trip.getId());
+
+        if (!tousLesPassages.isEmpty()) {
+            // Trouver le passage de départ (station demandée par le client)
+            PassageStation passageDepart = tousLesPassages.stream()
+                .filter(p -> p.getStation().getId().equals(stationDepartId))
+                .findFirst()
+                .orElse(tousLesPassages.get(0)); // Fallback: première station
+
+            // Trouver le passage d'arrivée (station demandée par le client)
+            PassageStation passageArrivee = tousLesPassages.stream()
+                .filter(p -> p.getStation().getId().equals(stationArriveeId))
+                .findFirst()
+                .orElse(tousLesPassages.get(tousLesPassages.size() - 1)); // Fallback: dernière station
+
+            // Ne retourner que ces 2 passages (départ et arrivée demandés par le client)
+            dto.setPassages(List.of(
+                convertPassageToDTO(passageDepart),
+                convertPassageToDTO(passageArrivee)
+            ));
+
+            // Heure d'arrivée estimée = heure de la station d'arrivée demandée
+            dto.setHeureArriveeEstimee(passageArrivee.obtenirHeureEstimee());
+        } else {
+            // Fallback si pas de passages
+            dto.setPassages(List.of());
+            dto.setHeureArriveeEstimee(trip.getHeureDepart());
+        }
+
+        // Calculer places disponibles
+        dto.setPlacesDisponibles(bus.getCapacite() - trip.getTicketsVendus());
+
+        return dto;
     }
 
     /** Obtenir tous les trips passant par une station pour une date donnée */

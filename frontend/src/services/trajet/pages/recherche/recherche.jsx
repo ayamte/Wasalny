@@ -274,16 +274,30 @@ export function TripsPage() {
           // Prix depuis la ligne (BigDecimal converti en number)
           const price = trip.prix ? Number(trip.prix) : (trip.ligne?.prixStandard ? Number(trip.ligne.prixStandard) : 30)
 
+          // Récupérer les passages (seulement 2: départ et arrivée demandés par le client)
+          const passages = trip.passages || []
+          const stationDepart = passages.length > 0 ? passages[0].station?.nom : fromName
+          const stationArrivee = passages.length > 1 ? passages[1].station?.nom : toName
+          const heurePassageDepart = passages.length > 0 ?
+            (passages[0].heureEstimee || passages[0].heurePrevu || departure).substring(0, 5) :
+            departure
+          const heurePassageArrivee = passages.length > 1 ?
+            (passages[1].heureEstimee || passages[1].heurePrevu || arrival).substring(0, 5) :
+            arrival
+
           return {
             id: trip.id || index + 1,
             lineNumber: trip.numeroTrip || trip.ligne?.numero || `Ligne ${index + 1}`,
             lineName: trip.ligne?.nom || `${fromName} - ${toName}`,
-            departureTime: departure,
-            arrivalTime: arrival,
+            departureTime: heurePassageDepart,
+            arrivalTime: heurePassageArrivee,
             price: price,
             totalSeats: totalSeats,
             availableSeats: availableSeats,
             bus: trip.bus?.numeroImmatriculation || trip.bus?.modele || 'Bus',
+            // Nouvelles informations pour affichage simplifié
+            stationDepart: stationDepart,
+            stationArrivee: stationArrivee,
           }
         })
 
@@ -413,7 +427,7 @@ export function TripsPage() {
                           {trip.departureTime}
                         </p>
                         <p className="trips-results-time-label">
-                          Départ
+                          De {trip.stationDepart}
                         </p>
                       </div>
                     </div>
@@ -429,14 +443,14 @@ export function TripsPage() {
                       </div>
                     </div>
 
-                    {/* Arrival Time */}
+                    {/* Arrival Time - Station d'arrivée */}
                     <div className="trips-results-trip-section-3">
                       <div className="trips-results-trip-arrival">
                         <p className="trips-results-time-large">
                           {trip.arrivalTime}
                         </p>
                         <p className="trips-results-time-label">
-                          Arrivée
+                          À {trip.stationArrivee}
                         </p>
                       </div>
                     </div>
