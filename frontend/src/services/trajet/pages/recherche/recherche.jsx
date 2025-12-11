@@ -313,9 +313,15 @@ export function TripsPage() {
     fetchTrips()
   }, [date, fromId, toId, fromName, toName])
 
-  const handleBookTrip = (trip) => {
-    navigate(`/booking?tripId=${trip.id}&from=${fromName}&to=${toName}&date=${date}`)
-  }
+  const handleBookTrip = (trip) => {  
+    navigate('/paiement', {  
+      state: {  
+        typeService: 'ACHAT_TICKET',  
+        referenceService: trip.id,  
+        montant: trip.price  
+      }  
+    });  
+  };
 
   const formatDate = (dateStr) => {
     const dateObj = new Date(dateStr + 'T00:00:00')

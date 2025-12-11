@@ -1,18 +1,24 @@
-package com.wasalny.geolocalisation.service;    
-    
-import com.wasalny.geolocalisation.entity.Location;    
-import com.wasalny.geolocalisation.repository.LocationRepository;    
-import org.springframework.beans.factory.annotation.Autowired;    
-import org.springframework.stereotype.Service;    
-import java.util.List;    
-    
-@Service    
-public class LocationService {    
-    @Autowired    
-    private LocationRepository locationRepository;    
-        
-    public Location saveLocation(Location location) {    
-        return locationRepository.save(location);    
+package com.wasalny.geolocalisation.service;
+
+import com.wasalny.geolocalisation.entity.Location;
+import com.wasalny.geolocalisation.repository.LocationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class LocationService {
+    @Autowired
+    private LocationRepository locationRepository;
+
+    @Autowired
+    private LocationBroadcastService broadcastService;
+
+    public Location saveLocation(Location location) {
+        Location saved = locationRepository.save(location);
+        // Broadcast the location update via WebSocket
+        broadcastService.broadcastLocationUpdate(saved);
+        return saved;
     }    
         
     public List<Location> getBusLocations(String busId) {    
@@ -29,15 +35,18 @@ public class LocationService {
             .orElseThrow(() -> new RuntimeException("Location not found with id: " + id));    
     }    
     
-    public Location updateLocation(Long id, Location locationDetails) {    
-        Location location = locationRepository.findById(id)    
-            .orElseThrow(() -> new RuntimeException("Location not found with id: " + id));    
-            
-        location.setLatitude(locationDetails.getLatitude());    
-        location.setLongitude(locationDetails.getLongitude());    
-        location.setBusId(locationDetails.getBusId());    
-            
-        return locationRepository.save(location);    
+    public Location updateLocation(Long id, Location locationDetails) {
+        Location location = locationRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Location not found with id: " + id));
+
+        location.setLatitude(locationDetails.getLatitude());
+        location.setLongitude(locationDetails.getLongitude());
+        location.setBusId(locationDetails.getBusId());
+
+        Location updated = locationRepository.save(location);
+        // Broadcast the location update via WebSocket
+        broadcastService.broadcastLocationUpdate(updated);
+        return updated;
     }    
     
     public void deleteLocation(Long id) {    

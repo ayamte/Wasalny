@@ -1,71 +1,72 @@
-server:  
-  port: 8080  
-  
-spring:  
-  cloud:  
-    gateway:  
-      discovery:  
-        locator:  
-          enabled: true  
-          lower-case-service-id: true  
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
       routes:
         - id: auth-service
-          uri: lb://AUTH-SERVICE
+          uri: lb://auth-service
           predicates:
             - Path=/api/auth/**
           filters:
             - StripPrefix=1
 
         - id: user-service
-          uri: lb://USER-SERVICE
+          uri: lb://user-service
           predicates:
             - Path=/api/users/**
           filters:
             - StripPrefix=1
 
         - id: trajet-service
-          uri: lb://TRAJET-SERVICE
+          uri: lb://trajet-service
           predicates:
             - Path=/api/trajets/**
           filters:
             - StripPrefix=1
 
         - id: geolocalisation-service
-          uri: lb://GEOLOCALISATION-SERVICE
+          uri: lb://geolocalisation-service
           predicates:
             - Path=/api/locations/**
           filters:
             - StripPrefix=1
 
         - id: paiement-service
-          uri: lb://PAIEMENT-SERVICE
+          uri: lb://paiement-service
           predicates:
             - Path=/api/paiements/**
           filters:
             - StripPrefix=1
 
         - id: ticket-service
-          uri: lb://TICKET-SERVICE
+          uri: lb://ticket-service
           predicates:
             - Path=/api/tickets/**
           filters:
             - StripPrefix=1
 
         - id: abonnement-service
-          uri: lb://ABONNEMENT-SERVICE
+          uri: lb://abonnement-service
           predicates:
             - Path=/api/abonnements/**
           filters:
             - StripPrefix=1
+            - PreserveHostHeader
 
         - id: notification-service
-          uri: lb://NOTIFICATION-SERVICE
+          uri: lb://notification-service
           predicates:
             - Path=/api/notifications/**
           filters:
             - StripPrefix=1
-  
-eureka:  
-  client:  
-    service-url:  
+
+eureka:
+  client:
+    service-url:
       defaultZone: http://localhost:8761/eureka/
