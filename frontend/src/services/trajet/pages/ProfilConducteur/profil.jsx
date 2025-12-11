@@ -6,7 +6,7 @@ import {
   demarrerTrip,
   terminerTrip,
   confirmerPassage
-} from '../../../../conducteurService';
+} from '../../../conducteurService';
 
 export default function BusDriverDashboard() {
   // Inject CSS styles directly
@@ -486,7 +486,15 @@ export default function BusDriverDashboard() {
 
     try {
       setLoading(true);
+
+      // Trouver la station actuelle par l'index
       const currentStation = trip.stations[currentStationIndex];
+
+      if (!currentStation) {
+        setError('Station non trouvée');
+        setLoading(false);
+        return;
+      }
 
       // Confirmer le passage avec l'heure actuelle
       const heureReelle = new Date().toLocaleTimeString('fr-FR', {

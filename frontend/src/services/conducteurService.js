@@ -157,7 +157,7 @@ export const getTripById = async (tripId) => {
  */
 export const getTripAssigne = async () => {
   try {
-    const response = await axios.get('/trajets/trips/assigned');
+    const response = await axios.get('/api/trajets/trips/assigned');
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la récupération du trip assigné:', error);
@@ -170,7 +170,7 @@ export const getTripAssigne = async () => {
  */
 export const getTripActif = async () => {
   try {
-    const response = await axios.get('/trajets/trips/active');
+    const response = await axios.get('/api/trajets/trips/active');
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la récupération du trip actif:', error);
