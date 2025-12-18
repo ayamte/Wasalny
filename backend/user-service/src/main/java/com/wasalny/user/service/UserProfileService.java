@@ -227,6 +227,7 @@ public class UserProfileService {
             dto.setNom(conducteur.getNom());
             dto.setPrenom(conducteur.getPrenom());
             dto.setTelephone(conducteur.getTelephone());
+            dto.setNumeroPermis(conducteur.getNumeroPermis());
             dto.setStatut(conducteur.getStatut() != null ? conducteur.getStatut().name() : null);
         }
 

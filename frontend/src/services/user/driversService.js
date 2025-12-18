@@ -43,7 +43,15 @@ export const driversService = {
    */
   getAllDrivers: async () => {
     try {
-      const response = await api.get('/admin/users/role/CONDUCTEUR');
+      const response = await api.get('/admin/users/role/CONDUCTEUR', {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        },
+        params: {
+          _t: new Date().getTime() // Add timestamp to prevent caching
+        }
+      });
       return response.data;
     } catch (error) {
       throw error.response?.data || error;

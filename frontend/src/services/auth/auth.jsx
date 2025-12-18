@@ -34,7 +34,7 @@ export default function AuthPage() {
       if (user?.role === 'ADMIN') {
         redirectPath = '/admin/dashboard'
       } else if (user?.role === 'CONDUCTEUR') {
-        redirectPath = '/conducteur/dashboard'
+        redirectPath = '/conducteur/mes-trajets'
       }
 
       console.log('Redirecting authenticated user to:', redirectPath)
@@ -189,7 +189,7 @@ export default function AuthPage() {
         if (response.role === 'ADMIN') {
           redirectPath = '/admin/dashboard'
         } else if (response.role === 'CONDUCTEUR') {
-          redirectPath = '/conducteur/dashboard'
+          redirectPath = '/conducteur/mes-trajets'
         }
         console.log('Redirecting to:', redirectPath, 'Role:', response.role)
         setTimeout(() => navigate(redirectPath), 1500)

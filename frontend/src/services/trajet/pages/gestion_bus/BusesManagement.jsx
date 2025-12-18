@@ -13,6 +13,7 @@ const BusesManagement = () => {
   const [lines, setLines] = useState([])
   const [stations, setStations] = useState([])
   const [busAssignments, setBusAssignments] = useState({})
+  const [lineAssignments, setLineAssignments] = useState({})
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [showAssignmentModal, setShowAssignmentModal] = useState(false)
   const [selectedBusForAssignment, setSelectedBusForAssignment] = useState(null)
@@ -39,30 +40,72 @@ const BusesManagement = () => {
 
   // Load buses, drivers, lines, and stations on component mount
   useEffect(() => {
-    loadBuses()
-    loadDrivers()
-    loadLines()
-    loadStations()
+    const loadData = async () => {
+      await loadDrivers()
+      const linesData = await loadLines()
+      await loadStations()
+      const busesData = await loadBuses()
+      // Load assignments after everything is loaded
+      if (busesData && busesData.length > 0 && linesData && linesData.length > 0) {
+        await loadBusAssignments(busesData, linesData)
+      }
+    }
+    loadData()
   }, [])
 
-  // Load bus assignments
-  const loadBusAssignments = async (buses) => {
-    const assignments = {}
-    const today = new Date().toISOString().split('T')[0]
+  // Load bus assignments (driver and line assignments)
+  const loadBusAssignments = async (buses, linesData) => {
+    const driverAssignments = {}
+    const ligneAssignments = {}
+
+    console.log('=== Loading bus assignments ===')
+    console.log('Buses:', buses.length)
+    console.log('Lines:', linesData.length)
 
     for (const bus of buses) {
       try {
-        const assignment = await assignationBusConducteurService.getActiveAssignment(
-          bus.id,
-          today
-        )
-        assignments[bus.id] = assignment
+        // Get all driver assignments for this bus
+        const assignments = await assignationBusConducteurService.getAssignmentsByBus(bus.id)
+
+        // Find the first active assignment
+        const activeAssignment = assignments && assignments.length > 0
+          ? assignments.find(a => a.active) || assignments[0]
+          : null
+
+        driverAssignments[bus.id] = activeAssignment
+        console.log(`Driver assigned to bus ${bus.numeroImmatriculation}:`, activeAssignment)
       } catch (err) {
         // No active assignment for this bus
-        assignments[bus.id] = null
+        console.error(`Error loading driver assignment for bus ${bus.id}:`, err)
+        driverAssignments[bus.id] = null
       }
     }
-    setBusAssignments(assignments)
+
+    // Load line assignments for all lines
+    for (const line of linesData) {
+      try {
+        console.log(`Loading assignments for line ${line.numero} (${line.id})`)
+        const assignments = await busAssignmentService.getAssignmentsByLine(line.id)
+        console.log(`Found ${assignments?.length || 0} assignments for line ${line.numero}`)
+
+        if (assignments && assignments.length > 0) {
+          assignments.forEach(assignment => {
+            if (assignment.active) {
+              ligneAssignments[assignment.busId] = assignment
+              console.log(`Bus ${assignment.busImmatriculation} assigned to line ${line.numero}`)
+            }
+          })
+        }
+      } catch (err) {
+        console.error(`Error loading assignments for line ${line.id}:`, err)
+      }
+    }
+
+    console.log('Final driver assignments:', driverAssignments)
+    console.log('Final line assignments:', ligneAssignments)
+
+    setBusAssignments(driverAssignments)
+    setLineAssignments(ligneAssignments)
   }
 
   // Load all buses
@@ -72,11 +115,12 @@ const BusesManagement = () => {
       setError(null)
       const data = await busService.getAllBuses()
       setBuses(data)
-      await loadBusAssignments(data)
+      return data
     } catch (err) {
       const errorMsg = handleApiError(err)
       setError(errorMsg)
       console.error('Error loading buses:', err)
+      return []
     } finally {
       setLoading(false)
     }
@@ -97,9 +141,11 @@ const BusesManagement = () => {
     try {
       const data = await ligneService.getAllLines()
       setLines(data || [])
+      return data || []
     } catch (err) {
       console.error('Error loading lines:', err)
       setLines([])
+      return []
     }
   }
 
@@ -310,7 +356,10 @@ const BusesManagement = () => {
       showSuccess(successMsg)
 
       // Reload buses and assignments
-      await loadBuses()
+      const busesData = await loadBuses()
+      if (busesData && busesData.length > 0 && lines.length > 0) {
+        await loadBusAssignments(busesData, lines)
+      }
 
       // Close modal
       setShowAssignmentModal(false)
@@ -379,6 +428,7 @@ const BusesManagement = () => {
                   <th>Numéro d'Immatriculation</th>
                   <th>Modèle</th>
                   <th>Capacité</th>
+                  <th>Ligne Assignée</th>
                   <th>Conducteur Assigné</th>
                   <th>Statut</th>
                   <th className="text-center">Actions</th>
@@ -387,7 +437,7 @@ const BusesManagement = () => {
               <tbody>
                 {buses.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="text-center">
+                    <td colSpan="7" className="text-center">
                       Aucun bus trouvé
                     </td>
                   </tr>
@@ -397,12 +447,40 @@ const BusesManagement = () => {
                     const assignedDriver = assignment
                       ? drivers.find(d => d.uuid === assignment.conducteurId)
                       : null
+                    const lineAssignment = lineAssignments[bus.id]
+                    const assignedLine = lineAssignment
+                      ? lines.find(l => l.id === lineAssignment.ligneId)
+                      : null
+
+                    // Debug logs for each bus
+                    if (bus.numeroImmatriculation === '44444') {
+                      console.log('=== Bus 44444 Debug ===')
+                      console.log('Bus ID:', bus.id)
+                      console.log('Driver assignment:', assignment)
+                      console.log('All drivers:', drivers.length, drivers.map(d => ({ uuid: d.uuid, nom: d.nom })))
+                      console.log('Found driver:', assignedDriver)
+                      console.log('Line assignment:', lineAssignment)
+                      console.log('Found line:', assignedLine)
+                    }
 
                     return (
                       <tr key={bus.id}>
                         <td>{bus.numeroImmatriculation || bus.registrationNumber}</td>
                         <td>{bus.modele || bus.model}</td>
                         <td>{bus.capacite || bus.capacity}</td>
+                        <td>
+                          {assignedLine ? (
+                            <div>
+                              <strong>{assignedLine.numero}</strong> - {assignedLine.nom}
+                              <br />
+                              <small style={{ color: '#666' }}>
+                                {lineAssignment.stationDepartNom} → {lineAssignment.stationArriveeNom}
+                              </small>
+                            </div>
+                          ) : (
+                            <span className="no-driver">Non assigné</span>
+                          )}
+                        </td>
                         <td>
                           {assignedDriver ? (
                             <span className="driver-name">

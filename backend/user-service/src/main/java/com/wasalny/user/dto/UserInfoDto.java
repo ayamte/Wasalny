@@ -13,6 +13,7 @@ public class UserInfoDto {
     private String nom;
     private String prenom;
     private String telephone;
+    private String numeroPermis;
     private String statut;
     private LocalDateTime dateCreation;
 
@@ -40,6 +41,9 @@ public class UserInfoDto {
 
     public String getTelephone() { return telephone; }
     public void setTelephone(String telephone) { this.telephone = telephone; }
+
+    public String getNumeroPermis() { return numeroPermis; }
+    public void setNumeroPermis(String numeroPermis) { this.numeroPermis = numeroPermis; }
 
     public String getStatut() { return statut; }
     public void setStatut(String statut) { this.statut = statut; }

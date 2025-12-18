@@ -85,6 +85,9 @@ const DriversManagement = () => {
         // Create new driver
         await driversService.createDriver(formData)
         showSuccess('Conducteur ajouté avec succès')
+
+        // Small delay to ensure backend has processed the creation
+        await new Promise(resolve => setTimeout(resolve, 500))
       }
 
       // Reload drivers list

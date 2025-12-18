@@ -554,9 +554,13 @@ public TripResponseDTO confirmerPassageStation(UUID tripId, ConfirmerPassageDTO 
         }
 
         String conducteurIdStr = authentication.getName();
+        System.out.println("DEBUG: conducteurIdStr from authentication = " + conducteurIdStr);
         try {
-            return UUID.fromString(conducteurIdStr);
+            UUID uuid = UUID.fromString(conducteurIdStr);
+            System.out.println("DEBUG: UUID parsed successfully = " + uuid);
+            return uuid;
         } catch (IllegalArgumentException e) {
+            System.out.println("DEBUG: Failed to parse UUID from: " + conducteurIdStr);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID conducteur invalide");
         }
     }

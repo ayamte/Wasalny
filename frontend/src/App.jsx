@@ -12,9 +12,8 @@ import ClientsManagement from './services/user/gestion_client/ClientsManagement'
 import DriversManagement from './services/user/gestion_conducteur/DriversManagement'  
 import BusesManagement from './services/trajet/pages/gestion_bus/BusesManagement'  
 import DriverDashboard from './services/trajet/pages/ProfilConducteur/profil'  
-import AdminLayout from './components/admin/AdminLayout'  
+import AdminLayout from './components/admin/AdminLayout'
 import DriverLayout from './components/driver/DriverLayout'  
-import BusDriverDashboard from './components/BusDriverDashboard'  
 // Ajouts des services paiement, ticket et abonnement
 import PaymentPage from './services/paiement/PaymentPage'
 import TicketPage from './services/ticket/TicketPage'
@@ -22,8 +21,6 @@ import AbonnementPage from './services/abonnement/AbonnementPage'
 import TypeAbonnementSelection from './services/abonnement/components/TypeAbonnementSelection'
 import NotificationPage from './services/notification/NotificationPage'
 import MesTrajetsPage from './services/mesTrajets/MesTrajetsPage'
-import MesTrajetsPageTest from './services/mesTrajets/MesTrajetsPageTest'
-import MesTrajetsPageSimple from './services/mesTrajets/MesTrajetsPageSimple'
 import * as authService from './services/auth/authService'  
   
 // Protected Route Component  
@@ -47,22 +44,26 @@ function HomePage() {
   const user = authService.getUser()  
   const navigate = React.useRef(null)  
   
-  // Redirect admin users to dashboard  
-  React.useEffect(() => {  
-    if (isAuth && user?.role === 'ADMIN') {  
-      navigate.current = setTimeout(() => {  
-        window.location.href = '/admin/dashboard'  
-      }, 0)  
-    }  
-    return () => {  
-      if (navigate.current) clearTimeout(navigate.current)  
-    }  
-  }, [isAuth, user])  
+  // Redirect admin and driver users to their dashboards
+  React.useEffect(() => {
+    if (isAuth && user?.role === 'ADMIN') {
+      navigate.current = setTimeout(() => {
+        window.location.href = '/admin/dashboard'
+      }, 0)
+    } else if (isAuth && user?.role === 'CONDUCTEUR') {
+      navigate.current = setTimeout(() => {
+        window.location.href = '/conducteur/mes-trajets'
+      }, 0)
+    }
+    return () => {
+      if (navigate.current) clearTimeout(navigate.current)
+    }
+  }, [isAuth, user])
   
-  // Don't render if admin user  
-  if (isAuth && user?.role === 'ADMIN') {  
-    return null  
-  }  
+  // Don't render if admin or driver user
+  if (isAuth && (user?.role === 'ADMIN' || user?.role === 'CONDUCTEUR')) {
+    return null
+  }
   
   return (  
     <div className="text-center py-12">  
@@ -284,28 +285,16 @@ function App() {
           }  
         />  
   
-        {/* Driver Dashboard - Protected for CONDUCTEUR only */}  
-        <Route  
-          path="/conducteur/dashboard"  
-          element={  
-            <ProtectedRoute>  
-              <DriverLayout>  
-                <BusDriverDashboard />  
-              </DriverLayout>  
-            </ProtectedRoute>  
-          }  
-        />  
-  
-        {/* Driver other pages */}  
-        <Route  
-          path="/conducteur/mes-trajets"  
-          element={  
-            <ProtectedRoute>  
-              <DriverLayout>  
-                <DriverDashboard />  
-              </DriverLayout>  
-            </ProtectedRoute>  
-          }  
+        {/* Driver - Mes Trajets */}
+        <Route
+          path="/conducteur/mes-trajets"
+          element={
+            <ProtectedRoute>
+              <DriverLayout>
+                <DriverDashboard />
+              </DriverLayout>
+            </ProtectedRoute>
+          }
         />  
   
         {/* Nouvelles routes pour les services paiement, ticket et abonnement */}  

@@ -58,23 +58,17 @@ public class AuthenticationService {
             User savedUser = userRepository.save(user);
 
             // Appeler user-service pour créer le profil
-            try {
-                userProfileClient.createProfile(
-                    savedUser.getUuid().toString(),
-                    savedUser.getEmail(),
-                    savedUser.getUsername(),
-                    savedUser.getRole().name(),
-                    dateCreation.toString(),
-                    input.getNom(),
-                    input.getPrenom(),
-                    input.getTelephone(),
-                    input.getNumeroPermis()
-                );
-            } catch (Exception e) {
-                // Log l'erreur mais ne bloque pas l'inscription
-                System.err.println("Error creating user profile: " + e.getMessage());
-                e.printStackTrace();
-            }
+            userProfileClient.createProfile(
+                savedUser.getUuid().toString(),
+                savedUser.getEmail(),
+                savedUser.getUsername(),
+                savedUser.getRole().name(),
+                dateCreation.toString(),
+                input.getNom(),
+                input.getPrenom(),
+                input.getTelephone(),
+                input.getNumeroPermis()
+            );
 
             return savedUser;
         } catch (IllegalArgumentException e) {
