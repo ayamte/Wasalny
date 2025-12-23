@@ -275,7 +275,7 @@ export function TripsPage() {
           const price = trip.prix ? Number(trip.prix) : (trip.ligne?.prixStandard ? Number(trip.ligne.prixStandard) : 30)
 
           return {
-            id: trip.id || index + 1,
+            id: trip.id, // Doit être un UUID valide - pas de fallback
             lineNumber: trip.numeroTrip || trip.ligne?.numero || `Ligne ${index + 1}`,
             lineName: trip.ligne?.nom || `${fromName} - ${toName}`,
             departureTime: departure,
@@ -287,7 +287,9 @@ export function TripsPage() {
           }
         })
 
-        setTrips(mapped)
+        // Filtrer les trips sans ID valide (UUID requis pour le paiement)
+        const validTrips = mapped.filter(trip => trip.id && typeof trip.id === 'string')
+        setTrips(validTrips)
       } catch (e) {
         setError(handleApiError(e))
         setTrips([])
@@ -300,6 +302,12 @@ export function TripsPage() {
   }, [date, fromId, toId, fromName, toName])
 
   const handleBookTrip = (trip) => {  
+    // Vérifier que trip.id existe et est un UUID valide
+    if (!trip.id) {
+      alert('Erreur: ID du trajet manquant. Veuillez réessayer.');
+      return;
+    }
+    
     navigate('/paiement', {  
       state: {  
         typeService: 'ACHAT_TICKET',  

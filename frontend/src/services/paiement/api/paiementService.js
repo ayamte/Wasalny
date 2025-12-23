@@ -2,22 +2,22 @@ import axiosInstance from '../../axiosConfig';
 
 export const paiementService = {
   initierPaiement: async (data) => {
-    const response = await axiosInstance.post('/paiements/initier', data);
+    const response = await axiosInstance.post('/api/paiements/initier', data);
     return response.data;
   },
 
   traiterPaiement: async (transactionId) => {
-    const response = await axiosInstance.post(`/paiements/${transactionId}/traiter`);
+    const response = await axiosInstance.post(`/api/paiements/${transactionId}/traiter`);
     return response.data;
   },
 
   getTransaction: async (transactionId) => {
-    const response = await axiosInstance.get(`/paiements/${transactionId}`);
+    const response = await axiosInstance.get(`/api/paiements/${transactionId}`);
     return response.data;
   },
 
   getTransactionsClient: async (clientId) => {
-    const response = await axiosInstance.get(`/paiements/client/${clientId}`);
+    const response = await axiosInstance.get(`/api/paiements/client/${clientId}`);
     return response.data;
   }
 };

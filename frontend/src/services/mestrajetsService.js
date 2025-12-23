@@ -8,31 +8,31 @@ export const getMyTickets = async () => {
     throw new Error('User not authenticated');
   }
 
-  const response = await axios.get(`/tickets/client/${user.id}`);
+  const response = await axios.get(`/api/tickets/client/${user.id}`);
   return response.data;
 };
 
 // Récupérer les abonnements actifs du client
 export const getMyAbonnements = async () => {
-  const response = await axios.get('/abonnements/mes-abonnements');
+  const response = await axios.get('/api/abonnements/mes-abonnements');
   return response.data;
 };
 
 // Récupérer les détails d'un trip
 export const getTripDetails = async (tripId) => {
-  const response = await axios.get(`/trajets/trips/${tripId}`);
+  const response = await axios.get(`/api/trajets/trips/${tripId}`);
   return response.data;
 };
 
 // Récupérer la dernière position d'un bus
 export const getBusLatestLocation = async (busId) => {
-  const response = await axios.get(`/geolocalisation/locations/latest?busId=${busId}`);
+  const response = await axios.get(`/api/locations/latest?busId=${busId}`);
   return response.data;
 };
 
 // Récupérer les détails d'une ligne
 export const getLigneDetails = async (ligneId) => {
-  const response = await axios.get(`/trajets/lignes/${ligneId}`);
+  const response = await axios.get(`/api/trajets/lignes/${ligneId}`);
   return response.data;
 };
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';  
 import { CheckCircle } from 'lucide-react';  
 import * as authService from '../auth/authService';  
+import Navbar from '../../components/Navbar';
 import { ServiceSelection } from './components/ServiceSelection';  
 import { PaymentForm } from './components/PaymentForm';  
 import { TransactionHistory } from './components/TransactionHistory';  
@@ -71,13 +72,20 @@ export const PaymentPage = () => {
     }  
   };  
   
-  if (!clientId) {  
-    return <div>Chargement...</div>;  
-  }  
+  if (!clientId) {
+    return (
+      <>
+        <Navbar />
+        <div>Chargement...</div>
+      </>
+    );
+  }
   
   return (  
-    <div className="payment-container">  
-      <div className="max-w-6xl mx-auto">  
+    <>
+      <Navbar />
+      <div className="payment-container">  
+        <div className="max-w-6xl mx-auto">  
         <div className="nav-tabs">  
           <button  
             onClick={() => setView('selection')}  
@@ -123,8 +131,9 @@ export const PaymentPage = () => {
         {view === 'history' && (
           <TransactionHistory clientId={clientId} />
         )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

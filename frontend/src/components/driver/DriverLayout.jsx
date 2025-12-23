@@ -1,13 +1,12 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
-  LayoutDashboard,
   MapPin,
-  Clock,
   LogOut,
   Menu,
   X,
-  Bus
+  Bus,
+  ScanLine
 } from 'lucide-react'
 import './DriverLayout.css'
 
@@ -17,8 +16,8 @@ const DriverLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
   const menuItems = [
-    { path: '/conducteur/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { path: '/conducteur/mes-trajets', icon: MapPin, label: 'Mes Trajets' },
+    { path: '/conducteur/validation-ticket', icon: ScanLine, label: 'Validation Ticket' },
   ]
 
   const handleLogout = () => {

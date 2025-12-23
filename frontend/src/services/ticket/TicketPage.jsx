@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Ticket, CheckCircle, XCircle, Clock } from 'lucide-react';  
 import { ticketService } from './api/ticketService';  
 import * as authService from '../auth/authService';  
+import Navbar from '../../components/Navbar';
 import TicketList from './components/TicketList';  
 import TicketModal from './components/TicketModal';  
 import './styles/Ticket.css';  
@@ -72,18 +73,23 @@ export default function TicketPage() {
   
   if (loading) {  
     return (  
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>  
-        <Clock className="w-8 h-8 animate-spin" style={{ color: '#ff6b35' }} />  
-      </div>  
+      <>
+        <Navbar />
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>  
+          <Clock className="w-8 h-8 animate-spin" style={{ color: '#ff6b35' }} />  
+        </div>  
+      </>
     );  
   }  
   
   return (  
-    <div style={{  
-      minHeight: '100vh',  
-      background: 'linear-gradient(135deg, #ffffff 0%, #fff5f0 100%)',  
-      padding: '2rem 1rem'  
-    }}>  
+    <>
+      <Navbar />
+      <div style={{  
+        minHeight: '100vh',  
+        background: 'linear-gradient(135deg, #ffffff 0%, #fff5f0 100%)',  
+        padding: '2rem 1rem'  
+      }}>  
       <div style={{ maxWidth: '64rem', margin: '0 auto' }}>  
         <div style={{  
           background: 'white',  
@@ -155,6 +161,7 @@ export default function TicketPage() {
         onRembourser={handleRembourser}  
         actionLoading={actionLoading}  
       />  
-    </div>  
-  );  
+      </div>  
+    </>
+  );
 }

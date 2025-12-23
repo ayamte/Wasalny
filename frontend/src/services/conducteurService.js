@@ -9,7 +9,7 @@ import axios from './axiosConfig';
  */
 export const getAssignationsConducteur = async (conducteurId) => {
   try {
-    const url = `/trajets/assignations/conducteur/${conducteurId}`;
+    const url = `/api/trajets/assignations/conducteur/${conducteurId}`;
     console.log('Calling API:', url);
     console.log('Full URL:', axios.defaults.baseURL + url);
     const response = await axios.get(url);
@@ -17,7 +17,7 @@ export const getAssignationsConducteur = async (conducteurId) => {
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la récupération des assignations du conducteur:', error);
-    console.error('URL appelée:', `/trajets/assignations/conducteur/${conducteurId}`);
+    console.error('URL appelée:', `/api/trajets/assignations/conducteur/${conducteurId}`);
     console.error('Status:', error.response?.status);
     console.error('Response:', error.response?.data);
     throw error;
@@ -29,7 +29,7 @@ export const getAssignationsConducteur = async (conducteurId) => {
  */
 export const getTripsByBusAndDate = async (busId, date) => {
   try {
-    const response = await axios.get(`/trajets/trips/bus/${busId}/date/${date}`);
+    const response = await axios.get(`/api/trajets/trips/bus/${busId}/date/${date}`);
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la récupération des trips du bus:', error);
@@ -42,7 +42,7 @@ export const getTripsByBusAndDate = async (busId, date) => {
  */
 export const getAssignationActive = async (busId, date) => {
   try {
-    const response = await axios.get(`/trajets/assignations/bus/${busId}/active`, {
+    const response = await axios.get(`/api/trajets/assignations/bus/${busId}/active`, {
       params: { date }
     });
     return response.data;
@@ -60,7 +60,7 @@ export const getAssignationActive = async (busId, date) => {
  */
 export const demarrerTrip = async (tripId) => {
   try {
-    const response = await axios.post(`/trajets/trips/${tripId}/demarrer`);
+    const response = await axios.post(`/api/trajets/trips/${tripId}/demarrer`);
     return response.data;
   } catch (error) {
     console.error('Erreur lors du démarrage du trip:', error);
@@ -73,7 +73,7 @@ export const demarrerTrip = async (tripId) => {
  */
 export const terminerTrip = async (tripId) => {
   try {
-    const response = await axios.post(`/trajets/trips/${tripId}/terminer`);
+    const response = await axios.post(`/api/trajets/trips/${tripId}/terminer`);
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la fin du trip:', error);
@@ -86,7 +86,7 @@ export const terminerTrip = async (tripId) => {
  */
 export const confirmerPassage = async (tripId, stationId, heureReelle) => {
   try {
-    const response = await axios.post(`/trajets/trips/${tripId}/confirmer-passage`, {
+    const response = await axios.post(`/api/trajets/trips/${tripId}/confirmer-passage`, {
       stationId,
       heureReelle
     });
@@ -102,7 +102,7 @@ export const confirmerPassage = async (tripId, stationId, heureReelle) => {
  */
 export const getPassagesByTrip = async (tripId) => {
   try {
-    const response = await axios.get(`/trajets/passages/trip/${tripId}`);
+    const response = await axios.get(`/api/trajets/passages/trip/${tripId}`);
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la récupération des passages:', error);
@@ -115,7 +115,7 @@ export const getPassagesByTrip = async (tripId) => {
  */
 export const getPassagesNonConfirmes = async (tripId) => {
   try {
-    const response = await axios.get(`/trajets/passages/trip/${tripId}/non-confirmes`);
+    const response = await axios.get(`/api/trajets/passages/trip/${tripId}/non-confirmes`);
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la récupération des passages non confirmés:', error);
@@ -128,7 +128,7 @@ export const getPassagesNonConfirmes = async (tripId) => {
  */
 export const updateBusLocation = async (tripId, latitude, longitude) => {
   try {
-    const response = await axios.post(`/trajets/trips/${tripId}/update-location`, {
+    const response = await axios.post(`/api/trajets/trips/${tripId}/update-location`, {
       latitude,
       longitude
     });
@@ -144,7 +144,7 @@ export const updateBusLocation = async (tripId, latitude, longitude) => {
  */
 export const getTripById = async (tripId) => {
   try {
-    const response = await axios.get(`/trajets/trips/${tripId}`);
+    const response = await axios.get(`/api/trajets/trips/${tripId}`);
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la récupération du trip:', error);

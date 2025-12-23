@@ -204,11 +204,6 @@ function TripInfo({ trip, tripState, lastConfirmedStation, passages }) {
                   <span className={`station-text ${isPassed ? 'station-text-passed' : ''} ${isCurrent ? 'station-text-current' : ''} ${isFuture ? 'station-text-future' : ''}`}>
                     {passage.station?.nom}
                   </span>
-                  {isPassed && (
-                    <svg className="station-check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
                 </div>
               );
             })}

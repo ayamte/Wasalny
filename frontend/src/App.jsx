@@ -18,6 +18,7 @@ import BusDriverDashboard from './components/BusDriverDashboard'
 // Ajouts des services paiement, ticket et abonnement
 import PaymentPage from './services/paiement/PaymentPage'
 import TicketPage from './services/ticket/TicketPage'
+import TicketValidation from './services/ticket/components/TicketValidation'
 import AbonnementPage from './services/abonnement/AbonnementPage'
 import TypeAbonnementSelection from './services/abonnement/components/TypeAbonnementSelection'
 import NotificationPage from './services/notification/NotificationPage'
@@ -303,6 +304,16 @@ function App() {
             <ProtectedRoute>  
               <DriverLayout>  
                 <DriverDashboard />  
+              </DriverLayout>  
+            </ProtectedRoute>  
+          }  
+        />
+        <Route  
+          path="/conducteur/validation-ticket"  
+          element={  
+            <ProtectedRoute>  
+              <DriverLayout>  
+                <TicketValidation />  
               </DriverLayout>  
             </ProtectedRoute>  
           }  
