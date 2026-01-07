@@ -207,6 +207,34 @@
         limits:  
           cpus: '0.5'  
           memory: 512M  
+
+  neo4j:
+    image: neo4j:5.22
+    container_name: neo4j
+    environment:
+      NEO4J_AUTH: ${NEO4J_AUTH:-neo4j/neo4j_password}
+      NEO4J_dbms_security_procedures_unrestricted: apoc.*
+      NEO4J_dbms_security_procedures_allowlist: apoc.*
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j-data:/data
+      - neo4j-logs:/logs
+    networks:
+      - wasalny-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:7474"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
   
   # ==================== RABBITMQ ====================  
   rabbitmq:  
@@ -663,6 +691,87 @@
         limits:  
           cpus: '1'  
           memory: 1G  
+
+  kg-etl:
+    build:
+      context: ./kg-etl
+      dockerfile: Dockerfile
+    container_name: kg-etl
+    networks:
+      - wasalny-network
+    profiles:
+      - etl
+    environment:
+      - AUTH_DB_HOST=postgres-auth
+      - AUTH_DB_PORT=5432
+      - AUTH_DB_NAME=${AUTH_DB_NAME:-auth_db}
+      - AUTH_DB_USER=${AUTH_DB_USER:-wasalny_user}
+      - AUTH_DB_PASSWORD=${AUTH_DB_PASSWORD}
+      - USER_DB_HOST=postgres-user
+      - USER_DB_PORT=5432
+      - USER_DB_NAME=${USER_DB_NAME:-user_db}
+      - USER_DB_USER=${USER_DB_USER:-wasalny_user}
+      - USER_DB_PASSWORD=${USER_DB_PASSWORD}
+      - TRAJET_DB_HOST=postgres-trajet
+      - TRAJET_DB_PORT=5432
+      - TRAJET_DB_NAME=${TRAJET_DB_NAME:-trajet_db}
+      - TRAJET_DB_USER=${TRAJET_DB_USER:-wasalny_user}
+      - TRAJET_DB_PASSWORD=${TRAJET_DB_PASSWORD}
+      - GEO_DB_HOST=postgres-geo
+      - GEO_DB_PORT=5432
+      - GEO_DB_NAME=${GEO_DB_NAME:-geolocalisation_db}
+      - GEO_DB_USER=${GEO_DB_USER:-wasalny_user}
+      - GEO_DB_PASSWORD=${GEO_DB_PASSWORD}
+      - PAYMENT_DB_HOST=postgres-paiement
+      - PAYMENT_DB_PORT=5432
+      - PAYMENT_DB_NAME=${PAYMENT_DB_NAME:-paiement_db}
+      - PAYMENT_DB_USER=${PAYMENT_DB_USER:-wasalny_user}
+      - PAYMENT_DB_PASSWORD=${PAYMENT_DB_PASSWORD}
+      - TICKET_DB_HOST=postgres-ticket
+      - TICKET_DB_PORT=5432
+      - TICKET_DB_NAME=${TICKET_DB_NAME:-ticket_db}
+      - TICKET_DB_USER=${TICKET_DB_USER:-wasalny_user}
+      - TICKET_DB_PASSWORD=${TICKET_DB_PASSWORD}
+      - ABONNEMENT_DB_HOST=postgres-abonnement
+      - ABONNEMENT_DB_PORT=5432
+      - ABONNEMENT_DB_NAME=${ABONNEMENT_DB_NAME:-abonnement_db}
+      - ABONNEMENT_DB_USER=${ABONNEMENT_DB_USER:-wasalny_user}
+      - ABONNEMENT_DB_PASSWORD=${ABONNEMENT_DB_PASSWORD}
+      - NOTIFICATION_DB_HOST=postgres-notification
+      - NOTIFICATION_DB_PORT=5432
+      - NOTIFICATION_DB_NAME=${NOTIFICATION_DB_NAME:-notification_db}
+      - NOTIFICATION_DB_USER=${NOTIFICATION_DB_USER:-wasalny_user}
+      - NOTIFICATION_DB_PASSWORD=${NOTIFICATION_DB_PASSWORD}
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_AUTH=${NEO4J_AUTH:-neo4j/neo4j_password}
+      - KG_CONSTRAINTS_PATH=/app/scripts/knowledge-graph/01_constraints.cypher
+      - KG_RULES_PATH=/app/scripts/knowledge-graph/02_derived_relations.cypher
+      - KG_ENRICHMENT_PATH=/app/scripts/knowledge-graph/04_enrichment.cypher
+      - KG_APPLY_CONSTRAINTS=true
+      - KG_APPLY_RULES=true
+      - KG_APPLY_ENRICHMENT=true
+    volumes:
+      - ./scripts/knowledge-graph:/app/scripts/knowledge-graph
+    depends_on:
+      postgres-auth:
+        condition: service_healthy
+      postgres-user:
+        condition: service_healthy
+      postgres-trajet:
+        condition: service_healthy
+      postgres-geo:
+        condition: service_healthy
+      postgres-paiement:
+        condition: service_healthy
+      postgres-ticket:
+        condition: service_healthy
+      postgres-abonnement:
+        condition: service_healthy
+      postgres-notification:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+    restart: "no"
   
   # ==================== FRONTEND ====================
   frontend:
@@ -713,6 +822,10 @@ volumes:
     driver: local  
   redis-data:  
     driver: local  
+  neo4j-data:
+    driver: local
+  neo4j-logs:
+    driver: local
   
 # ==================== NETWORKS ====================  
 networks:  
