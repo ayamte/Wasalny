@@ -2,7 +2,7 @@ spring:
   application:
     name: ticket-service
   config:
-    import: "optional:configserver:http://config-server:8888"
+    import: "configserver:${CONFIG_SERVER_URL:http://localhost:8888}"
 
 management:  
   endpoints:  
@@ -11,4 +11,4 @@ management:
         include: health,info  
   endpoint:  
     health:  
-      show-details: always
+      show-details: never

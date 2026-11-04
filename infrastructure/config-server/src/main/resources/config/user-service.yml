@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://postgres-auth:5434/user_db
+    url: jdbc:postgresql://postgres-user:5432/user_db
     username: ${USER_DB_USER:wasalny_user}
     password: ${USER_DB_PASSWORD}
   jpa:
@@ -23,3 +23,6 @@ eureka:
   client:
     service-url:
       defaultZone: http://eureka-server:8761/eureka/
+security:
+  jwt:
+    secret-key: ${JWT_SECRET}

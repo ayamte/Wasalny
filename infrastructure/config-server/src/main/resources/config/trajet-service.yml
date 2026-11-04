@@ -16,7 +16,7 @@ spring:
 
 geolocalisation:
   service:
-    url: ${GEOLOCALISATION_SERVICE_URL:http://localhost:8084}
+    url: ${GEOLOCALISATION_SERVICE_URL:http://geolocalisation-service:8084}
 
 eureka:
   client:

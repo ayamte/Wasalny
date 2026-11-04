@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.wasalny</groupId>
+    <artifactId>wasalny</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>infrastructure/eureka-server</module>
+        <module>infrastructure/config-server</module>
+        <module>infrastructure/api-gateway</module>
+        <module>backend/auth-service</module>
+        <module>backend/user-service</module>
+        <module>backend/trajet-service</module>
+        <module>backend/geolocalisation-service</module>
+        <module>backend/paiement-service</module>
+        <module>backend/ticket-service</module>
+        <module>backend/abonnement-service</module>
+        <module>backend/notification-service</module>
+    </modules>
+</project>

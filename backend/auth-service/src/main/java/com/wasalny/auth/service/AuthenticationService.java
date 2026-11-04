@@ -44,18 +44,24 @@ public class AuthenticationService {
 
         try {
             RoleUtilisateur role = RoleUtilisateur.valueOf(input.getRole().toUpperCase());
+            var authentication = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+            boolean admin = authentication != null && authentication.getAuthorities().stream()
+                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+            if (role != RoleUtilisateur.CLIENT && !admin) {
+                throw new org.springframework.security.access.AccessDeniedException("Only an administrator can create staff accounts");
+            }
 
             LocalDateTime dateCreation = LocalDateTime.now();
 
             User user = new User(input.getUsername(), input.getEmail(), passwordEncoder.encode(input.getPassword()));
             user.setRole(role);
             user.setDateCreation(dateCreation);
-            // Auto-verify user for testing purposes
-            user.setEnabled(true);
-            user.setVerificationCode(null);
-            user.setVerificationCodeExpiresAt(null);
+            user.setEnabled(false);
+            user.setVerificationCode(generateVerificationCode());
+            user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
 
             User savedUser = userRepository.save(user);
+            sendVerificationEmail(savedUser);
 
             // Appeler user-service pour créer le profil
             try {
@@ -101,7 +107,8 @@ public class AuthenticationService {
         User user = userRepository.findByEmail(input.getEmail())  
                 .orElseThrow(() -> new RuntimeException("User not found"));  
   
-        if (user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {  
+        if (user.isEnabled() || user.getVerificationCodeExpiresAt() == null
+                || user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
             throw new RuntimeException("Verification code has expired");  
         }  
   
@@ -153,7 +160,7 @@ public class AuthenticationService {
     }  
   
     private String generateVerificationCode() {
-        return String.valueOf((int) ((Math.random() * (999999 - 100000)) + 100000));
+        return String.valueOf(100000 + new java.security.SecureRandom().nextInt(900000));
     }
 
     public ResponseEntity<?> getUserProfile(String userId) {

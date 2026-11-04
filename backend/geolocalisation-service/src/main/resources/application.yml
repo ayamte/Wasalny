@@ -2,7 +2,7 @@ spring:
   application:
     name: geolocalisation-service
   config:
-    import: "optional:configserver:http://config-server:8888"
+    import: "configserver:${CONFIG_SERVER_URL:http://localhost:8888}"
 
 
 management:  
@@ -12,4 +12,4 @@ management:
         include: health,info  
   endpoint:  
     health:  
-      show-details: always
+      show-details: never

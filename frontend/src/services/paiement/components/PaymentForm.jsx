@@ -179,6 +179,10 @@ export const PaymentForm = ({
         <h2 className="payment-title">Paiement - {getServiceLabel()}</h2>
       </div>
 
+      <p className="error-alert">
+        Démonstration : aucun débit réel. Utilisez uniquement des données de carte fictives.
+      </p>
+
       {error && (
         <div className="error-alert">
           <AlertCircle className="error-icon" />

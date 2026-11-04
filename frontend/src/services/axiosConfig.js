@@ -3,7 +3,7 @@ import axios from 'axios';
 // Configuration de base pour axios
 // Utilise l'API Gateway (port 8080) pour toutes les requêtes
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_GATEWAY_URL || 'http://localhost:8080/api',
+  baseURL: import.meta.env.VITE_API_GATEWAY_URL || '',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

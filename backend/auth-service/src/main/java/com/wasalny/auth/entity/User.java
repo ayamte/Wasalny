@@ -18,7 +18,6 @@ public class User implements UserDetails {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID uuid;
 
     @Column(unique = true, nullable = false)

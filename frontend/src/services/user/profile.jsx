@@ -4,7 +4,7 @@ import Navbar from '../../components/Navbar'
 import * as authService from '../auth/authService'
 import './profile.css'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
+const API_URL = import.meta.env.VITE_API_GATEWAY_URL || ''
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)

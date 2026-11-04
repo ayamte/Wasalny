@@ -1,10 +1,8 @@
-FROM node:18-alpine AS build
+FROM node:22-alpine AS build
 WORKDIR /app
 
 COPY package*.json ./
-RUN rm -rf node_modules package-lock.json && \
-    npm install --legacy-peer-deps && \
-    npm install esbuild@latest --save-exact
+RUN npm ci
 
 COPY . .
 RUN npm run build  

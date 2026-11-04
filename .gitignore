@@ -2,18 +2,48 @@
 .idea/
 .vscode/
 *.iml
+.classpath
+.project
+.settings/
 
 # Build
 target/
 build/
 node_modules/
+dist/
+*.class
+*.jar
+*.war
+!**/.mvn/wrapper/maven-wrapper.jar
+coverage/
+.nyc_output/
+.vite/
+.cache/
+.npm/
+*.tsbuildinfo
 
 # Environment
 .env
+.env.*
+!.env.example
 *.env.local
+http-client.private.env.json
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+/.aws/
 
 # Logs
 *.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
 
 # OS
 .DS_Store
@@ -21,3 +51,7 @@ Thumbs.db
 
 # Docker
 docker-compose.override.yml
+
+# Local backups and verification output
+.local-audit/
+*.bundle

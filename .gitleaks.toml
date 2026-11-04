@@ -1,0 +1,8 @@
+title = "Wasalny secret scanning"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Local build output and private verification backups"
+paths = ['''(^|/)(\.git|\.local-audit|node_modules|target|dist)(/|$)''']

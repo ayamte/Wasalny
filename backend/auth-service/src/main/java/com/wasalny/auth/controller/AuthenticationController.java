@@ -51,11 +51,15 @@ public class AuthenticationController {
 
         try {
             // Call user-service directly via RestTemplate
-            String url = userServiceUrl + "/api/users/" + authenticatedUser.getUuid().toString();
+            String url = userServiceUrl + "/users/" + authenticatedUser.getUuid().toString();
             System.out.println("Fetching user profile from: " + url);
 
             @SuppressWarnings("unchecked")
-            java.util.Map<String, Object> profileData = restTemplate.getForObject(url, java.util.Map.class);
+            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+            headers.setBearerAuth(jwtToken);
+            java.util.Map<String, Object> profileData = restTemplate.exchange(url,
+                    org.springframework.http.HttpMethod.GET, new org.springframework.http.HttpEntity<>(headers),
+                    java.util.Map.class).getBody();
 
             if (profileData != null) {
                 prenom = (String) profileData.get("prenom");

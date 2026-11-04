@@ -96,7 +96,8 @@ public class AdminController {
 
     // Créer un conducteur (ADMIN only) - Appelle auth-service
     @PostMapping("/conducteur/create")
-    public ResponseEntity<?> createConducteur(@RequestBody CreateConducteurDto dto) {
+    public ResponseEntity<?> createConducteur(@RequestBody CreateConducteurDto dto,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
         try {
             // Validation des champs requis
             if (dto.getEmail() == null || dto.getEmail().isEmpty()) {
@@ -134,6 +135,7 @@ public class AdminController {
             // Appeler auth-service pour créer l'utilisateur
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set(HttpHeaders.AUTHORIZATION, authorization);
             HttpEntity<Map<String, String>> request = new HttpEntity<>(signupRequest, headers);
 
             String url = authServiceUrl + "/auth/signup";

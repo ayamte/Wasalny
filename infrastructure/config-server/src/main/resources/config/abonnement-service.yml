@@ -3,9 +3,9 @@ server:
   
 spring:  
   datasource:  
-    url: jdbc:postgresql://postgres-auth:5438/abonnement_db  
+    url: jdbc:postgresql://postgres-abonnement:5432/abonnement_db
     username: ${ABONNEMENT_DB_USER:wasalny_user}  
-    password: ${ABONNEMENT_DB_PASSWORD}  
+    password: ${ABONNEMENT_DB_PASSWORD}
   jpa:  
     hibernate:  
       ddl-auto: update  
@@ -17,7 +17,7 @@ spring:
     host: rabbitmq
     port: 5672
     username: ${RABBITMQ_USER:admin}
-    password: ${RABBITMQ_PASSWORD}  
+    password: ${RABBITMQ_PASSWORD}
   
 eureka:
   client:
@@ -26,4 +26,4 @@ eureka:
 
 security:
   jwt:
-    secret-key: <REDACTED>
+    secret-key: ${JWT_SECRET}

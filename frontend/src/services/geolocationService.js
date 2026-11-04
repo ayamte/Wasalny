@@ -10,7 +10,7 @@ class GeolocationService {
   connect(onConnected, onError) {
     // Create STOMP client with SockJS
     this.client = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8084/ws'),
+      webSocketFactory: () => new SockJS(import.meta.env.VITE_GEOLOCATION_WS_URL || `${window.location.origin}/ws`),
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,

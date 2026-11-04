@@ -1,14 +1,13 @@
-﻿services:  
+services:
   # ==================== BASES DE DONNÉES POSTGRESQL ====================  
   postgres-auth:
     image: postgres:15-alpine
-    container_name: postgres-auth
     environment:
       POSTGRES_DB: ${AUTH_DB_NAME:-auth_db}
       POSTGRES_USER: ${AUTH_DB_USER:-wasalny_user}
-      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD}
+      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD:?Generate .env with node scripts/init-env.mjs}
     ports:
-      - "${AUTH_DB_PORT:-5437}:5432"
+      - "127.0.0.1:${AUTH_DB_PORT:-5437}:5432"
     volumes:
       - postgres-auth-data:/var/lib/postgresql/data
     networks:
@@ -28,13 +27,12 @@
   
   postgres-user:
     image: postgres:15-alpine
-    container_name: postgres-user
     environment:
       POSTGRES_DB: ${USER_DB_NAME:-user_db}
       POSTGRES_USER: ${USER_DB_USER:-wasalny_user}
-      POSTGRES_PASSWORD: ${USER_DB_PASSWORD}
+      POSTGRES_PASSWORD: ${USER_DB_PASSWORD:?Generate .env with node scripts/init-env.mjs}
     ports:
-      - "${USER_DB_PORT:-5434}:5432"
+      - "127.0.0.1:${USER_DB_PORT:-5434}:5432"
     volumes:
       - postgres-user-data:/var/lib/postgresql/data
     networks:
@@ -54,13 +52,12 @@
   
   postgres-trajet:
     image: postgres:15-alpine
-    container_name: postgres-trajet
     environment:
       POSTGRES_DB: ${TRAJET_DB_NAME:-trajet_db}
       POSTGRES_USER: ${TRAJET_DB_USER:-wasalny_user}
-      POSTGRES_PASSWORD: ${TRAJET_DB_PASSWORD}
+      POSTGRES_PASSWORD: ${TRAJET_DB_PASSWORD:?Generate .env with node scripts/init-env.mjs}
     ports:
-      - "${TRAJET_DB_PORT:-5432}:5432"
+      - "127.0.0.1:${TRAJET_DB_PORT:-5432}:5432"
     volumes:
       - postgres-trajet-data:/var/lib/postgresql/data
     networks:
@@ -80,13 +77,12 @@
   
   postgres-geo:  
     image: postgres:15-alpine  
-    container_name: postgres-geo  
     environment:  
       POSTGRES_DB: ${GEO_DB_NAME:-geolocalisation_db}  
       POSTGRES_USER: ${GEO_DB_USER:-wasalny_user}  
-      POSTGRES_PASSWORD: ${GEO_DB_PASSWORD}  
+      POSTGRES_PASSWORD: ${GEO_DB_PASSWORD:?Generate .env with node scripts/init-env.mjs}
     ports:  
-      - "${GEO_DB_PORT:-5435}:5432"  
+      - "127.0.0.1:${GEO_DB_PORT:-5435}:5432"
     volumes:  
       - postgres-geo-data:/var/lib/postgresql/data  
     networks:  
@@ -106,13 +102,12 @@
   
   postgres-paiement:
     image: postgres:15-alpine
-    container_name: postgres-paiement
     environment:
       POSTGRES_DB: ${PAYMENT_DB_NAME:-paiement_db}
       POSTGRES_USER: ${PAYMENT_DB_USER:-wasalny_user}
-      POSTGRES_PASSWORD: ${PAYMENT_DB_PASSWORD}
+      POSTGRES_PASSWORD: ${PAYMENT_DB_PASSWORD:?Generate .env with node scripts/init-env.mjs}
     ports:
-      - "${PAYMENT_DB_PORT:-5433}:5432"
+      - "127.0.0.1:${PAYMENT_DB_PORT:-5433}:5432"
     volumes:
       - postgres-paiement-data:/var/lib/postgresql/data
     networks:
@@ -132,13 +127,12 @@
   
   postgres-ticket:
     image: postgres:15-alpine
-    container_name: postgres-ticket
     environment:
       POSTGRES_DB: ${TICKET_DB_NAME:-ticket_db}
       POSTGRES_USER: ${TICKET_DB_USER:-wasalny_user}
-      POSTGRES_PASSWORD: ${TICKET_DB_PASSWORD}
+      POSTGRES_PASSWORD: ${TICKET_DB_PASSWORD:?Generate .env with node scripts/init-env.mjs}
     ports:
-      - "${TICKET_DB_PORT:-5436}:5432"
+      - "127.0.0.1:${TICKET_DB_PORT:-5436}:5432"
     volumes:
       - postgres-ticket-data:/var/lib/postgresql/data
     networks:
@@ -158,13 +152,12 @@
   
   postgres-abonnement:
     image: postgres:15-alpine
-    container_name: postgres-abonnement
     environment:
       POSTGRES_DB: ${ABONNEMENT_DB_NAME:-abonnement_db}
       POSTGRES_USER: ${ABONNEMENT_DB_USER:-wasalny_user}
-      POSTGRES_PASSWORD: ${ABONNEMENT_DB_PASSWORD}
+      POSTGRES_PASSWORD: ${ABONNEMENT_DB_PASSWORD:?Generate .env with node scripts/init-env.mjs}
     ports:
-      - "${ABONNEMENT_DB_PORT:-5438}:5432"
+      - "127.0.0.1:${ABONNEMENT_DB_PORT:-5438}:5432"
     volumes:
       - postgres-abonnement-data:/var/lib/postgresql/data
     networks:
@@ -184,13 +177,12 @@
   
   postgres-notification:
     image: postgres:15-alpine
-    container_name: postgres-notification
     environment:
       POSTGRES_DB: ${NOTIFICATION_DB_NAME:-notification_db}
       POSTGRES_USER: ${NOTIFICATION_DB_USER:-wasalny_user}
-      POSTGRES_PASSWORD: ${NOTIFICATION_DB_PASSWORD}
+      POSTGRES_PASSWORD: ${NOTIFICATION_DB_PASSWORD:?Generate .env with node scripts/init-env.mjs}
     ports:
-      - "${NOTIFICATION_DB_PORT:-5439}:5432"
+      - "127.0.0.1:${NOTIFICATION_DB_PORT:-5439}:5432"
     volumes:
       - postgres-notification-data:/var/lib/postgresql/data
     networks:
@@ -211,13 +203,12 @@
   # ==================== RABBITMQ ====================  
   rabbitmq:  
     image: rabbitmq:3-management-alpine  
-    container_name: rabbitmq  
     environment:  
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-admin}  
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}  
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?Generate .env with node scripts/init-env.mjs}
     ports:  
-      - "${RABBITMQ_PORT:-5672}:5672"  
-      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"  
+      - "127.0.0.1:${RABBITMQ_PORT:-5672}:5672"
+      - "127.0.0.1:${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
     volumes:  
       - rabbitmq-data:/var/lib/rabbitmq  
     networks:  
@@ -238,17 +229,18 @@
   # ==================== REDIS ====================  
   redis:  
     image: redis:7-alpine  
-    container_name: redis  
-    command: redis-server --requirepass ${REDIS_PASSWORD}  
+    command: ["sh", "-c", 'exec redis-server --requirepass "$$REDIS_PASSWORD"']
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Generate .env with node scripts/init-env.mjs}
     ports:  
-      - "${REDIS_PORT:-6379}:6379"  
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
     volumes:  
       - redis-data:/data  
     networks:  
       - wasalny-network  
     restart: unless-stopped  
     healthcheck:  
-      test: ["CMD", "redis-cli", "ping"]  
+      test: ["CMD-SHELL", "REDISCLI_AUTH=$$REDIS_PASSWORD redis-cli ping | grep -q PONG"]
       interval: 10s  
       timeout: 5s  
       retries: 5  
@@ -264,9 +256,8 @@
     build:  
       context: ./infrastructure/eureka-server  
       dockerfile: Dockerfile  
-    container_name: eureka-server  
     ports:  
-      - "8761:8761"  
+      - "127.0.0.1:8761:8761"
     networks:  
       - wasalny-network  
     environment:  
@@ -278,18 +269,17 @@
       interval: 30s  
       timeout: 10s  
       retries: 5  
-      start_period: 300s   
+      start_period: 600s
   
   # ==================== CONFIG SERVER ====================
   config-server:
     build:
       context: ./infrastructure/config-server
       dockerfile: Dockerfile
-    container_name: config-server
     ports:
-      - "8888:8888"
+      - "127.0.0.1:8888:8888"
     volumes:
-      - ./infrastructure/config-server/src/main/resources/config:/app/config
+      - ./infrastructure/config-server/src/main/resources/config:/app/config:ro
     networks:
       - wasalny-network
     environment:
@@ -304,7 +294,7 @@
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 300s
+      start_period: 600s
     deploy:
       resources:
         limits:
@@ -316,13 +306,12 @@
     build:  
       context: ./infrastructure/api-gateway  
       dockerfile: Dockerfile  
-    container_name: api-gateway  
     ports:  
-      - "8080:8080"  
+      - "127.0.0.1:8080:8080"
     networks:  
       - wasalny-network  
     environment:  
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888  
+      - CONFIG_SERVER_URL=http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/  
     depends_on:  
       eureka-server:  
@@ -335,7 +324,7 @@
       interval: 60s
       timeout: 30s
       retries: 5
-      start_period: 360s      
+      start_period: 600s
     deploy:  
       resources:  
         limits:  
@@ -347,23 +336,28 @@
     build:  
       context: ./backend/auth-service  
       dockerfile: Dockerfile  
-    container_name: auth-service  
     ports:  
-      - "8086:8086"  
+      - "127.0.0.1:8086:8086"
     networks:  
       - wasalny-network  
     environment:  
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888  
+      - INTERNAL_API_KEY=${INTERNAL_API_KEY:?Generate .env with node scripts/init-env.mjs}
+      - CONFIG_SERVER_URL=http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/  
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-auth:5432/${AUTH_DB_NAME:-auth_db}  
       - SPRING_DATASOURCE_USERNAME=${AUTH_DB_USER:-wasalny_user}  
-      - SPRING_DATASOURCE_PASSWORD=${AUTH_DB_PASSWORD}
-      - SPRING_REDIS_HOST=redis
-      - SPRING_REDIS_PASSWORD=${REDIS_PASSWORD}
-      - JWT_SECRET=${JWT_SECRET}
+      - SPRING_DATASOURCE_PASSWORD=${AUTH_DB_PASSWORD:?Generate .env with node scripts/init-env.mjs}
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD:?Generate .env with node scripts/init-env.mjs}
+      - JWT_SECRET=${JWT_SECRET:?Generate .env with node scripts/init-env.mjs}
       - JWT_EXPIRATION=${JWT_EXPIRATION:-86400000}
-      - SUPPORT_EMAIL=${SUPPORT_EMAIL}
-      - APP_PASSWORD=${APP_PASSWORD}
+      - SUPPORT_EMAIL=${SUPPORT_EMAIL:-noreply@wasalny.local}
+      - MAIL_HOST=${MAIL_HOST:-mailpit}
+      - MAIL_PORT=${MAIL_PORT:-1025}
+      - MAIL_USERNAME=${MAIL_USERNAME:-}
+      - MAIL_PASSWORD=${MAIL_PASSWORD:-}
+      - MAIL_SMTP_AUTH=${MAIL_SMTP_AUTH:-false}
+      - MAIL_STARTTLS=${MAIL_STARTTLS:-false}
     depends_on:  
       postgres-auth:  
         condition: service_healthy  
@@ -379,7 +373,7 @@
       interval: 30s  
       timeout: 10s  
       retries: 5  
-      start_period: 300s  
+      start_period: 600s
     deploy:  
       resources:  
         limits:  
@@ -390,19 +384,20 @@
     build:  
       context: ./backend/user-service  
       dockerfile: Dockerfile  
-    container_name: user-service  
     ports:  
-      - "8083:8083"  
+      - "127.0.0.1:8083:8083"
     networks:  
       - wasalny-network  
     environment:  
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888  
+      - JWT_SECRET=${JWT_SECRET:?Generate .env with node scripts/init-env.mjs}
+      - INTERNAL_API_KEY=${INTERNAL_API_KEY:?Generate .env with node scripts/init-env.mjs}
+      - CONFIG_SERVER_URL=http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/  
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-user:5432/${USER_DB_NAME:-user_db}  
       - SPRING_DATASOURCE_USERNAME=${USER_DB_USER:-wasalny_user}  
-      - SPRING_DATASOURCE_PASSWORD=${USER_DB_PASSWORD}
-      - SPRING_REDIS_HOST=redis
-      - SPRING_REDIS_PASSWORD=${REDIS_PASSWORD}
+      - SPRING_DATASOURCE_PASSWORD=${USER_DB_PASSWORD:?Generate .env with node scripts/init-env.mjs}
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD:?Generate .env with node scripts/init-env.mjs}
     depends_on:  
       postgres-user:  
         condition: service_healthy  
@@ -418,7 +413,7 @@
       interval: 30s  
       timeout: 10s  
       retries: 5  
-      start_period: 300s  
+      start_period: 600s
     deploy:  
       resources:  
         limits:  
@@ -429,18 +424,17 @@
     build:
       context: ./backend/trajet-service
       dockerfile: Dockerfile
-    container_name: wasalny-trajet-service
     ports:
-      - "8081:8081"
+      - "127.0.0.1:8081:8081"
     networks:
       - wasalny-network
     environment:
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - CONFIG_SERVER_URL=http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-trajet:5432/${TRAJET_DB_NAME:-trajet_db}
       - SPRING_DATASOURCE_USERNAME=${TRAJET_DB_USER:-wasalny_user}
-      - SPRING_DATASOURCE_PASSWORD=${TRAJET_DB_PASSWORD}
-      - JWT_SECRET=${JWT_SECRET}
+      - SPRING_DATASOURCE_PASSWORD=${TRAJET_DB_PASSWORD:?Generate .env with node scripts/init-env.mjs}
+      - JWT_SECRET=${JWT_SECRET:?Generate .env with node scripts/init-env.mjs}
       - JWT_EXPIRATION=${JWT_EXPIRATION:-86400000}
       - GEOLOCALISATION_SERVICE_URL=http://geolocalisation-service:8084
     depends_on:
@@ -456,7 +450,7 @@
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 300s
+      start_period: 600s
     deploy:
       resources:
         limits:
@@ -467,20 +461,19 @@
     build:
       context: ./backend/geolocalisation-service
       dockerfile: Dockerfile
-    container_name: wasalny-geolocalisation-service
     ports:
-      - "8084:8084"
+      - "127.0.0.1:8084:8084"
     networks:
       - wasalny-network
     environment:
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - CONFIG_SERVER_URL=http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-geo:5432/${GEO_DB_NAME:-geolocalisation_db}
       - SPRING_DATASOURCE_USERNAME=${GEO_DB_USER:-wasalny_user}
-      - SPRING_DATASOURCE_PASSWORD=${GEO_DB_PASSWORD}
-      - SPRING_REDIS_HOST=redis
-      - SPRING_REDIS_PASSWORD=${REDIS_PASSWORD}
-      - JWT_SECRET=${JWT_SECRET}
+      - SPRING_DATASOURCE_PASSWORD=${GEO_DB_PASSWORD:?Generate .env with node scripts/init-env.mjs}
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD:?Generate .env with node scripts/init-env.mjs}
+      - JWT_SECRET=${JWT_SECRET:?Generate .env with node scripts/init-env.mjs}
       - JWT_EXPIRATION=${JWT_EXPIRATION:-86400000}
     depends_on:
       postgres-geo:
@@ -497,7 +490,7 @@
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 300s
+      start_period: 600s
     deploy:
       resources:
         limits:
@@ -509,20 +502,22 @@
       context: ./backend/paiement-service
       dockerfile: Dockerfile
     ports:
-      - "8082:8082"
+      - "127.0.0.1:8082:8082"
     networks:
       - wasalny-network
     environment:
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - JWT_SECRET=${JWT_SECRET:?Generate .env with node scripts/init-env.mjs}
+      - JWT_EXPIRATION=${JWT_EXPIRATION:-86400000}
+      - CONFIG_SERVER_URL=http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-paiement:5432/${PAYMENT_DB_NAME:-paiement_db}
       - SPRING_DATASOURCE_USERNAME=${PAYMENT_DB_USER:-wasalny_user}
-      - SPRING_DATASOURCE_PASSWORD=${PAYMENT_DB_PASSWORD}
+      - SPRING_DATASOURCE_PASSWORD=${PAYMENT_DB_PASSWORD:?Generate .env with node scripts/init-env.mjs}
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USER:-admin}
-      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
-      - SPRING_REDIS_HOST=redis
-      - SPRING_REDIS_PASSWORD=${REDIS_PASSWORD}  
+      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:?Generate .env with node scripts/init-env.mjs}
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD:?Generate .env with node scripts/init-env.mjs}
     depends_on:  
       postgres-paiement:  
         condition: service_healthy  
@@ -540,7 +535,7 @@
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 300s
+      start_period: 600s
     deploy:  
       resources:  
         limits:  
@@ -552,18 +547,20 @@
       context: ./backend/ticket-service
       dockerfile: Dockerfile
     ports:
-      - "8085:8085"
+      - "127.0.0.1:8085:8085"
     networks:
       - wasalny-network
     environment:
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - JWT_SECRET=${JWT_SECRET:?Generate .env with node scripts/init-env.mjs}
+      - JWT_EXPIRATION=${JWT_EXPIRATION:-86400000}
+      - CONFIG_SERVER_URL=http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-ticket:5432/${TICKET_DB_NAME:-ticket_db}
       - SPRING_DATASOURCE_USERNAME=${TICKET_DB_USER:-wasalny_user}
-      - SPRING_DATASOURCE_PASSWORD=${TICKET_DB_PASSWORD}
+      - SPRING_DATASOURCE_PASSWORD=${TICKET_DB_PASSWORD:?Generate .env with node scripts/init-env.mjs}
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USER:-admin}
-      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}  
+      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:?Generate .env with node scripts/init-env.mjs}
     depends_on:  
       postgres-ticket:  
         condition: service_healthy  
@@ -579,7 +576,7 @@
       interval: 30s  
       timeout: 10s  
       retries: 5  
-      start_period: 300s  
+      start_period: 600s
     deploy:  
       resources:  
         limits:  
@@ -591,18 +588,20 @@
       context: ./backend/abonnement-service
       dockerfile: Dockerfile
     ports:
-      - "8087:8087"
+      - "127.0.0.1:8087:8087"
     networks:
       - wasalny-network
     environment:
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - JWT_SECRET=${JWT_SECRET:?Generate .env with node scripts/init-env.mjs}
+      - JWT_EXPIRATION=${JWT_EXPIRATION:-86400000}
+      - CONFIG_SERVER_URL=http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-abonnement:5432/${ABONNEMENT_DB_NAME:-abonnement_db}
       - SPRING_DATASOURCE_USERNAME=${ABONNEMENT_DB_USER:-wasalny_user}
-      - SPRING_DATASOURCE_PASSWORD=${ABONNEMENT_DB_PASSWORD}
+      - SPRING_DATASOURCE_PASSWORD=${ABONNEMENT_DB_PASSWORD:?Generate .env with node scripts/init-env.mjs}
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USER:-admin}
-      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}  
+      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:?Generate .env with node scripts/init-env.mjs}
     depends_on:  
       postgres-abonnement:  
         condition: service_healthy  
@@ -618,7 +617,7 @@
       interval: 30s  
       timeout: 10s  
       retries: 5  
-      start_period: 300s  
+      start_period: 600s
     deploy:  
       resources:  
         limits:  
@@ -630,18 +629,20 @@
       context: ./backend/notification-service
       dockerfile: Dockerfile
     ports:
-      - "8088:8088"
+      - "127.0.0.1:8088:8088"
     networks:
       - wasalny-network
     environment:
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - JWT_SECRET=${JWT_SECRET:?Generate .env with node scripts/init-env.mjs}
+      - JWT_EXPIRATION=${JWT_EXPIRATION:-86400000}
+      - CONFIG_SERVER_URL=http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-notification:5432/${NOTIFICATION_DB_NAME:-notification_db}
       - SPRING_DATASOURCE_USERNAME=${NOTIFICATION_DB_USER:-wasalny_user}
-      - SPRING_DATASOURCE_PASSWORD=${NOTIFICATION_DB_PASSWORD}
+      - SPRING_DATASOURCE_PASSWORD=${NOTIFICATION_DB_PASSWORD:?Generate .env with node scripts/init-env.mjs}
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_USERNAME=${RABBITMQ_USER:-admin}
-      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}  
+      - SPRING_RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:?Generate .env with node scripts/init-env.mjs}
     depends_on:  
       postgres-notification:  
         condition: service_healthy  
@@ -657,25 +658,30 @@
       interval: 30s  
       timeout: 10s  
       retries: 5  
-      start_period: 300s  
+      start_period: 600s
     deploy:  
       resources:  
         limits:  
           cpus: '1'  
           memory: 1G  
   
+  mailpit:
+    image: axllent/mailpit:v1.30.0
+    ports:
+      - "127.0.0.1:8025:8025"
+    networks:
+      - wasalny-network
+    restart: unless-stopped
+
   # ==================== FRONTEND ====================
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: wasalny-frontend
     ports:
-      - "3000:80"
+      - "127.0.0.1:3000:80"
     networks:
       - wasalny-network
-    environment:
-      - VITE_API_GATEWAY_URL=http://localhost:8080
     depends_on:
       api-gateway:
         condition: service_healthy

@@ -1,44 +1,16 @@
-# Maven build artifacts  
-target/  
-!target/*.jar  
-  
-# Maven wrapper  
-.mvn/  
-mvnw  
-mvnw.cmd  
-  
-# IDE files  
-.idea/  
-.vscode/  
-*.iml  
-*.ipr  
-*.iws  
-.project  
-.classpath  
-.settings/  
-  
-# OS files  
-.DS_Store  
-Thumbs.db  
-  
-# Git  
-.git/  
-.gitignore  
-.gitattributes  
-  
-# Documentation  
-README.md  
-*.md  
-  
-# Test files  
-src/test/  
-  
-# Logs  
-*.log  
-logs/  
-  
-# Temporary files  
-*.tmp  
-*.bak  
-*.swp  
-*~  
+target/
+.git/
+.idea/
+.vscode/
+.env
+.env.*
+*.log
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.tmp
+*.bak
+.local-audit/

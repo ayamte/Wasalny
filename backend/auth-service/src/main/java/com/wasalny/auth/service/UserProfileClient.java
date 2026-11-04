@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "user-service")
+@FeignClient(name = "user-service", configuration = com.wasalny.auth.config.UserProfileClientConfiguration.class)
 public interface UserProfileClient {
     @PostMapping("/users/admin/users/create")
     ResponseEntity<?> createProfile(
@@ -22,6 +22,6 @@ public interface UserProfileClient {
         @RequestParam(value = "numeroPermis", required = false) String numeroPermis
     );
 
-    @GetMapping("/api/users/{userId}")
+    @GetMapping("/users/{userId}")
     ResponseEntity<?> getUserProfile(@PathVariable("userId") String userId);
 }

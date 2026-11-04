@@ -23,8 +23,6 @@ import AbonnementPage from './services/abonnement/AbonnementPage'
 import TypeAbonnementSelection from './services/abonnement/components/TypeAbonnementSelection'
 import NotificationPage from './services/notification/NotificationPage'
 import MesTrajetsPage from './services/mesTrajets/MesTrajetsPage'
-import MesTrajetsPageTest from './services/mesTrajets/MesTrajetsPageTest'
-import MesTrajetsPageSimple from './services/mesTrajets/MesTrajetsPageSimple'
 import * as authService from './services/auth/authService'  
   
 // Protected Route Component  

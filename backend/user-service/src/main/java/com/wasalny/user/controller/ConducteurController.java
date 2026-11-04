@@ -16,6 +16,7 @@ public class ConducteurController {
     }
 
     // Consulter son profil
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or #email == authentication.name")
     @GetMapping("/profile")
     public ResponseEntity<ConducteurProfile> getProfile(@RequestParam String email) {
         ConducteurProfile profile = userProfileService.getConducteurProfile(email);
@@ -23,6 +24,7 @@ public class ConducteurController {
     }
 
     // Modifier son profil
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or #email == authentication.name")
     @PutMapping("/profile")
     public ResponseEntity<ConducteurProfile> updateProfile(
             @RequestParam String email,

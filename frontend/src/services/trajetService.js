@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Configuration de base pour les appels API
-const API_GATEWAY_URL = import.meta.env.VITE_API_GATEWAY_URL || 'http://localhost:8080';
+const API_GATEWAY_URL = import.meta.env.VITE_API_GATEWAY_URL || '';
 
 // Création d'une instance axios configurée
 const trajetApi = axios.create({

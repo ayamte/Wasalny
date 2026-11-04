@@ -52,7 +52,10 @@ public class Transaction {
     private String description;  
     private String motifEchec;  
       
-    @Embedded  
+    // The demo payment flow must not retain card details in the database or logs.
+    @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY)
+    @lombok.ToString.Exclude
     private InfoPaiementCarte infoCarte;  
       
     @Column(nullable = false, updatable = false)  

@@ -21,6 +21,7 @@ public class ClientController {
     }
 
     // Consulter son profil
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or #email == authentication.name")
     @GetMapping("/profile")
     public ResponseEntity<ClientProfile> getProfile(@RequestParam String email) {
         ClientProfile profile = userProfileService.getClientProfile(email);
@@ -28,6 +29,7 @@ public class ClientController {
     }
 
     // Modifier son profil
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or #email == authentication.name")
     @PutMapping("/profile")
     public ResponseEntity<ClientProfile> updateProfile(
             @RequestParam String email,
@@ -38,6 +40,7 @@ public class ClientController {
     }
 
     // Modifier son mot de passe
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or #dto.email == authentication.name")
     @PutMapping("/password")
     public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordDto dto) {
         passwordService.changePassword(
@@ -50,6 +53,7 @@ public class ClientController {
     }
 
     // Supprimer son compte
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN') or #email == authentication.name")
     @DeleteMapping("/account")
     public ResponseEntity<Void> deleteAccount(@RequestParam String email) {
         userProfileService.deleteClientAccount(email);

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_GATEWAY_URL = import.meta.env.VITE_API_GATEWAY_URL || 'http://localhost:8080';
+const API_GATEWAY_URL = import.meta.env.VITE_API_GATEWAY_URL || '';
 const API_BASE_URL = `${API_GATEWAY_URL}/api`;
 const TRAJET_SERVICE_URL = `${API_BASE_URL}/trajets`;
 

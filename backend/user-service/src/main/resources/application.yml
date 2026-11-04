@@ -2,7 +2,7 @@ spring:
   application:
     name: user-service
   config:
-    import: "optional:configserver:http://config-server:8888"
+    import: "configserver:${CONFIG_SERVER_URL:http://localhost:8888}"
 
 # Configuration Feign avec timeouts
 feign:
@@ -27,4 +27,6 @@ management:
         include: health,info
   endpoint:
     health:
-      show-details: always
+      show-details: never
+internal:
+  api-key: ${INTERNAL_API_KEY}

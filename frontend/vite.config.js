@@ -5,8 +5,13 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
+    proxy: {
+      '/api': 'http://localhost:8080',
+      '/ws': { target: 'http://localhost:8084', ws: true },
+    },
   },
   define: {
     __HMR_CONFIG_NAME__: JSON.stringify('default')
+    ,global: 'globalThis'
   }
 })

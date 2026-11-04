@@ -18,6 +18,7 @@ public class UserController {
         this.userProfileService = userProfileService;
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("@profileAccess.canAccess(#userId, authentication)")
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUserByUuid(@PathVariable String userId) {
         try {
@@ -41,6 +42,7 @@ public class UserController {
         }
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("@profileAccess.canAccess(#userId, authentication)")
     @PutMapping("/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable String userId, @RequestBody UpdateProfileDto updateDto) {
         try {
