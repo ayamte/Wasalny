@@ -87,3 +87,13 @@ Le test `smoke.mjs` crée un compte de démonstration avec un mot de passe aléa
 Le démarrage simultané des applications Java a pris plusieurs minutes sur cette machine. Les périodes de grâce des contrôles de santé ont été adaptées au démarrage à froid. Les journaux, rapports masqués et sauvegardes restent dans `.local-audit/`. L'instance de test est arrêtée après vérification, sans suppression de ses volumes ni des données existantes.
 
 Le plan initial est conservé dans [history-cleanup-plan.md](history-cleanup-plan.md). Le résultat de son exécution dans la copie indépendante et les preuves de conservation sont détaillés dans [history-cleanup-result.md](history-cleanup-result.md).
+
+## Suivi du job Compose sur main
+
+Le run GitHub 41887543412 a valide backend, frontend et secrets, puis echoue au test de lecture du profil (HTTP 403 apres connexion). La limite de 100 lignes des logs ne conservait pas la cause initiale de l'echec eventuel de creation du profil.
+
+Le client Feign de profils utilise maintenant user.service.url, deja configure pour Docker Compose, au lieu de dependre de la premiere actualisation Eureka. Le controle d'acces au profil et l'assertion HTTP 200 restent inchanges. Un test HTTP reel, sans Eureka, verifie la destination configuree, la route POST et la cle interne. Les 5 tests du module auth-service passent localement. La CI conserve desormais 2000 lignes de logs par conteneur en cas d'echec.
+
+La reproduction Docker locale n'a pas abouti : demarrage tres lent et premiere construction interrompue par BuildKit, puis seconde construction arretee. La stack isolee a ete arretee, ses volumes conserves. Le parcours Compose complet apres correction reste a confirmer sur GitHub ; la cause precise du 403 initial n'est pas etablie par les logs disponibles.
+
+La configuration Dependabot a ete retiree de main pour conserver ce projet sans propositions programmees de mises a jour. Les pull requests deja ouvertes ne sont pas fermees par cette suppression.

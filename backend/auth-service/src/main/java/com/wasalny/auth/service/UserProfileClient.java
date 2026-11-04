@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "user-service", configuration = com.wasalny.auth.config.UserProfileClientConfiguration.class)
+@FeignClient(name = "user-service", url = "${user.service.url:http://user-service:8083}",
+        configuration = com.wasalny.auth.config.UserProfileClientConfiguration.class)
 public interface UserProfileClient {
     @PostMapping("/users/admin/users/create")
     ResponseEntity<?> createProfile(
