@@ -14,7 +14,7 @@
     "lucide-react": "^0.408.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-leaflet": "^4.2.1",
+    "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.18.5",
     "sockjs-client": "^1.6.1"
   },
